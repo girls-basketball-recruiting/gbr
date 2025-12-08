@@ -19,6 +19,13 @@ export const config = [
     },
     rules: {
       "turbo/no-undeclared-env-vars": "warn",
+      "quotes": [
+        "error",
+        "single",
+        { "avoidEscape": true, "allowTemplateLiterals": true }
+      ],
+      "semi": "off",
+      "jsx-quotes": ["error", "prefer-single"],
     },
   },
   {
