@@ -1,135 +1,276 @@
-# Turborepo starter
+# Girls Basketball Recruiting Platform
 
-This Turborepo starter is maintained by the Turborepo core team.
+A modern web platform connecting high school AAU girls basketball players with university basketball program coaches. Built with a focus on performance, scalability, and user experience.
 
-## Using this example
+## 🏀 Overview
 
-Run the following command:
+This platform facilitates meaningful connections between talented student-athletes and collegiate basketball programs by providing:
 
-```sh
-npx create-turbo@latest
+- **Player Profiles**: Comprehensive athletic portfolios with stats, highlights, and academic information
+- **Coach Dashboard**: Advanced search and filtering tools for discovering talent
+- **Video Integration**: Seamless highlight reel uploads and playback
+- **Messaging System**: Direct, compliant communication between coaches and players
+- **Analytics**: Performance tracking and recruitment insights
+
+## 📁 Repository Structure
+
+This is a [Turborepo](https://turbo.build/repo) monorepo. See [TURBOREPO.md](./TURBOREPO.md) for detailed information about the monorepo architecture and tooling.
+
+**apps/** - Application packages
+- **web/** - Next.js player-facing application
+- **coach-portal/** - Next.js coach dashboard (TODO)
+- **api/** - Backend API service (TODO)
+
+**packages/** - Shared packages
+- **ui/** - Shared React component library
+- **database/** - Prisma schema and database utilities (TODO)
+- **typescript-config/** - Shared TypeScript configurations
+- **eslint-config/** - Shared ESLint configurations
+- **auth/** - Authentication utilities (TODO)
+- **utils/** - Shared utility functions
+
+## 🚀 Tech Stack
+
+### Frontend
+- **Framework**: Next.js 14+ (App Router)
+- **UI Library**: React 18+
+- **Styling**: Tailwind CSS
+- **Component Library**: Custom components built on Radix UI primitives
+- **State Management**: React Server Components + Zustand (TODO)
+- **Forms**: React Hook Form + Zod validation
+
+### Backend (TODO)
+- **Runtime**: Node.js
+- **Framework**: Nest.js or Express (TBD)
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: BetterAuth or Clerk (TBD)
+- **File Storage**: AWS S3 or Cloudflare R2 for video content
+
+### Infrastructure
+- **Hosting**: Vercel (frontend) + Railway/Fly.io (backend - TBD)
+- **CI/CD**: GitHub Actions
+- **Monitoring and Analytics**: PostHog
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- pnpm 8+ (required for workspace management)
+- PostgreSQL 14+ (for local development - TODO)
+
+### Installation
+
+Clone the repository and install dependencies:
+
+    git clone <repository-url>
+    cd basketball-recruiting-platform
+    pnpm install
+
+Set up environment variables:
+
+    cp .env.example .env.local
+
+Edit .env.local with your configuration, then run database migrations (TODO):
+
+    pnpm db:migrate
+
+Start development servers:
+
+    pnpm dev
+
+This will start:
+- Player web app: http://localhost:3000
+- Coach portal: http://localhost:3001 (TODO)
+- API server: http://localhost:4000 (TODO)
+
+## 📦 Available Scripts
+
+**Development**
+- `pnpm dev` - Start all apps in development mode
+- `pnpm dev:web` - Start only the player web app
+- `pnpm dev:coach` - Start only the coach portal (TODO)
+
+**Building**
+- `pnpm build` - Build all apps and packages
+- `pnpm build:web` - Build specific app
+
+**Testing**
+- `pnpm test` - Run all tests (TODO)
+- `pnpm test:unit` - Run unit tests (TODO)
+- `pnpm test:e2e` - Run end-to-end tests (TODO)
+
+**Code Quality**
+- `pnpm lint` - Lint all packages
+- `pnpm format` - Format code with Prettier
+- `pnpm type-check` - Run TypeScript compiler checks
+
+**Database (TODO)**
+- `pnpm db:migrate` - Run database migrations
+- `pnpm db:seed` - Seed database with test data
+- `pnpm db:studio` - Open Prisma Studio
+
+## 🏗️ Architecture
+
+### Design Principles
+1. **Mobile-first**: Responsive design optimized for mobile recruiting
+2. **Performance**: Server-side rendering, image optimization, lazy loading
+3. **Accessibility**: WCAG 2.1 AA compliance target
+4. **Type Safety**: End-to-end TypeScript with strict mode
+5. **Modularity**: Shared packages for reusability across apps
+
+### Key Features (Planned)
+
+#### For Players
+- Profile creation with stats, bio, and academic info
+- Video highlight upload and management
+- University program discovery and search
+- Message inbox for coach communications
+- Recruitment timeline tracking
+- Mobile-responsive design
+
+#### For Coaches
+- Advanced player search with filters (position, class year, location, stats)
+- Saved player lists and boards
+- Bulk messaging capabilities
+- Compliance tools for NCAA/NAIA regulations
+- Analytics dashboard
+- Team collaboration features
+
+#### Admin (Future)
+- User management
+- Content moderation
+- Platform analytics
+- Feature flags
+
+## 🔐 Authentication & Authorization (TODO)
+
+- **Player Accounts**: Email/password + OAuth (Google)
+- **Coach Accounts**: Email verification + university affiliation verification
+- **Role-based Access Control**: Player, Coach, Admin roles
+- **Session Management**: JWT tokens with refresh mechanism
+
+## 📊 Database Schema (TODO)
+
+Key entities:
+- Users (players, coaches, admins)
+- Player Profiles
+- Coach Profiles
+- Universities/Programs
+- Videos
+- Messages
+- Recruitment Activities
+
+See `packages/database/schema.prisma` for complete schema.
+
+## 🎨 Design System
+
+The shared UI package provides a consistent design system across all applications:
+- Typography scale
+- Color palette (brand colors, semantic colors)
+- Spacing system
+- Component library
+- Icon set
+
+See `packages/ui/README.md` for component documentation.
+
+## Usage
+
+```bash
+pnpm dlx shadcn@latest init
 ```
 
-## What's inside?
+## Adding components
 
-This Turborepo includes the following packages/apps:
+To add components to your app, run the following command at the root of your `web` app:
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+pnpm dlx shadcn@latest add button -c apps/web
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+This will place the ui components in the `packages/ui/src/components` directory.
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+## Tailwind
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
 
-### Develop
+## Using components
 
-To develop all apps and packages, run the following command:
+To use the components in your app, import them from the `ui` package.
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+```tsx
+import { Button } from "@workspace/ui/components/button"
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 🧪 Testing Strategy (TODO)
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+- **Unit Tests**: Vitest for utilities and components
+- **Integration Tests**: React Testing Library
+- **E2E Tests**: Playwright for critical user flows
+- **Visual Regression**: Chromatic or Percy (TBD)
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## 📈 Performance Targets
 
-### Remote Caching
+- **Lighthouse Score**: >90 across all metrics
+- **First Contentful Paint**: <1.5s
+- **Time to Interactive**: <3.5s
+- **Core Web Vitals**: All "Good" ratings
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## 🚢 Deployment
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### Staging
+- Automatic deployment on push to `develop` branch
+- URL: https://staging.basketball-recruiting.com (TODO)
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+### Production
+- Manual deployment from `main` branch
+- URL: https://basketball-recruiting.com (TODO)
 
-```
-cd my-turborepo
+## 🤝 Contributing
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+This is currently a private project. Contributing guidelines will be added when the project opens for collaboration.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+## 📝 License
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+[License TBD]
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## 🗺️ Roadmap
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+### Phase 1: MVP (Current)
+- [x] Project setup and monorepo architecture
+- [x] Design system and UI component library
+- [ ] Player profile creation
+- [ ] Basic search functionality
+- [ ] Video upload integration
+- [ ] Authentication system
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+### Phase 2: Core Features
+- [ ] Advanced search and filtering
+- [ ] Messaging system
+- [ ] Coach dashboard
+- [ ] Mobile app (React Native - TBD)
 
-## Useful Links
+### Phase 3: Growth Features
+- [ ] Analytics and insights
+- [ ] Recruitment tracking
+- [ ] Team collaboration tools
+- [ ] Premium features/subscriptions
 
-Learn more about the power of Turborepo:
+### Phase 4: Scale
+- [ ] API for third-party integrations
+- [ ] Webhooks and event system
+- [ ] Advanced analytics
+- [ ] Multi-sport expansion
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+## 📞 Support
+
+For questions or issues:
+- Create an issue in this repository
+- Contact: [contact email TBD]
+
+## 🔗 Related Documentation
+
+- [Turborepo Setup](./TURBOREPO.md) - Monorepo architecture and configuration
+- [Design System](./packages/ui/README.md) - Component library documentation
+
+***

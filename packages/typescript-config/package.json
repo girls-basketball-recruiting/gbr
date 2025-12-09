@@ -1,15 +1,9 @@
 {
-  "name": "@repo/typescript-config",
+  "name": "@workspace/typescript-config",
   "version": "0.0.0",
   "private": true,
-  "license": "MIT",
+  "license": "PROPRIETARY",
   "publishConfig": {
     "access": "public"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "all",
-    "semi": false,
-    "jsxSingleQuote": true
   }
 }
