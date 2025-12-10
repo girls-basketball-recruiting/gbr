@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["PAYLOAD_SECRET", "CLERK_WEBHOOK_SECRET"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

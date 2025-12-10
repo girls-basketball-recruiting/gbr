@@ -8,20 +8,19 @@ This platform facilitates meaningful connections between talented student-athlet
 
 - **Player Profiles**: Comprehensive athletic portfolios with stats, highlights, and academic information
 - **Coach Dashboard**: Advanced search and filtering tools for discovering talent
-- **Video Integration**: Seamless highlight reel uploads and playback
-- **Messaging System**: Direct, compliant communication between coaches and players
-- **Analytics**: Performance tracking and recruitment insights
 
 ## 📁 Repository Structure
 
 This is a [Turborepo](https://turbo.build/repo) monorepo. See [TURBOREPO.md](./TURBOREPO.md) for detailed information about the monorepo architecture and tooling.
 
 **apps/** - Application packages
+
 - **web/** - Next.js player-facing application
 - **coach-portal/** - Next.js coach dashboard (TODO)
 - **api/** - Backend API service (TODO)
 
 **packages/** - Shared packages
+
 - **ui/** - Shared React component library
 - **database/** - Prisma schema and database utilities (TODO)
 - **typescript-config/** - Shared TypeScript configurations
@@ -32,6 +31,7 @@ This is a [Turborepo](https://turbo.build/repo) monorepo. See [TURBOREPO.md](./T
 ## 🚀 Tech Stack
 
 ### Frontend
+
 - **Framework**: Next.js 14+ (App Router)
 - **UI Library**: React 18+
 - **Styling**: Tailwind CSS
@@ -40,6 +40,7 @@ This is a [Turborepo](https://turbo.build/repo) monorepo. See [TURBOREPO.md](./T
 - **Forms**: React Hook Form + Zod validation
 
 ### Backend (TODO)
+
 - **Runtime**: Node.js
 - **Framework**: Nest.js or Express (TBD)
 - **Database**: PostgreSQL
@@ -48,6 +49,7 @@ This is a [Turborepo](https://turbo.build/repo) monorepo. See [TURBOREPO.md](./T
 - **File Storage**: AWS S3 or Cloudflare R2 for video content
 
 ### Infrastructure
+
 - **Hosting**: Vercel (frontend) + Railway/Fly.io (backend - TBD)
 - **CI/CD**: GitHub Actions
 - **Monitoring and Analytics**: PostHog
@@ -55,7 +57,8 @@ This is a [Turborepo](https://turbo.build/repo) monorepo. See [TURBOREPO.md](./T
 ## 🛠️ Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - pnpm 8+ (required for workspace management)
 - PostgreSQL 14+ (for local development - TODO)
 
@@ -80,6 +83,7 @@ Start development servers:
     pnpm dev
 
 This will start:
+
 - Player web app: http://localhost:3000
 - Coach portal: http://localhost:3001 (TODO)
 - API server: http://localhost:4000 (TODO)
@@ -87,25 +91,30 @@ This will start:
 ## 📦 Available Scripts
 
 **Development**
+
 - `pnpm dev` - Start all apps in development mode
 - `pnpm dev:web` - Start only the player web app
 - `pnpm dev:coach` - Start only the coach portal (TODO)
 
 **Building**
+
 - `pnpm build` - Build all apps and packages
 - `pnpm build:web` - Build specific app
 
 **Testing**
+
 - `pnpm test` - Run all tests (TODO)
 - `pnpm test:unit` - Run unit tests (TODO)
 - `pnpm test:e2e` - Run end-to-end tests (TODO)
 
 **Code Quality**
+
 - `pnpm lint` - Lint all packages
 - `pnpm format` - Format code with Prettier
 - `pnpm type-check` - Run TypeScript compiler checks
 
 **Database (TODO)**
+
 - `pnpm db:migrate` - Run database migrations
 - `pnpm db:seed` - Seed database with test data
 - `pnpm db:studio` - Open Prisma Studio
@@ -113,6 +122,7 @@ This will start:
 ## 🏗️ Architecture
 
 ### Design Principles
+
 1. **Mobile-first**: Responsive design optimized for mobile recruiting
 2. **Performance**: Server-side rendering, image optimization, lazy loading
 3. **Accessibility**: WCAG 2.1 AA compliance target
@@ -122,6 +132,7 @@ This will start:
 ### Key Features (Planned)
 
 #### For Players
+
 - Profile creation with stats, bio, and academic info
 - Video highlight upload and management
 - University program discovery and search
@@ -130,6 +141,7 @@ This will start:
 - Mobile-responsive design
 
 #### For Coaches
+
 - Advanced player search with filters (position, class year, location, stats)
 - Saved player lists and boards
 - Bulk messaging capabilities
@@ -138,6 +150,7 @@ This will start:
 - Team collaboration features
 
 #### Admin (Future)
+
 - User management
 - Content moderation
 - Platform analytics
@@ -153,6 +166,7 @@ This will start:
 ## 📊 Database Schema (TODO)
 
 Key entities:
+
 - Users (players, coaches, admins)
 - Player Profiles
 - Coach Profiles
@@ -166,6 +180,7 @@ See `packages/database/schema.prisma` for complete schema.
 ## 🎨 Design System
 
 The shared UI package provides a consistent design system across all applications:
+
 - Typography scale
 - Color palette (brand colors, semantic colors)
 - Spacing system
@@ -199,7 +214,7 @@ Your `tailwind.config.ts` and `globals.css` are already set up to use the compon
 To use the components in your app, import them from the `ui` package.
 
 ```tsx
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@workspace/ui/components/button";
 ```
 
 ## 🧪 Testing Strategy (TODO)
@@ -219,10 +234,12 @@ import { Button } from "@workspace/ui/components/button"
 ## 🚢 Deployment
 
 ### Staging
+
 - Automatic deployment on push to `develop` branch
 - URL: https://staging.basketball-recruiting.com (TODO)
 
 ### Production
+
 - Manual deployment from `main` branch
 - URL: https://basketball-recruiting.com (TODO)
 
@@ -237,6 +254,7 @@ This is currently a private project. Contributing guidelines will be added when 
 ## 🗺️ Roadmap
 
 ### Phase 1: MVP (Current)
+
 - [x] Project setup and monorepo architecture
 - [x] Design system and UI component library
 - [ ] Player profile creation
@@ -245,18 +263,21 @@ This is currently a private project. Contributing guidelines will be added when 
 - [ ] Authentication system
 
 ### Phase 2: Core Features
+
 - [ ] Advanced search and filtering
 - [ ] Messaging system
 - [ ] Coach dashboard
 - [ ] Mobile app (React Native - TBD)
 
 ### Phase 3: Growth Features
+
 - [ ] Analytics and insights
 - [ ] Recruitment tracking
 - [ ] Team collaboration tools
 - [ ] Premium features/subscriptions
 
 ### Phase 4: Scale
+
 - [ ] API for third-party integrations
 - [ ] Webhooks and event system
 - [ ] Advanced analytics
@@ -265,6 +286,7 @@ This is currently a private project. Contributing guidelines will be added when 
 ## 📞 Support
 
 For questions or issues:
+
 - Create an issue in this repository
 - Contact: [contact email TBD]
 
@@ -273,4 +295,4 @@ For questions or issues:
 - [Turborepo Setup](./TURBOREPO.md) - Monorepo architecture and configuration
 - [Design System](./packages/ui/README.md) - Component library documentation
 
-***
+---

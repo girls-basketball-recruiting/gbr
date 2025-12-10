@@ -1,6 +1,27 @@
-import { clerkMiddleware } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-export default clerkMiddleware()
+// Define public routes that don't require authentication
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/register-player(.*)',
+  '/register-coach(.*)',
+  '/onboarding/player(.*)',
+  '/onboarding/coach(.*)',
+  '/players/(.*)', // Public player profiles for SEO
+  '/api/webhooks(.*)', // Webhooks should be public but verified
+  '/admin(.*)', // PayloadCMS handles its own authentication
+])
+
+export default clerkMiddleware(async (auth, request) => {
+  // Allow public routes (including /admin since PayloadCMS handles auth)
+  if (isPublicRoute(request)) {
+    return
+  }
+
+  // Protect all other routes - require Clerk authentication
+  await auth.protect()
+})
 
 export const config = {
   matcher: [
