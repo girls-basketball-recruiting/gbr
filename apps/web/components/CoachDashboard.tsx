@@ -89,24 +89,6 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
   return (
     <div className='container mx-auto px-4 py-8'>
       <div className='max-w-6xl mx-auto'>
-        <div className='flex justify-between items-center mb-8'>
-          <h2 className='text-3xl font-bold text-white'>Your Recruiting Board</h2>
-          <div className='flex gap-3'>
-            <Link href='/profile/edit'>
-              <Button
-                variant='outline'
-                className='border-slate-600 text-white hover:bg-slate-800'
-              >
-                Edit Profile
-              </Button>
-            </Link>
-            <Link href='/players'>
-              <Button className='bg-blue-500 hover:bg-blue-600'>
-                Browse All Players
-              </Button>
-            </Link>
-          </div>
-        </div>
 
         {/* Saved Players Section */}
         <div className='mb-8'>

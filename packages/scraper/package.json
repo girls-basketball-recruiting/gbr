@@ -1,0 +1,25 @@
+{
+  "name": "@workspace/scraper",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "scrape": "tsx src/index.ts",
+    "debug": "tsx src/debug.ts",
+    "parse": "tsx src/parse-html.ts",
+    "parse:cli": "tsx src/parse-html-cli.ts",
+    "parse:save": "tsx src/save-local.ts",
+    "import": "tsx src/import-to-db.ts",
+    "postinstall": "puppeteer browsers install chrome"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "jsdom": "^25.0.1",
+    "puppeteer": "^23.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.25",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

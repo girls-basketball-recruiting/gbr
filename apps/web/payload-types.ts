@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     players: Player;
     coaches: Coach;
+    colleges: College;
     'coach-player-notes': CoachPlayerNote;
     'saved-players': SavedPlayer;
     tournaments: Tournament;
@@ -86,6 +87,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     players: PlayersSelect<false> | PlayersSelect<true>;
     coaches: CoachesSelect<false> | CoachesSelect<true>;
+    colleges: CollegesSelect<false> | CollegesSelect<true>;
     'coach-player-notes': CoachPlayerNotesSelect<false> | CoachPlayerNotesSelect<true>;
     'saved-players': SavedPlayersSelect<false> | SavedPlayersSelect<true>;
     tournaments: TournamentsSelect<false> | TournamentsSelect<true>;
@@ -183,6 +185,24 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -228,6 +248,8 @@ export interface Player {
   createdAt: string;
 }
 /**
+ * Manage tournaments for players and coaches to discover
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tournaments".
  */
@@ -265,6 +287,13 @@ export interface Coach {
    */
   user: number | User;
   name: string;
+  /**
+   * Link to college/university from database
+   */
+  college?: (number | null) | College;
+  /**
+   * University name (use this if college not in database)
+   */
   university: string;
   /**
    * e.g., "Women's Basketball"
@@ -292,6 +321,23 @@ export interface Coach {
   phone?: string | null;
   bio?: string | null;
   profileImage?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manage the database of colleges and universities for typeahead/autocomplete
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "colleges".
+ */
+export interface College {
+  id: number;
+  school: string;
+  city: string;
+  state: string;
+  type: 'public' | 'private';
+  conference: string;
+  division: 'd1' | 'd2' | 'd3' | 'naia' | 'juco' | 'other';
   updatedAt: string;
   createdAt: string;
 }
@@ -473,6 +519,10 @@ export interface PayloadLockedDocument {
         value: number | Coach;
       } | null)
     | ({
+        relationTo: 'colleges';
+        value: number | College;
+      } | null)
+    | ({
         relationTo: 'coach-player-notes';
         value: number | CoachPlayerNote;
       } | null)
@@ -573,6 +623,30 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -605,6 +679,7 @@ export interface PlayersSelect<T extends boolean = true> {
 export interface CoachesSelect<T extends boolean = true> {
   user?: T;
   name?: T;
+  college?: T;
   university?: T;
   programName?: T;
   position?: T;
@@ -615,6 +690,20 @@ export interface CoachesSelect<T extends boolean = true> {
   phone?: T;
   bio?: T;
   profileImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "colleges_select".
+ */
+export interface CollegesSelect<T extends boolean = true> {
+  school?: T;
+  city?: T;
+  state?: T;
+  type?: T;
+  conference?: T;
+  division?: T;
   updatedAt?: T;
   createdAt?: T;
 }

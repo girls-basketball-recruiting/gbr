@@ -1,52 +1,54 @@
 import { currentUser } from '@clerk/nextjs/server'
-import { UserButton } from '@clerk/nextjs'
 import PlayerDashboard from './PlayerDashboard'
 import CoachDashboard from './CoachDashboard'
+import { SidebarLayout } from './sidebar-layout'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
 
 export default async function DashboardPage() {
   const clerkUser = await currentUser()
 
   if (!clerkUser) {
     return (
-      <div className='min-h-svh flex items-center justify-center'>
-        <p>Loading...</p>
+      <div className='min-h-svh flex items-center justify-center bg-slate-900'>
+        <p className='text-white'>Loading...</p>
       </div>
     )
   }
 
-  const role = clerkUser.publicMetadata?.role as string | undefined
+  // Get role from PayloadCMS user instead of Clerk metadata
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+
+  const users = await payload.find({
+    collection: 'users',
+    where: {
+      clerkId: {
+        equals: clerkUser.id,
+      },
+    },
+  })
+
+  const payloadUser = users.docs[0]
+  const role = payloadUser?.roles?.[0]
   const isPlayer = role === 'player'
   const isCoach = role === 'coach'
 
-  return (
-    <div className='min-h-svh bg-slate-900'>
-      {/* Header */}
-      <header className='bg-slate-800 border-b border-slate-700'>
-        <div className='container mx-auto px-4 py-4 flex justify-between items-center'>
-          <div>
-            <h1 className='text-2xl font-bold text-white'>
-              Girls Basketball Recruiting
-            </h1>
-            <p className='text-slate-400 text-sm'>
-              Welcome back,{' '}
-              {clerkUser?.firstName ||
-                clerkUser?.emailAddresses[0]?.emailAddress}
-            </p>
-          </div>
-          <UserButton />
-        </div>
-      </header>
+  const user = {
+    name: clerkUser.firstName || clerkUser.emailAddresses[0]?.emailAddress?.split('@')[0] || 'User',
+    email: clerkUser.emailAddresses[0]?.emailAddress || '',
+    role: role,
+  }
 
-      {/* Main Content */}
-      <main>
-        {isPlayer && <PlayerDashboard />}
-        {isCoach && <CoachDashboard />}
-        {!isPlayer && !isCoach && (
-          <div className='container mx-auto px-4 py-16 text-center text-white'>
-            <p>No role assigned yet. Please contact support.</p>
-          </div>
-        )}
-      </main>
-    </div>
+  return (
+    <SidebarLayout user={user}>
+      {isPlayer && <PlayerDashboard />}
+      {isCoach && <CoachDashboard />}
+      {!isPlayer && !isCoach && (
+        <div className='flex items-center justify-center p-16'>
+          <p className='text-white'>No role assigned yet. Please contact support.</p>
+        </div>
+      )}
+    </SidebarLayout>
   )
 }

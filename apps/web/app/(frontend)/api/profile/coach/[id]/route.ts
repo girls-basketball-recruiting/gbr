@@ -35,7 +35,7 @@ export async function PUT(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const payloadUser = users.docs[0]
+    const payloadUser = users.docs[0]!
 
     // Verify the coach profile belongs to this user
     const coachProfile = await payload.findByID({

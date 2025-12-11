@@ -5,6 +5,8 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { EmptyState } from './ui/EmptyState'
 import { StatCard } from './ui/StatCard'
+import { currentUser } from '@clerk/nextjs/server'
+import Image from 'next/image'
 
 interface PlayerDashboardProps {
   // Empty for now
@@ -15,6 +17,34 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
+  // Get current user and their player profile
+  const clerkUser = await currentUser()
+  let playerProfile = null
+
+  if (clerkUser) {
+    const users = await payload.find({
+      collection: 'users',
+      where: {
+        clerkId: {
+          equals: clerkUser.id,
+        },
+      },
+    })
+
+    if (users.docs.length > 0) {
+      const payloadUser = users.docs[0]!
+      const players = await payload.find({
+        collection: 'players',
+        where: {
+          user: {
+            equals: payloadUser.id,
+          },
+        },
+      })
+      playerProfile = players.docs[0]
+    }
+  }
+
   const coachesData = await payload.find({
     collection: 'coaches',
     limit: 12,
@@ -23,17 +53,59 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
 
   const coaches = coachesData.docs
 
+  const profileImageUrl =
+    playerProfile?.profileImage &&
+    typeof playerProfile.profileImage === 'object'
+      ? playerProfile.profileImage.url
+      : null
+
   return (
     <div className='container mx-auto px-4 py-8'>
       <div className='max-w-6xl mx-auto'>
-        <div className='flex justify-between items-center mb-8'>
-          <h2 className='text-3xl font-bold text-white'>Your Dashboard</h2>
-          <Link href='/profile/edit'>
-            <Button className='bg-orange-500 hover:bg-orange-600'>
-              Edit Profile
-            </Button>
-          </Link>
-        </div>
+        {/* Player Profile Header */}
+        {playerProfile && (
+          <div className='mb-8 bg-slate-800/50 border border-slate-700 rounded-lg p-6'>
+            <div className='flex items-center gap-6'>
+              {profileImageUrl ? (
+                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+                  <Image
+                    src={profileImageUrl}
+                    alt={`${playerProfile.firstName} ${playerProfile.lastName}`}
+                    fill
+                    className='object-cover'
+                  />
+                </div>
+              ) : (
+                <div className='w-24 h-24 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0'>
+                  <span className='text-3xl font-bold text-white'>
+                    {playerProfile.firstName?.[0]}
+                    {playerProfile.lastName?.[0]}
+                  </span>
+                </div>
+              )}
+              <div className='flex-1'>
+                <h2 className='text-2xl font-bold text-white mb-1'>
+                  {playerProfile.firstName} {playerProfile.lastName}
+                </h2>
+                <p className='text-slate-400'>
+                  {playerProfile.primaryPosition}
+                  {playerProfile.secondaryPosition &&
+                    ` / ${playerProfile.secondaryPosition}`}
+                  {' • '}
+                  Class of {playerProfile.graduationYear}
+                </p>
+                <p className='text-slate-400 text-sm mt-1'>
+                  {playerProfile.highSchool}
+                  {playerProfile.city && ` • ${playerProfile.city}`}
+                  {playerProfile.state && `, ${playerProfile.state}`}
+                </p>
+              </div>
+              <Button asChild variant='outline'>
+                <Link href='/profile/edit'>Edit Profile</Link>
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Coaches Section */}
         <div className='mb-8'>

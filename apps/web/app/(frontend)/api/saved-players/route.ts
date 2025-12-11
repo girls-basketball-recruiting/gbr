@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const payloadUser = users.docs[0]
+    const payloadUser = users.docs[0]!
 
     // Find the coach profile
     const coaches = await payload.find({
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       )
     }
 
-    const coachProfile = coaches.docs[0]
+    const coachProfile = coaches.docs[0]!
 
     // Check if player is already saved
     const existing = await payload.find({
@@ -145,7 +145,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const payloadUser = users.docs[0]
+    const payloadUser = users.docs[0]!
 
     // Find the coach profile
     const coaches = await payload.find({
@@ -164,7 +164,7 @@ export async function GET(req: Request) {
       )
     }
 
-    const coachProfile = coaches.docs[0]
+    const coachProfile = coaches.docs[0]!
 
     // Get all saved players for this coach
     const savedPlayers = await payload.find({

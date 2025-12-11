@@ -1,6 +1,7 @@
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ReactNode } from 'react'
 
 interface Player {
@@ -8,13 +9,17 @@ interface Player {
   firstName: string
   lastName: string
   graduationYear: number
-  primaryPosition?: string
-  highSchool?: string
-  city?: string
-  state?: string
-  weightedGpa?: number
-  unweightedGpa?: number
-  bio?: string
+  primaryPosition?: string | null
+  highSchool?: string | null
+  city?: string | null
+  state?: string | null
+  weightedGpa?: number | null
+  unweightedGpa?: number | null
+  bio?: string | null
+  profileImage?: {
+    url?: string | null
+    alt?: string | null
+  } | number | null
 }
 
 interface PlayerCardProps {
@@ -23,11 +28,29 @@ interface PlayerCardProps {
 }
 
 export function PlayerCard({ player, action }: PlayerCardProps) {
+  const profileImageUrl =
+    player.profileImage && typeof player.profileImage === 'object'
+      ? player.profileImage.url
+      : null
+
   return (
     <Card className='bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors'>
       <div className='p-6 space-y-4'>
-        <div className='flex items-start justify-between'>
-          <div>
+        <div className='flex items-start gap-4'>
+          {/* Profile Image */}
+          {profileImageUrl && (
+            <div className='w-16 h-16 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+              <Image
+                src={profileImageUrl}
+                alt={`${player.firstName} ${player.lastName}`}
+                fill
+                className='object-cover'
+              />
+            </div>
+          )}
+
+          {/* Player Info */}
+          <div className='flex-1 min-w-0'>
             <h4 className='text-xl font-semibold text-white'>
               {player.firstName} {player.lastName}
             </h4>

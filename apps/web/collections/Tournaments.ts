@@ -5,6 +5,8 @@ export const Tournaments: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'location', 'startDate', 'endDate'],
+    description: 'Manage tournaments for players and coaches to discover',
+    group: 'Reference Data',
   },
   fields: [
     {

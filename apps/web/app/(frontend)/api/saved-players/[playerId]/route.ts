@@ -42,7 +42,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const payloadUser = users.docs[0]
+    const payloadUser = users.docs[0]!
 
     // Find the coach profile
     const coaches = await payload.find({
@@ -61,7 +61,7 @@ export async function DELETE(
       )
     }
 
-    const coachProfile = coaches.docs[0]
+    const coachProfile = coaches.docs[0]!
 
     // Find the saved player record
     const savedPlayers = await payload.find({
@@ -81,7 +81,7 @@ export async function DELETE(
       )
     }
 
-    const savedPlayerRecord = savedPlayers.docs[0]
+    const savedPlayerRecord = savedPlayers.docs[0]!
 
     // Delete the saved player record
     await payload.delete({
@@ -138,7 +138,7 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const payloadUser = users.docs[0]
+    const payloadUser = users.docs[0]!
 
     // Find the coach profile
     const coaches = await payload.find({
@@ -157,7 +157,7 @@ export async function GET(
       )
     }
 
-    const coachProfile = coaches.docs[0]
+    const coachProfile = coaches.docs[0]!
 
     // Check if player is saved
     const savedPlayers = await payload.find({

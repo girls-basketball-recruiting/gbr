@@ -34,3 +34,9 @@ npm-debug.log*
 # Misc
 .DS_Store
 *.pem
+
+# Scraper output files
+packages/scraper/debug-html.html
+packages/scraper/debug-screenshot.png
+packages/scraper/colleges-data.json
+packages/scraper/temp-*.json

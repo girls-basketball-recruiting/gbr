@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const payloadConfig = await config
     const payload = await getPayload({ config: payloadConfig })
 
-    // Find the user in PayloadCMS
+    // Find or create the user in PayloadCMS
     const users = await payload.find({
       collection: 'users',
       where: {
@@ -25,17 +25,39 @@ export async function POST(req: Request) {
       },
     })
 
-    if (users.docs.length === 0) {
-      return NextResponse.json(
-        {
-          error:
-            'User not found in database. Please try signing out and back in.',
-        },
-        { status: 404 },
-      )
-    }
+    let payloadUser = users.docs[0]
 
-    const payloadUser = users.docs[0]!
+    // If user doesn't exist in PayloadCMS, create them
+    if (!payloadUser) {
+      const email = clerkUser.emailAddresses?.[0]?.emailAddress
+      if (!email) {
+        return NextResponse.json(
+          { error: 'No email address found' },
+          { status: 400 },
+        )
+      }
+
+      const roleFromMetadata = clerkUser.publicMetadata?.role as string
+      const validRoles = ['admin', 'player', 'coach'] as const
+      type Role = typeof validRoles[number]
+      const role: Role = validRoles.includes(roleFromMetadata as Role) ? (roleFromMetadata as Role) : 'coach'
+
+      payloadUser = await payload.create({
+        collection: 'users',
+        data: {
+          email,
+          clerkId: clerkUser.id,
+          roles: [role],
+          firstName: clerkUser.firstName || undefined,
+          lastName: clerkUser.lastName || undefined,
+          password:
+            Math.random().toString(36).slice(-12) +
+            Math.random().toString(36).slice(-12),
+        },
+      })
+
+      console.log(`✅ Auto-created PayloadCMS user for Clerk ID: ${clerkUser.id}`)
+    }
 
     // Check if coach profile already exists
     const existingCoaches = await payload.find({

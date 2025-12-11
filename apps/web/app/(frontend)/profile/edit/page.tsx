@@ -13,18 +13,6 @@ export default async function ProfileEditPage() {
     redirect('/sign-in')
   }
 
-  const role = clerkUser.publicMetadata?.role as string | undefined
-  const isPlayer = role === 'player'
-  const isCoach = role === 'coach'
-
-  if (!isPlayer && !isCoach) {
-    return (
-      <div className='min-h-svh bg-slate-900 flex items-center justify-center'>
-        <p className='text-white'>No profile found. Please contact support.</p>
-      </div>
-    )
-  }
-
   // Fetch the user's profile data
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
@@ -48,6 +36,19 @@ export default async function ProfileEditPage() {
   }
 
   const payloadUser = users.docs[0]!
+
+  // Get role from PayloadCMS user instead of Clerk metadata
+  const role = payloadUser.roles?.[0]
+  const isPlayer = role === 'player'
+  const isCoach = role === 'coach'
+
+  if (!isPlayer && !isCoach) {
+    return (
+      <div className='min-h-svh bg-slate-900 flex items-center justify-center'>
+        <p className='text-white'>No profile found. Please contact support.</p>
+      </div>
+    )
+  }
 
   // Fetch player or coach profile
   if (isPlayer) {

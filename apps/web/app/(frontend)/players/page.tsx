@@ -48,7 +48,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     })
 
     if (users.docs.length > 0) {
-      const payloadUser = users.docs[0]
+      const payloadUser = users.docs[0]!
 
       const coaches = await payload.find({
         collection: 'coaches',
@@ -60,7 +60,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       })
 
       if (coaches.docs.length > 0) {
-        const coachProfile = coaches.docs[0]
+        const coachProfile = coaches.docs[0]!
 
         // Get saved player IDs
         const savedPlayers = await payload.find({

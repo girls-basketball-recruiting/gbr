@@ -2,12 +2,14 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@workspace/ui/components/button'
+import { Toggle } from '@workspace/ui/components/toggle'
+import { Bookmark } from 'lucide-react'
 
 interface SavePlayerButtonProps {
   playerId: number
   initialIsSaved?: boolean
   variant?: 'default' | 'outline'
+  size?: 'default' | 'sm' | 'lg'
   className?: string
 }
 
@@ -15,6 +17,7 @@ export function SavePlayerButton({
   playerId,
   initialIsSaved = false,
   variant = 'outline',
+  size = 'default',
   className,
 }: SavePlayerButtonProps) {
   const router = useRouter()
@@ -22,22 +25,11 @@ export function SavePlayerButton({
   const [isLoading, setIsLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
 
-  const handleToggleSave = async () => {
+  const handleToggleSave = async (pressed: boolean) => {
     setIsLoading(true)
 
     try {
-      if (isSaved) {
-        // Unsave the player
-        const response = await fetch(`/api/saved-players/${playerId}`, {
-          method: 'DELETE',
-        })
-
-        if (!response.ok) {
-          throw new Error('Failed to unsave player')
-        }
-
-        setIsSaved(false)
-      } else {
+      if (pressed) {
         // Save the player
         const response = await fetch('/api/saved-players', {
           method: 'POST',
@@ -56,6 +48,17 @@ export function SavePlayerButton({
         } else {
           setIsSaved(true)
         }
+      } else {
+        // Unsave the player
+        const response = await fetch(`/api/saved-players/${playerId}`, {
+          method: 'DELETE',
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to unsave player')
+        }
+
+        setIsSaved(false)
       }
 
       // Refresh the page data
@@ -72,44 +75,19 @@ export function SavePlayerButton({
   }
 
   return (
-    <Button
+    <Toggle
       variant={variant}
-      onClick={handleToggleSave}
+      size={size}
+      pressed={isSaved}
+      onPressedChange={handleToggleSave}
       disabled={isLoading || isPending}
       className={className}
+      aria-label={isSaved ? 'Unsave player' : 'Save player'}
     >
-      {isLoading || isPending ? (
-        'Loading...'
-      ) : isSaved ? (
-        <>
-          <svg
-            className='w-4 h-4 mr-2 fill-current'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path d='M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z' />
-          </svg>
-          Saved
-        </>
-      ) : (
-        <>
-          <svg
-            className='w-4 h-4 mr-2'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z'
-            />
-          </svg>
-          Save Player
-        </>
+      <Bookmark className={isSaved ? 'fill-current' : ''} />
+      {size !== 'sm' && (
+        <span className='ml-2'>{isSaved ? 'Saved' : 'Save'}</span>
       )}
-    </Button>
+    </Toggle>
   )
 }

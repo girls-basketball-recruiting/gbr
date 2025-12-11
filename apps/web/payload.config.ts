@@ -13,6 +13,7 @@ import { CoachPlayerNotes } from './collections/CoachPlayerNotes'
 import { SavedPlayers } from './collections/SavedPlayers'
 import { Tournaments } from './collections/Tournaments'
 import { Prospects } from './collections/Prospects'
+import { Colleges } from './collections/Colleges'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -29,6 +30,7 @@ export default buildConfig({
     Media,
     Players,
     Coaches,
+    Colleges,
     CoachPlayerNotes,
     SavedPlayers,
     Tournaments,
@@ -44,6 +46,7 @@ export default buildConfig({
       connectionString: process.env.POSTGRES_URL || '',
     },
   }),
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
   sharp,
   plugins: [],
 })

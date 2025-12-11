@@ -27,7 +27,7 @@ export async function GET(
       },
     })
 
-    if (users.docs.length === 0 || !users.docs[0].roles?.includes('coach')) {
+    if (users.docs.length === 0 || !users.docs[0]?.roles?.includes('coach')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -94,7 +94,7 @@ export async function PUT(
       },
     })
 
-    if (users.docs.length === 0 || !users.docs[0].roles?.includes('coach')) {
+    if (users.docs.length === 0 || !users.docs[0]?.roles?.includes('coach')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -143,7 +143,7 @@ export async function PUT(
           interestLevel: body.interestLevel || undefined,
         },
       })
-    } else {
+    } else if (existingNotes.docs[0]) {
       // Update existing notes
       result = await payload.update({
         collection: 'coach-player-notes',

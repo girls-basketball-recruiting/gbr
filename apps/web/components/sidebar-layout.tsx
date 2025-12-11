@@ -1,0 +1,52 @@
+'use client'
+
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@workspace/ui/components/sidebar'
+import { AppSidebar } from './app-sidebar'
+import { Separator } from '@workspace/ui/components/separator'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@workspace/ui/components/breadcrumb'
+
+interface SidebarLayoutProps {
+  children: React.ReactNode
+  user?: {
+    name?: string
+    email?: string
+    role?: string
+  }
+}
+
+export function SidebarLayout({ children, user }: SidebarLayoutProps) {
+  return (
+    <SidebarProvider>
+      <AppSidebar user={user} />
+      <SidebarInset>
+        <header className='flex h-16 shrink-0 items-center gap-2 border-b border-slate-700 bg-slate-800/50 px-4'>
+          <SidebarTrigger className='-ml-1' />
+          <Separator orientation='vertical' className='mr-2 h-4' />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className='hidden md:block'>
+                <BreadcrumbLink href='/'>
+                  Girls Basketball Recruiting
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className='hidden md:block' />
+              <BreadcrumbItem>
+                <BreadcrumbPage>
+                  {user?.role === 'coach' ? 'Coach Portal' : user?.role === 'player' ? 'Player Portal' : 'Dashboard'}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </header>
+        <div className='flex flex-1 flex-col'>{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}

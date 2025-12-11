@@ -22,9 +22,21 @@ export const Coaches: CollectionConfig = {
       required: true,
     },
     {
+      name: 'college',
+      type: 'relationship',
+      relationTo: 'colleges',
+      required: false,
+      admin: {
+        description: 'Link to college/university from database',
+      },
+    },
+    {
       name: 'university',
       type: 'text',
       required: true,
+      admin: {
+        description: 'University name (use this if college not in database)',
+      },
     },
     {
       name: 'programName',

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
+import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
 import { CoachNotesSection } from '@/components/CoachNotesSection'
 import { SavePlayerButton } from '@/components/SavePlayerButton'
@@ -103,7 +104,7 @@ export default async function PlayerProfilePage({
     })
 
     if (users.docs.length > 0) {
-      const user = users.docs[0]
+      const user = users.docs[0]!
       isCoach = user.roles?.includes('coach') || false
 
       if (isCoach) {
@@ -154,13 +155,14 @@ export default async function PlayerProfilePage({
           <Card className='bg-slate-800/50 border-slate-700 p-8 mb-8'>
             <div className='text-center space-y-6'>
               {/* Profile Image */}
-              {player.profileImage && typeof player.profileImage === 'object' && (
+              {player.profileImage && typeof player.profileImage === 'object' && player.profileImage.url && (
                 <div className='flex justify-center'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden bg-slate-700'>
-                    <img
+                  <div className='w-32 h-32 rounded-full overflow-hidden bg-slate-700 relative'>
+                    <Image
                       src={player.profileImage.url}
                       alt={`${player.firstName} ${player.lastName}`}
-                      className='w-full h-full object-cover'
+                      fill
+                      className='object-cover'
                     />
                   </div>
                 </div>
@@ -242,21 +244,37 @@ export default async function PlayerProfilePage({
 
         {/* Player Header */}
         <Card className='bg-slate-800/50 border-slate-700 p-8 mb-8'>
-          <div className='flex items-start justify-between'>
-            <div>
-              <h1 className='text-4xl font-bold text-white mb-2'>
-                {player.firstName} {player.lastName}
-              </h1>
-              <p className='text-xl text-slate-400'>
-                Class of {player.graduationYear}
-              </p>
+          <div className='flex items-start justify-between gap-6'>
+            <div className='flex items-start gap-6 flex-1'>
+              {/* Profile Image */}
+              {player.profileImage && typeof player.profileImage === 'object' && player.profileImage.url && (
+                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+                  <Image
+                    src={player.profileImage.url}
+                    alt={`${player.firstName} ${player.lastName}`}
+                    fill
+                    className='object-cover'
+                  />
+                </div>
+              )}
+
+              {/* Player Info */}
+              <div>
+                <h1 className='text-4xl font-bold text-white mb-2'>
+                  {player.firstName} {player.lastName}
+                </h1>
+                <p className='text-xl text-slate-400'>
+                  Class of {player.graduationYear}
+                </p>
+              </div>
             </div>
+
             {isCoach && (
               <SavePlayerButton
                 playerId={player.id}
                 initialIsSaved={isSaved}
-                variant='default'
-                className='bg-blue-600 hover:bg-blue-700'
+                variant='outline'
+                size='lg'
               />
             )}
           </div>
@@ -358,7 +376,7 @@ export default async function PlayerProfilePage({
 
         {/* Coach Notes Section - Only visible to coaches */}
         {isCoach && coachProfile && (
-          <CoachNotesSection playerId={id} coachId={coachProfile.id} />
+          <CoachNotesSection playerId={id} coachId={String(coachProfile.id)} />
         )}
       </div>
     </div>
