@@ -64,6 +64,22 @@ export async function PUT(
       profileImage.name
     ) {
       try {
+        // Delete old profile image if it exists
+        if (playerProfile.profileImage) {
+          try {
+            await payload.delete({
+              collection: 'media',
+              id: typeof playerProfile.profileImage === 'number'
+                ? playerProfile.profileImage
+                : playerProfile.profileImage.id,
+            })
+            console.log(`✅ Deleted old profile image: ${playerProfile.profileImage}`)
+          } catch (deleteError) {
+            console.error('Error deleting old profile image:', deleteError)
+            // Continue with upload even if deletion fails
+          }
+        }
+
         // Convert File to Buffer for PayloadCMS
         const buffer = Buffer.from(await profileImage.arrayBuffer())
 

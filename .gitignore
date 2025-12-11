@@ -35,6 +35,9 @@ npm-debug.log*
 .DS_Store
 *.pem
 
+# Next.js
+next-env.d.ts
+
 # Scraper output files
 packages/scraper/debug-html.html
 packages/scraper/debug-screenshot.png

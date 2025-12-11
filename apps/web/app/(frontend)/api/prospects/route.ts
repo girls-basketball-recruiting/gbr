@@ -3,6 +3,26 @@ import config from '@/payload.config'
 import { NextRequest, NextResponse } from 'next/server'
 import { currentUser } from '@clerk/nextjs/server'
 
+export async function GET() {
+  try {
+    const payloadConfig = await config
+    const payload = await getPayload({ config: payloadConfig })
+
+    const prospects = await payload.find({
+      collection: 'prospects',
+      limit: 100,
+    })
+
+    return NextResponse.json(prospects)
+  } catch (error) {
+    console.error('Error fetching prospects:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch prospects' },
+      { status: 500 }
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const clerkUser = await currentUser()

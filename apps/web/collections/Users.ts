@@ -15,7 +15,9 @@ export const Users: CollectionConfig = {
       index: true,
       admin: {
         hidden: true,
+        description: 'Clerk ID for synced users. Null for PayloadCMS-only admin users.',
       },
+      // This field is optional - null for PayloadCMS admins, populated for Clerk-synced users
     },
     {
       name: 'roles',

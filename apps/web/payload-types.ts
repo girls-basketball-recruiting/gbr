@@ -136,6 +136,9 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  /**
+   * Clerk ID for synced users. Null for PayloadCMS-only admin users.
+   */
   clerkId?: string | null;
   /**
    * User roles determine access levels across the platform

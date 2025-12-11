@@ -209,6 +209,21 @@ export async function POST(req: Request) {
 
       if (players.docs.length > 0) {
         for (const player of players.docs) {
+          // Delete profile image if exists
+          if (player.profileImage) {
+            try {
+              await payloadClient.delete({
+                collection: 'media',
+                id: typeof player.profileImage === 'number'
+                  ? player.profileImage
+                  : player.profileImage.id,
+              })
+              console.log(`✅ Deleted player profile image: ${player.profileImage}`)
+            } catch (error) {
+              console.error('Error deleting player profile image:', error)
+            }
+          }
+
           await payloadClient.delete({
             collection: 'players',
             id: player.id,
@@ -229,6 +244,21 @@ export async function POST(req: Request) {
 
       if (coaches.docs.length > 0) {
         for (const coach of coaches.docs) {
+          // Delete profile image if exists
+          if (coach.profileImage) {
+            try {
+              await payloadClient.delete({
+                collection: 'media',
+                id: typeof coach.profileImage === 'number'
+                  ? coach.profileImage
+                  : coach.profileImage.id,
+              })
+              console.log(`✅ Deleted coach profile image: ${coach.profileImage}`)
+            } catch (error) {
+              console.error('Error deleting coach profile image:', error)
+            }
+          }
+
           await payloadClient.delete({
             collection: 'coaches',
             id: coach.id,

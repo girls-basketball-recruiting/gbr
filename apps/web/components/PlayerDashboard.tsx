@@ -40,6 +40,7 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
             equals: payloadUser.id,
           },
         },
+        depth: 1, // Populate profileImage relationship to get URL
       })
       playerProfile = players.docs[0]
     }

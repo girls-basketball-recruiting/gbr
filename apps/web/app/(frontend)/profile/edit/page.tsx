@@ -59,6 +59,7 @@ export default async function ProfileEditPage() {
           equals: payloadUser.id,
         },
       },
+      depth: 1, // Populate profileImage relationship to get URL
     })
 
     const playerProfile = players.docs[0]
@@ -86,6 +87,7 @@ export default async function ProfileEditPage() {
           equals: payloadUser.id,
         },
       },
+      depth: 1, // Populate profileImage relationship to get URL
     })
 
     const coachProfile = coaches.docs[0]

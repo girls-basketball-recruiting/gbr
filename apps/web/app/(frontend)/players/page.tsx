@@ -143,6 +143,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     limit,
     page,
     sort,
+    depth: 1, // Populate profileImage relationship to get URL
   })
 
   const players = playersData.docs
