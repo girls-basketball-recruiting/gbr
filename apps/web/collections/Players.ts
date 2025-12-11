@@ -115,6 +115,14 @@ export const Players: CollectionConfig = {
           'Select tournaments you will be attending during exposure periods',
       },
     },
+    {
+      name: 'deletedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        description: 'Soft delete timestamp - if set, profile is archived',
+      },
+    },
   ],
   access: {
     // Admins can do everything

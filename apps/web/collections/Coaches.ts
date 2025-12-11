@@ -100,6 +100,14 @@ export const Coaches: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
     },
+    {
+      name: 'deletedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        description: 'Soft delete timestamp - if set, profile is archived',
+      },
+    },
   ],
   access: {
     // Admins can do everything

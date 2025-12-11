@@ -244,6 +244,10 @@ export interface Player {
    * Select tournaments you will be attending during exposure periods
    */
   tournamentSchedule?: (number | Tournament)[] | null;
+  /**
+   * Soft delete timestamp - if set, profile is archived
+   */
+  deletedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -321,6 +325,10 @@ export interface Coach {
   phone?: string | null;
   bio?: string | null;
   profileImage?: (number | null) | Media;
+  /**
+   * Soft delete timestamp - if set, profile is archived
+   */
+  deletedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -669,6 +677,7 @@ export interface PlayersSelect<T extends boolean = true> {
   profileImage?: T;
   highlightVideo?: T;
   tournamentSchedule?: T;
+  deletedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -690,6 +699,7 @@ export interface CoachesSelect<T extends boolean = true> {
   phone?: T;
   bio?: T;
   profileImage?: T;
+  deletedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

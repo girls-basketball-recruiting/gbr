@@ -178,7 +178,9 @@ export async function POST(req: Request) {
     const { id } = evt.data
 
     try {
-      // Find and delete the user by clerkId
+      console.log(`🗑️  User deleted from Clerk: ${id}`)
+
+      // Find the PayloadCMS user
       const users = await payloadClient.find({
         collection: 'users',
         where: {
@@ -188,16 +190,96 @@ export async function POST(req: Request) {
         },
       })
 
-      if (users.docs.length > 0) {
-        const userId = users.docs[0]?.id
-        if (userId) {
+      if (users.docs.length === 0) {
+        console.log(`No PayloadCMS user found for Clerk ID: ${id}`)
+        return new Response('', { status: 200 })
+      }
+
+      const payloadUser = users.docs[0]!
+
+      // CASCADE DELETE: Find and delete player profile if exists
+      const players = await payloadClient.find({
+        collection: 'players',
+        where: {
+          user: {
+            equals: payloadUser.id,
+          },
+        },
+      })
+
+      if (players.docs.length > 0) {
+        for (const player of players.docs) {
           await payloadClient.delete({
-            collection: 'users',
-            id: userId,
+            collection: 'players',
+            id: player.id,
           })
-          console.log(`✅ User ${id} deleted from PayloadCMS`)
+          console.log(`✅ Deleted player profile: ${player.id}`)
         }
       }
+
+      // CASCADE DELETE: Find and delete coach profile if exists
+      const coaches = await payloadClient.find({
+        collection: 'coaches',
+        where: {
+          user: {
+            equals: payloadUser.id,
+          },
+        },
+      })
+
+      if (coaches.docs.length > 0) {
+        for (const coach of coaches.docs) {
+          await payloadClient.delete({
+            collection: 'coaches',
+            id: coach.id,
+          })
+          console.log(`✅ Deleted coach profile: ${coach.id}`)
+        }
+      }
+
+      // CASCADE DELETE: Delete SavedPlayers where this user is referenced
+      const savedPlayers = await payloadClient.find({
+        collection: 'saved-players',
+        where: {
+          coach: {
+            equals: payloadUser.id,
+          },
+        },
+      })
+
+      for (const saved of savedPlayers.docs) {
+        await payloadClient.delete({
+          collection: 'saved-players',
+          id: saved.id,
+        })
+        console.log(`✅ Deleted saved player record: ${saved.id}`)
+      }
+
+      // CASCADE DELETE: Delete CoachPlayerNotes where this user is referenced
+      const notes = await payloadClient.find({
+        collection: 'coach-player-notes',
+        where: {
+          coach: {
+            equals: payloadUser.id,
+          },
+        },
+      })
+
+      for (const note of notes.docs) {
+        await payloadClient.delete({
+          collection: 'coach-player-notes',
+          id: note.id,
+        })
+        console.log(`✅ Deleted coach note: ${note.id}`)
+      }
+
+      // Finally, delete the PayloadCMS user
+      await payloadClient.delete({
+        collection: 'users',
+        id: payloadUser.id,
+      })
+
+      console.log(`✅ Deleted PayloadCMS user: ${payloadUser.id}`)
     } catch (error) {
       console.error('Error deleting user from PayloadCMS:', error)
       return new Response('Error deleting user', { status: 500 })

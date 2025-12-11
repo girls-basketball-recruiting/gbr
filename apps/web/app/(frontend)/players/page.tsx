@@ -80,7 +80,12 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   }
 
   // Build dynamic where clause based on filters
-  const where: any = {}
+  const where: any = {
+    // Exclude soft-deleted players by default
+    deletedAt: {
+      exists: false,
+    },
+  }
 
   if (params.graduationYear) {
     where.graduationYear = { equals: parseInt(params.graduationYear) }

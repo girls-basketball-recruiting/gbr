@@ -16,6 +16,7 @@ interface Player {
   weightedGpa?: number | null
   unweightedGpa?: number | null
   bio?: string | null
+  deletedAt?: string | null
   profileImage?: {
     url?: string | null
     alt?: string | null
@@ -33,9 +34,20 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
       ? player.profileImage.url
       : null
 
+  const isArchived = !!player.deletedAt
+
   return (
-    <Card className='bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors'>
+    <Card className={`bg-slate-800/50 border-slate-700 transition-colors ${
+      isArchived
+        ? 'opacity-60 border-orange-600/50'
+        : 'hover:border-slate-600'
+    }`}>
       <div className='p-6 space-y-4'>
+        {isArchived && (
+          <div className='bg-orange-600/20 border border-orange-600/50 rounded px-3 py-2 text-sm text-orange-300'>
+            ⚠️ This player profile has been removed
+          </div>
+        )}
         <div className='flex items-start gap-4'>
           {/* Profile Image */}
           {profileImageUrl && (
@@ -98,9 +110,18 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
         )}
 
         <div className='pt-4 flex gap-2'>
-          <Button className='flex-1 bg-blue-600 hover:bg-blue-700' asChild>
-            <Link href={`/players/${player.id}`}>View Profile</Link>
-          </Button>
+          {isArchived ? (
+            <Button
+              className='flex-1 bg-slate-600 cursor-not-allowed'
+              disabled
+            >
+              Profile Unavailable
+            </Button>
+          ) : (
+            <Button className='flex-1 bg-blue-600 hover:bg-blue-700' asChild>
+              <Link href={`/players/${player.id}`}>View Profile</Link>
+            </Button>
+          )}
           {action}
         </div>
       </div>
