@@ -7,6 +7,7 @@ import { EmptyState } from './ui/EmptyState'
 import { StatCard } from './ui/StatCard'
 import { currentUser } from '@clerk/nextjs/server'
 import Image from 'next/image'
+import { getPositionLabel } from '@/types/positions'
 
 interface PlayerDashboardProps {
   // Empty for now
@@ -89,9 +90,10 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
                   {playerProfile.firstName} {playerProfile.lastName}
                 </h2>
                 <p className='text-slate-400'>
-                  {playerProfile.primaryPosition}
+                  {playerProfile.primaryPosition &&
+                    getPositionLabel(playerProfile.primaryPosition)}
                   {playerProfile.secondaryPosition &&
-                    ` / ${playerProfile.secondaryPosition}`}
+                    ` / ${getPositionLabel(playerProfile.secondaryPosition)}`}
                   {' • '}
                   Class of {playerProfile.graduationYear}
                 </p>
@@ -101,9 +103,14 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
                   {playerProfile.state && `, ${playerProfile.state}`}
                 </p>
               </div>
-              <Button asChild variant='outline'>
-                <Link href='/profile/edit'>Edit Profile</Link>
-              </Button>
+              <div className='flex gap-2'>
+                <Button asChild variant='outline'>
+                  <Link href='/profile'>View Profile</Link>
+                </Button>
+                <Button asChild variant='outline'>
+                  <Link href='/profile/edit'>Edit Profile</Link>
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -124,7 +131,7 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
               {coaches.map((coach) => (
                 <Card
                   key={coach.id}
-                  className='bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors'
+                  className='min-w-72 bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors'
                 >
                   <div className='p-6 space-y-4'>
                     <div>

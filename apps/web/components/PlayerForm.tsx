@@ -24,14 +24,23 @@ import {
 import { Textarea } from '@workspace/ui/components/textarea'
 import { Card } from '@workspace/ui/components/card'
 import type { Player } from '@/payload-types'
-import { isValidPosition } from '@/types/positions'
+import { isValidPosition, getPositionOptions } from '@/types/positions'
+import { US_STATES_AND_TERRITORIES } from '@/types/states'
+import { HeightSelect } from '@/components/HeightSelect'
 
 interface PlayerFormProps {
   profile?: Player
   mode?: 'create' | 'edit'
+  initialFirstName?: string
+  initialLastName?: string
 }
 
-export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
+export function PlayerForm({
+  profile,
+  mode = 'create',
+  initialFirstName,
+  initialLastName,
+}: PlayerFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -43,20 +52,43 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
       : null
   )
 
+  // Convert height format from "5'10"" to "5-10" for consistency
+  const normalizeHeight = (height: string | null | undefined) => {
+    if (!height) return ''
+    const match = height.match(/(\d+)'(\d+)"?/)
+    if (match) {
+      return `${match[1]}-${match[2]}`
+    }
+    return height
+  }
+
+  const [height, setHeight] = useState(normalizeHeight(profile?.height))
+
+  // Initialize highlight video URLs from profile or start with one empty input
+  const getInitialVideoUrls = () => {
+    if (profile?.highlightVideoUrls && Array.isArray(profile.highlightVideoUrls) && profile.highlightVideoUrls.length > 0) {
+      const urls = profile.highlightVideoUrls.map((item: any) =>
+        typeof item === 'object' && item.url ? item.url : ''
+      ).filter(url => url)
+      return urls.length > 0 ? urls : ['']
+    }
+    return ['']
+  }
+
+  const [videoUrls, setVideoUrls] = useState<string[]>(getInitialVideoUrls())
+
   const [formData, setFormData] = useState({
-    firstName: profile?.firstName || '',
-    lastName: profile?.lastName || '',
+    firstName: profile?.firstName || initialFirstName || '',
+    lastName: profile?.lastName || initialLastName || '',
     graduationYear: profile?.graduationYear?.toString() || '',
     city: profile?.city || '',
     state: profile?.state || '',
     highSchool: profile?.highSchool || '',
-    height: profile?.height || '',
     weightedGpa: profile?.weightedGpa?.toString() || '',
     unweightedGpa: profile?.unweightedGpa?.toString() || '',
     primaryPosition: profile?.primaryPosition || '',
     secondaryPosition: profile?.secondaryPosition || '',
     bio: profile?.bio || '',
-    highlightVideo: profile?.highlightVideo || '',
   })
 
   const handleChange = (
@@ -81,6 +113,24 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
     }
   }
 
+  const handleVideoUrlChange = (index: number, value: string) => {
+    const newUrls = [...videoUrls]
+    newUrls[index] = value
+    setVideoUrls(newUrls)
+  }
+
+  const addVideoUrl = () => {
+    if (videoUrls.length < 10) {
+      setVideoUrls([...videoUrls, ''])
+    }
+  }
+
+  const removeVideoUrl = (index: number) => {
+    if (videoUrls.length > 1) {
+      setVideoUrls(videoUrls.filter((_, i) => i !== index))
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -102,6 +152,19 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
           formDataToSend.append(key, value)
         }
       })
+
+      // Add height if set (convert from "5-10" to "5'10"" format)
+      if (height) {
+        const [feet, inches] = height.split('-')
+        const formattedHeight = `${feet}'${inches || '0'}"`
+        formDataToSend.append('height', formattedHeight)
+      }
+
+      // Add highlight video URLs as JSON
+      const filteredUrls = videoUrls.filter((url) => url.trim())
+      if (filteredUrls.length > 0) {
+        formDataToSend.append('highlightVideoUrls', JSON.stringify(filteredUrls))
+      }
 
       // Add profile image if selected
       if (profileImageFile) {
@@ -150,10 +213,10 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
           <FieldGroup>
             {/* Profile Image Upload */}
             <Field className='gap-1'>
-              <FieldLabel htmlFor='profileImage'>Profile Photo</FieldLabel>
+              <FieldLabel htmlFor='profileImage'>Player Photo</FieldLabel>
               <div className='flex items-center gap-4'>
                 {profileImagePreview && (
-                  <div className='w-20 h-20 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+                  <div className='w-20 h-20 rounded-full overflow-hidden bg-slate-700 relative shrink-0'>
                     <Image
                       src={profileImagePreview}
                       alt='Profile preview'
@@ -171,7 +234,7 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
                 />
               </div>
               <FieldDescription>
-                Upload a profile photo (JPG, PNG, or GIF)
+                Upload a player photo (JPG, PNG, or GIF)
               </FieldDescription>
             </Field>
 
@@ -203,26 +266,29 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
             <div className='grid grid-cols-2 gap-4'>
               <Field className='gap-1'>
                 <FieldLabel htmlFor='graduationYear'>Graduation Year</FieldLabel>
-                <Input
-                  id='graduationYear'
-                  name='graduationYear'
-                  type='number'
+                <Select
                   value={formData.graduationYear}
-                  onChange={handleChange}
-                  required
-                  placeholder='2026'
-                />
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, graduationYear: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select year' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='2026'>2026</SelectItem>
+                    <SelectItem value='2027'>2027</SelectItem>
+                    <SelectItem value='2028'>2028</SelectItem>
+                    <SelectItem value='2029'>2029</SelectItem>
+                    <SelectItem value='2030'>2030</SelectItem>
+                    <SelectItem value='2031'>2031</SelectItem>
+                    <SelectItem value='2032'>2032</SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
               <Field className='gap-1'>
-                <FieldLabel htmlFor='height'>Height</FieldLabel>
-                <Input
-                  id='height'
-                  name='height'
-                  value={formData.height}
-                  onChange={handleChange}
-                  placeholder="5'10&quot;"
-                />
-                <FieldDescription>Enter height in feet and inches.</FieldDescription>
+                <FieldLabel>Height</FieldLabel>
+                <HeightSelect value={height} onValueChange={setHeight} />
               </Field>
             </div>
 
@@ -251,13 +317,23 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
               </Field>
               <Field className='gap-1'>
                 <FieldLabel htmlFor='state'>State</FieldLabel>
-                <Input
-                  id='state'
-                  name='state'
+                <Select
                   value={formData.state}
-                  onChange={handleChange}
-                  placeholder='CA'
-                />
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, state: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select state' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {US_STATES_AND_TERRITORIES.map((state) => (
+                      <SelectItem key={state.value} value={state.value}>
+                        {state.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
             </div>
 
@@ -276,11 +352,11 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
                     <SelectValue placeholder='Select position' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='point-guard'>Point Guard</SelectItem>
-                    <SelectItem value='shooting-guard'>Shooting Guard</SelectItem>
-                    <SelectItem value='small-forward'>Small Forward</SelectItem>
-                    <SelectItem value='power-forward'>Power Forward</SelectItem>
-                    <SelectItem value='center'>Center</SelectItem>
+                    {getPositionOptions().map((position) => (
+                      <SelectItem key={position.value} value={position.value}>
+                        {position.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </Field>
@@ -298,11 +374,11 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
                     <SelectValue placeholder='Select position' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='point-guard'>Point Guard</SelectItem>
-                    <SelectItem value='shooting-guard'>Shooting Guard</SelectItem>
-                    <SelectItem value='small-forward'>Small Forward</SelectItem>
-                    <SelectItem value='power-forward'>Power Forward</SelectItem>
-                    <SelectItem value='center'>Center</SelectItem>
+                    {getPositionOptions().map((position) => (
+                      <SelectItem key={position.value} value={position.value}>
+                        {position.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </Field>
@@ -345,20 +421,48 @@ export function PlayerForm({ profile, mode = 'create' }: PlayerFormProps) {
                 placeholder='Tell coaches about your playing style, achievements, and goals...'
                 rows={4}
               />
-              <FieldDescription>Tell coaches about your playing style and goals.</FieldDescription>
             </Field>
 
             <Field className='gap-1'>
-              <FieldLabel htmlFor='highlightVideo'>Highlight Video URL</FieldLabel>
-              <Input
-                id='highlightVideo'
-                name='highlightVideo'
-                type='url'
-                value={formData.highlightVideo}
-                onChange={handleChange}
-                placeholder='https://youtube.com/...'
-              />
-              <FieldDescription>Link to your highlight reel on YouTube, Hudl, etc.</FieldDescription>
+              <FieldLabel>Highlight Video URLs</FieldLabel>
+              <div className='space-y-2'>
+                {videoUrls.map((url, index) => (
+                  <div key={index} className='flex gap-2'>
+                    <Input
+                      type='url'
+                      value={url}
+                      onChange={(e) => handleVideoUrlChange(index, e.target.value)}
+                      placeholder='https://youtube.com/... or https://hudl.com/...'
+                      className='flex-1'
+                    />
+                    {videoUrls.length > 1 && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='icon'
+                        onClick={() => removeVideoUrl(index)}
+                        className='shrink-0'
+                      >
+                        ✕
+                      </Button>
+                    )}
+                    {index === videoUrls.length - 1 && videoUrls.length < 10 && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='icon'
+                        onClick={addVideoUrl}
+                        className='shrink-0'
+                      >
+                        +
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <FieldDescription>
+                Add up to 10 highlight video URLs (YouTube, Hudl, etc.)
+              </FieldDescription>
             </Field>
 
             <div className='flex gap-3'>

@@ -18,11 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select'
+import { US_STATES_AND_TERRITORIES } from '@/types/states'
+import { HeightSelect } from '@/components/HeightSelect'
+import { getPositionOptions } from '@/types/positions'
 
 export function PlayerFilters() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
+  const [isOpen, setIsOpen] = useState(false)
 
   // Initialize state from URL params
   const [graduationYear, setGraduationYear] = useState(
@@ -71,6 +75,9 @@ export function PlayerFilters() {
         break
       case 'minHeight':
         setMinHeight(value)
+        break
+      case 'state':
+        setState(value)
         break
     }
 
@@ -143,18 +150,34 @@ export function PlayerFilters() {
   ].filter(Boolean).length
 
   return (
-    <Card className='bg-slate-800 border-slate-700 sticky top-4'>
-      <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle className='text-white'>Filters</CardTitle>
-          {activeFilterCount > 0 && (
-            <span className='bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full'>
-              {activeFilterCount}
-            </span>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className='space-y-6'>
+    <>
+      {/* Mobile Filter Toggle Button */}
+      <Button
+        onClick={() => setIsOpen(!isOpen)}
+        className='lg:hidden w-full mb-4 bg-slate-800 border-slate-700 hover:bg-slate-700'
+        variant='outline'
+      >
+        <span className='flex items-center justify-between w-full'>
+          <span className='text-white'>
+            Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+          </span>
+          <span className='text-slate-400'>{isOpen ? '▲' : '▼'}</span>
+        </span>
+      </Button>
+
+      {/* Filters Card - Always visible on desktop, toggleable on mobile */}
+      <Card className={`bg-slate-800 border-slate-700 lg:block ${isOpen ? 'block' : 'hidden'}`}>
+        <CardHeader className='hidden lg:block'>
+          <div className='flex items-center justify-between'>
+            <CardTitle className='text-white'>Filters</CardTitle>
+            {activeFilterCount > 0 && (
+              <span className='bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full'>
+                {activeFilterCount}
+              </span>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className='space-y-6'>
         {/* Graduation Year */}
         <div className='space-y-2'>
           <Label htmlFor='graduationYear' className='text-slate-200'>
@@ -192,11 +215,11 @@ export function PlayerFilters() {
               <SelectValue placeholder='Any position' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='point-guard'>Point Guard</SelectItem>
-              <SelectItem value='shooting-guard'>Shooting Guard</SelectItem>
-              <SelectItem value='small-forward'>Small Forward</SelectItem>
-              <SelectItem value='power-forward'>Power Forward</SelectItem>
-              <SelectItem value='center'>Center</SelectItem>
+              {getPositionOptions().map((pos) => (
+                <SelectItem key={pos.value} value={pos.value}>
+                  {pos.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -230,29 +253,12 @@ export function PlayerFilters() {
 
         {/* Height */}
         <div className='space-y-2'>
-          <Label htmlFor='minHeight' className='text-slate-200'>
-            Minimum Height
-          </Label>
-          <Select
+          <Label className='text-slate-200'>Minimum Height</Label>
+          <HeightSelect
             value={minHeight}
             onValueChange={(value) => handleSelectChange('minHeight', value)}
-          >
-            <SelectTrigger className='bg-slate-900 border-slate-600 text-white'>
-              <SelectValue placeholder='Any height' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='5-0'>5'0"</SelectItem>
-              <SelectItem value='5-2'>5'2"</SelectItem>
-              <SelectItem value='5-4'>5'4"</SelectItem>
-              <SelectItem value='5-6'>5'6"</SelectItem>
-              <SelectItem value='5-8'>5'8"</SelectItem>
-              <SelectItem value='5-10'>5'10"</SelectItem>
-              <SelectItem value='6-0'>6'0"</SelectItem>
-              <SelectItem value='6-2'>6'2"</SelectItem>
-              <SelectItem value='6-4'>6'4"</SelectItem>
-              <SelectItem value='6-6'>6'6"+</SelectItem>
-            </SelectContent>
-          </Select>
+            selectClassName='bg-slate-900 border-slate-600 text-white'
+          />
         </div>
 
         {/* State */}
@@ -260,13 +266,18 @@ export function PlayerFilters() {
           <Label htmlFor='state' className='text-slate-200'>
             State
           </Label>
-          <Input
-            id='state'
-            placeholder='e.g. CA, NY, TX'
-            value={state}
-            onChange={(e) => handleTextChange('state', e.target.value)}
-            className='bg-slate-900 border-slate-600 text-white'
-          />
+          <Select value={state} onValueChange={(value) => handleSelectChange('state', value)}>
+            <SelectTrigger className='bg-slate-900 border-slate-600 text-white'>
+              <SelectValue placeholder='Select state' />
+            </SelectTrigger>
+            <SelectContent>
+              {US_STATES_AND_TERRITORIES.map((stateOption) => (
+                <SelectItem key={stateOption.value} value={stateOption.value}>
+                  {stateOption.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* City */}
@@ -298,5 +309,6 @@ export function PlayerFilters() {
         )}
       </CardContent>
     </Card>
+    </>
   )
 }

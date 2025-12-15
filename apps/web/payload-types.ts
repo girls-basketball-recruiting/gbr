@@ -240,9 +240,14 @@ export interface Player {
   bio?: string | null;
   profileImage?: (number | null) | Media;
   /**
-   * URL to highlight video (YouTube, Hudl, etc.)
+   * Add up to 10 highlight video URLs (YouTube, Hudl, etc.)
    */
-  highlightVideo?: string | null;
+  highlightVideoUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Select tournaments you will be attending during exposure periods
    */
@@ -678,7 +683,12 @@ export interface PlayersSelect<T extends boolean = true> {
   secondaryPosition?: T;
   bio?: T;
   profileImage?: T;
-  highlightVideo?: T;
+  highlightVideoUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   tournamentSchedule?: T;
   deletedAt?: T;
   updatedAt?: T;

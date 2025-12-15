@@ -11,8 +11,13 @@ async function createAdmin() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
-  const email = process.env.ADMIN_EMAIL || 'admin@example.com'
-  const password = process.env.ADMIN_PASSWORD || 'admin123'
+  const email = process.env.ADMIN_EMAIL
+  const password = process.env.ADMIN_PASSWORD
+
+  if (!email || !password) {
+    console.error('❌ Missing ADMIN_EMAIL or ADMIN_PASSWORD in .env file')
+    process.exit(1)
+  }
 
   console.log(`Creating admin user with email: ${email}`)
 

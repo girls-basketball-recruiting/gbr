@@ -22,21 +22,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select'
+import { CollegeCombobox } from '@/components/CollegeCombobox'
 import type { Coach } from '@/payload-types'
+import { US_STATES_AND_TERRITORIES } from '@/types/states'
 
 interface CoachFormProps {
   profile?: Coach
   mode?: 'create' | 'edit'
+  initialName?: string
 }
 
-export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
+export function CoachForm({
+  profile,
+  mode = 'create',
+  initialName,
+}: CoachFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
-    name: profile?.name || '',
+    name: profile?.name || initialName || '',
     university: profile?.university || '',
     programName: profile?.programName || '',
     position: profile?.position || '',
@@ -123,14 +130,14 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
             </Field>
 
             <Field className='gap-1'>
-              <FieldLabel htmlFor='university'>University</FieldLabel>
-              <Input
-                id='university'
-                name='university'
+              <FieldLabel htmlFor='university'>College</FieldLabel>
+              <CollegeCombobox
                 value={formData.university}
-                onChange={handleChange}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, university: value }))
+                }
+                placeholder='Search for your college...'
                 required
-                placeholder='Required'
               />
             </Field>
 
@@ -208,13 +215,23 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
 
             <Field className='gap-1'>
               <FieldLabel htmlFor='state'>State</FieldLabel>
-              <Input
-                id='state'
-                name='state'
+              <Select
                 value={formData.state}
-                onChange={handleChange}
-                placeholder='CA'
-              />
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, state: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='Select state' />
+                </SelectTrigger>
+                <SelectContent>
+                  {US_STATES_AND_TERRITORIES.map((state) => (
+                    <SelectItem key={state.value} value={state.value}>
+                      {state.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
 
             <div className='grid grid-cols-2 gap-4'>

@@ -17,8 +17,8 @@ export async function GET() {
     }
 
     // Check if user has admin role
-    const roles = (clerkUser.publicMetadata?.roles as string[]) || []
-    if (!roles.includes('admin')) {
+    const role = clerkUser.publicMetadata?.role as string | undefined
+    if (role !== 'admin') {
       return new Response('Unauthorized - Admin role required', { status: 403 })
     }
 

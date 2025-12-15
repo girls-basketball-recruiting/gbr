@@ -16,3 +16,17 @@ export const BASKETBALL_POSITIONS: Record<BasketballPosition, string> = {
 export function isValidPosition(value: string): value is BasketballPosition {
   return value in BASKETBALL_POSITIONS
 }
+
+export function getPositionLabel(position: BasketballPosition | string): string {
+  if (isValidPosition(position)) {
+    return BASKETBALL_POSITIONS[position]
+  }
+  return position
+}
+
+export function getPositionOptions() {
+  return Object.entries(BASKETBALL_POSITIONS).map(([value, label]) => ({
+    value,
+    label,
+  }))
+}

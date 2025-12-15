@@ -1,5 +1,11 @@
 import { CoachForm } from './CoachForm'
 
-export function CoachOnboardingForm() {
-  return <CoachForm mode='create' />
+interface CoachOnboardingFormProps {
+  initialName?: string
+}
+
+export function CoachOnboardingForm({
+  initialName,
+}: CoachOnboardingFormProps) {
+  return <CoachForm mode='create' initialName={initialName} />
 }

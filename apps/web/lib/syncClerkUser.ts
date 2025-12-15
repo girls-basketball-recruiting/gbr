@@ -33,10 +33,10 @@ export async function syncClerkUser() {
   }
 
   // User doesn't exist, create them
-  const rawRoles = (clerkUser.publicMetadata?.roles as string[]) || ['player']
-  const roles = rawRoles.filter((r): r is 'admin' | 'player' | 'coach' =>
-    ['admin', 'player', 'coach'].includes(r),
-  )
+  // Get role from publicMetadata (singular string, as set by webhook)
+  const role = (clerkUser.publicMetadata?.role as string) || 'player'
+  const validRole = (['admin', 'player', 'coach'].includes(role) ? role : 'player') as 'admin' | 'player' | 'coach'
+  const roles = [validRole]  // PayloadCMS expects array
 
   const email = clerkUser.emailAddresses?.[0]?.emailAddress
   if (!email) {

@@ -15,11 +15,11 @@ interface College {
 // Map scraped division names to database values
 function normalizeDivision(division: string): string {
   const div = division.toLowerCase().trim()
-  if (div.includes('d i') || div.includes('division i')) return 'd1'
-  if (div.includes('d ii') || div.includes('division ii')) return 'd2'
-  if (div.includes('d iii') || div.includes('division iii')) return 'd3'
+  if (div.includes('d1') || div.includes('d i') || div.includes('division i')) return 'd1'
+  if (div.includes('d2') || div.includes('d ii') || div.includes('division ii')) return 'd2'
+  if (div.includes('d3') || div.includes('d iii') || div.includes('division iii')) return 'd3'
   if (div.includes('naia')) return 'naia'
-  if (div.includes('juco') || div.includes('njcaa')) return 'juco'
+  if (div.includes('juco') || div.includes('njcaa') || div.includes('jc')) return 'juco'
   return 'other'
 }
 
@@ -45,21 +45,34 @@ async function importColleges() {
     const payload = await getPayload({ config: payloadConfig })
 
     // Clear existing colleges (optional - remove if you want to keep existing)
-    console.log('🗑️  Clearing existing colleges...')
-    const existing = await payload.find({
-      collection: 'colleges',
-      limit: 1000,
-      pagination: false,
-    })
+    console.log('🗑️ Clearing existing colleges...')
+    let deletedCount = 0
+    let hasMore = true
 
-    for (const college of existing.docs) {
-      await payload.delete({
+    while (hasMore) {
+      const existing = await payload.find({
         collection: 'colleges',
-        id: college.id,
+        limit: 100,
       })
+
+      if (existing.docs.length === 0) {
+        hasMore = false
+        break
+      }
+
+      for (const college of existing.docs) {
+        await payload.delete({
+          collection: 'colleges',
+          id: college.id,
+          overrideAccess: true, // Bypass access control
+        })
+        deletedCount++
+      }
+
+      console.log(`Deleted ${deletedCount} colleges so far...`)
     }
 
-    console.log(`Deleted ${existing.docs.length} existing colleges`)
+    console.log(`Total deleted: ${deletedCount} existing colleges`)
 
     // Import colleges in batches
     console.log('📥 Importing colleges...')
@@ -83,6 +96,7 @@ async function importColleges() {
                 conference: college.conference,
                 division: normalizeDivision(college.division),
               },
+              overrideAccess: true, // Bypass access control
             })
             imported++
           } catch (error) {

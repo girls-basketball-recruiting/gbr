@@ -10,11 +10,15 @@
     "parse:cli": "tsx src/parse-html-cli.ts",
     "parse:save": "tsx src/save-local.ts",
     "import": "tsx src/import-to-db.ts",
+    "import:direct": "tsx src/import-direct.ts",
     "postinstall": "puppeteer browsers install chrome"
   },
   "dependencies": {
+    "@payloadcms/db-vercel-postgres": "3.68.2",
+    "@vercel/postgres": "^0.9.0",
     "dotenv": "^17.2.3",
     "jsdom": "^25.0.1",
+    "payload": "3.68.2",
     "puppeteer": "^23.11.1"
   },
   "devDependencies": {

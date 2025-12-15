@@ -19,14 +19,6 @@ const nextConfig = {
     contentDispositionType: 'attachment',
     unoptimized: process.env.NODE_ENV === 'development',
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/media/file/:path*',
-        destination: '/media/:path*',
-      },
-    ];
-  },
 };
 
 export default withPayload(nextConfig);

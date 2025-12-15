@@ -1,4 +1,4 @@
-import { currentUser } from '@clerk/nextjs/server'
+import { currentUser, clerkClient } from '@clerk/nextjs/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { NextResponse } from 'next/server'
@@ -41,6 +41,15 @@ export async function POST(req: Request) {
       const validRoles = ['admin', 'player', 'coach'] as const
       type Role = typeof validRoles[number]
       const role: Role = validRoles.includes(roleFromMetadata as Role) ? (roleFromMetadata as Role) : 'coach'
+
+      // Update Clerk publicMetadata to ensure it's set (in case webhook failed)
+      const client = await clerkClient()
+      await client.users.updateUserMetadata(clerkUser.id, {
+        publicMetadata: {
+          role,
+        },
+      })
+      console.log(`✅ Set Clerk publicMetadata.role = ${role} for user ${clerkUser.id}`)
 
       payloadUser = await payload.create({
         collection: 'users',

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { getPositionOptions } from '../types/positions'
 
 export const Players: CollectionConfig = {
   slug: 'players',
@@ -65,25 +66,13 @@ export const Players: CollectionConfig = {
     {
       name: 'primaryPosition',
       type: 'select',
-      options: [
-        { label: 'Point Guard', value: 'point-guard' },
-        { label: 'Shooting Guard', value: 'shooting-guard' },
-        { label: 'Small Forward', value: 'small-forward' },
-        { label: 'Power Forward', value: 'power-forward' },
-        { label: 'Center', value: 'center' },
-      ],
+      options: getPositionOptions(),
       required: true,
     },
     {
       name: 'secondaryPosition',
       type: 'select',
-      options: [
-        { label: 'Point Guard', value: 'point-guard' },
-        { label: 'Shooting Guard', value: 'shooting-guard' },
-        { label: 'Small Forward', value: 'small-forward' },
-        { label: 'Power Forward', value: 'power-forward' },
-        { label: 'Center', value: 'center' },
-      ],
+      options: getPositionOptions(),
     },
     {
       name: 'bio',
@@ -99,10 +88,18 @@ export const Players: CollectionConfig = {
       relationTo: 'media',
     },
     {
-      name: 'highlightVideo',
-      type: 'text',
+      name: 'highlightVideoUrls',
+      type: 'array',
+      maxRows: 10,
+      fields: [
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+      ],
       admin: {
-        description: 'URL to highlight video (YouTube, Hudl, etc.)',
+        description: 'Add up to 10 highlight video URLs (YouTube, Hudl, etc.)',
       },
     },
     {

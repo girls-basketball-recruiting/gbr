@@ -7,106 +7,158 @@ export const Coaches: CollectionConfig = {
   },
   fields: [
     {
-      name: 'user',
-      type: 'relationship',
-      relationTo: 'users',
-      required: true,
-      hasMany: false,
-      admin: {
-        description: 'Link to the Clerk user account',
-      },
-    },
-    {
-      name: 'name',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'college',
-      type: 'relationship',
-      relationTo: 'colleges',
-      required: false,
-      admin: {
-        description: 'Link to college/university from database',
-      },
-    },
-    {
-      name: 'university',
-      type: 'text',
-      required: true,
-      admin: {
-        description: 'University name (use this if college not in database)',
-      },
-    },
-    {
-      name: 'programName',
-      type: 'text',
-      admin: {
-        description: 'e.g., "Women\'s Basketball"',
-      },
-    },
-    {
-      name: 'position',
-      type: 'text',
-      admin: {
-        description:
-          'e.g., "Head Coach", "Assistant Coach", "Recruiting Coordinator"',
-      },
-    },
-    {
-      name: 'division',
-      type: 'select',
-      options: [
-        { label: 'NCAA D1', value: 'd1' },
-        { label: 'NCAA D2', value: 'd2' },
-        { label: 'NCAA D3', value: 'd3' },
-        { label: 'NAIA', value: 'naia' },
-        { label: 'JUCO', value: 'juco' },
-        { label: 'Other', value: 'other' },
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Profile',
+          fields: [
+            {
+              name: 'user',
+              type: 'relationship',
+              relationTo: 'users',
+              required: true,
+              hasMany: false,
+              admin: {
+                description: 'Link to the Clerk user account',
+              },
+            },
+            {
+              name: 'name',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'college',
+              type: 'relationship',
+              relationTo: 'colleges',
+              required: false,
+              admin: {
+                description: 'Link to college/university from database',
+              },
+            },
+            {
+              name: 'university',
+              type: 'text',
+              required: true,
+              admin: {
+                description: 'University name (use this if college not in database)',
+              },
+            },
+            {
+              name: 'programName',
+              type: 'text',
+              admin: {
+                description: 'e.g., "Women\'s Basketball"',
+              },
+            },
+            {
+              name: 'position',
+              type: 'text',
+              admin: {
+                description:
+                  'e.g., "Head Coach", "Assistant Coach", "Recruiting Coordinator"',
+              },
+            },
+            {
+              name: 'division',
+              type: 'select',
+              options: [
+                { label: 'NCAA D1', value: 'd1' },
+                { label: 'NCAA D2', value: 'd2' },
+                { label: 'NCAA D3', value: 'd3' },
+                { label: 'NAIA', value: 'naia' },
+                { label: 'JUCO', value: 'juco' },
+                { label: 'Other', value: 'other' },
+              ],
+            },
+            {
+              name: 'state',
+              type: 'text',
+            },
+            {
+              name: 'region',
+              type: 'select',
+              options: [
+                { label: 'New England', value: 'new-england' },
+                { label: 'Mid-Atlantic', value: 'mid-atlantic' },
+                { label: 'Southeast', value: 'southeast' },
+                { label: 'Southwest', value: 'southwest' },
+                { label: 'Midwest', value: 'midwest' },
+                { label: 'Mountain West', value: 'mountain-west' },
+                { label: 'West Coast', value: 'west-coast' },
+                { label: 'Pacific Northwest', value: 'pacific-northwest' },
+              ],
+            },
+            {
+              name: 'email',
+              type: 'email',
+            },
+            {
+              name: 'phone',
+              type: 'text',
+            },
+            {
+              name: 'bio',
+              type: 'textarea',
+            },
+            {
+              name: 'profileImage',
+              type: 'upload',
+              relationTo: 'media',
+            },
+            {
+              name: 'deletedAt',
+              type: 'date',
+              admin: {
+                position: 'sidebar',
+                description: 'Soft delete timestamp - if set, profile is archived',
+              },
+            },
+          ],
+        },
+        {
+          label: 'Saved Players',
+          fields: [
+            {
+              name: 'savedPlayersTab',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '/components/payload/SavedPlayersTab',
+                },
+              },
+            },
+          ],
+        },
+        {
+          label: 'Player Notes',
+          fields: [
+            {
+              name: 'playerNotesTab',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '/components/payload/PlayerNotesTab',
+                },
+              },
+            },
+          ],
+        },
+        {
+          label: 'Prospects',
+          fields: [
+            {
+              name: 'prospectsTab',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '/components/payload/ProspectsTab',
+                },
+              },
+            },
+          ],
+        },
       ],
-    },
-    {
-      name: 'state',
-      type: 'text',
-    },
-    {
-      name: 'region',
-      type: 'select',
-      options: [
-        { label: 'New England', value: 'new-england' },
-        { label: 'Mid-Atlantic', value: 'mid-atlantic' },
-        { label: 'Southeast', value: 'southeast' },
-        { label: 'Southwest', value: 'southwest' },
-        { label: 'Midwest', value: 'midwest' },
-        { label: 'Mountain West', value: 'mountain-west' },
-        { label: 'West Coast', value: 'west-coast' },
-        { label: 'Pacific Northwest', value: 'pacific-northwest' },
-      ],
-    },
-    {
-      name: 'email',
-      type: 'email',
-    },
-    {
-      name: 'phone',
-      type: 'text',
-    },
-    {
-      name: 'bio',
-      type: 'textarea',
-    },
-    {
-      name: 'profileImage',
-      type: 'upload',
-      relationTo: 'media',
-    },
-    {
-      name: 'deletedAt',
-      type: 'date',
-      admin: {
-        position: 'sidebar',
-        description: 'Soft delete timestamp - if set, profile is archived',
-      },
     },
   ],
   access: {

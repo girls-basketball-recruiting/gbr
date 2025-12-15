@@ -72,39 +72,78 @@ export async function POST(req: Request) {
         }
       }
 
+      console.log(`🔍 Processing user.created for ${id}, role: ${role}`)
+
       // Update Clerk user's publicMetadata with the role
-      const client = await clerkClient()
-      await client.users.updateUserMetadata(id, {
-        publicMetadata: {
-          role,
-        },
-      })
+      try {
+        const client = await clerkClient()
+        await client.users.updateUserMetadata(id, {
+          publicMetadata: {
+            role,
+          },
+        })
+        console.log(`✅ Updated Clerk publicMetadata for ${id}`)
+      } catch (error) {
+        console.error('❌ Error updating Clerk metadata:', error)
+        throw error
+      }
 
       const email = email_addresses?.[0]?.email_address
       if (!email) {
+        console.error('❌ No email address found')
         return new Response('No email address found', { status: 400 })
       }
 
-      // Create user in PayloadCMS with role as array (PayloadCMS expects array)
-      await payloadClient.create({
+      // Check if user already exists in PayloadCMS (in case of webhook retries)
+      const existingUsers = await payloadClient.find({
         collection: 'users',
-        data: {
-          email,
-          clerkId: id,
-          roles: [role], // PayloadCMS uses array for roles
-          firstName: first_name || undefined,
-          lastName: last_name || undefined,
-          // PayloadCMS requires a password, but we won't use it since auth is handled by Clerk
-          password:
-            Math.random().toString(36).slice(-12) +
-            Math.random().toString(36).slice(-12),
+        where: {
+          clerkId: {
+            equals: id,
+          },
         },
       })
 
-      console.log(`✅ User ${id} created in PayloadCMS with role: ${role}`)
+      if (existingUsers.docs.length > 0) {
+        console.log(`⚠️ User ${id} already exists in PayloadCMS, skipping creation`)
+        return new Response('User already exists', { status: 200 })
+      }
+
+      // Create user in PayloadCMS with role as array (PayloadCMS expects array)
+      try {
+        await payloadClient.create({
+          collection: 'users',
+          data: {
+            email,
+            clerkId: id,
+            roles: [role], // PayloadCMS uses array for roles
+            firstName: first_name || undefined,
+            lastName: last_name || undefined,
+            // PayloadCMS requires a password, but we won't use it since auth is handled by Clerk
+            password:
+              Math.random().toString(36).slice(-12) +
+              Math.random().toString(36).slice(-12),
+          },
+        })
+        console.log(`✅ User ${id} created in PayloadCMS with role: ${role}`)
+      } catch (error) {
+        console.error('❌ Error creating user in PayloadCMS:', error)
+        throw error
+      }
     } catch (error) {
-      console.error('Error creating user in PayloadCMS:', error)
-      return new Response('Error creating user', { status: 500 })
+      console.error('❌ Error in user.created handler:', error)
+      // Log the full error details
+      if (error instanceof Error) {
+        console.error('Error message:', error.message)
+        console.error('Error stack:', error.stack)
+      }
+      return new Response(JSON.stringify({
+        error: 'Error creating user',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
   }
 

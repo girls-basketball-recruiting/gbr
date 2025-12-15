@@ -8,6 +8,7 @@ import { EmptyState } from './ui/EmptyState'
 import { PlayerCard } from './ui/PlayerCard'
 import { ProspectCard } from './ui/ProspectCard'
 import { StatCard } from './ui/StatCard'
+import Image from 'next/image'
 
 interface CoachDashboardProps {
   // Empty for now
@@ -56,6 +57,19 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
 
   const coachProfile = coaches.docs[0]!
 
+  // Fetch coach profile with depth to get profile image
+  const coachWithImage = await payload.findByID({
+    collection: 'coaches',
+    id: coachProfile.id,
+    depth: 1,
+  })
+
+  const profileImageUrl =
+    coachWithImage?.profileImage &&
+    typeof coachWithImage.profileImage === 'object'
+      ? coachWithImage.profileImage.url
+      : null
+
   // Fetch saved players
   const savedPlayersData = await payload.find({
     collection: 'saved-players',
@@ -89,6 +103,55 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
   return (
     <div className='container mx-auto px-4 py-8'>
       <div className='max-w-6xl mx-auto'>
+        {/* Coach Profile Header */}
+        <div className='mb-8 bg-slate-800/50 border border-slate-700 rounded-lg p-6'>
+          <div className='flex items-center gap-6'>
+            {profileImageUrl ? (
+              <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+                <Image
+                  src={profileImageUrl}
+                  alt={coachWithImage.name}
+                  fill
+                  className='object-cover'
+                />
+              </div>
+            ) : (
+              <div className='w-24 h-24 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0'>
+                <span className='text-3xl font-bold text-white'>
+                  {coachWithImage.name?.[0]}
+                </span>
+              </div>
+            )}
+            <div className='flex-1'>
+              <h2 className='text-2xl font-bold text-white mb-1'>
+                {coachWithImage.name}
+              </h2>
+              <p className='text-slate-400'>
+                {coachWithImage.position && `${coachWithImage.position} • `}
+                {coachWithImage.university}
+              </p>
+              {coachWithImage.division && (
+                <p className='text-slate-400 text-sm mt-1'>
+                  {coachWithImage.division === 'd1' && 'NCAA D1'}
+                  {coachWithImage.division === 'd2' && 'NCAA D2'}
+                  {coachWithImage.division === 'd3' && 'NCAA D3'}
+                  {coachWithImage.division === 'naia' && 'NAIA'}
+                  {coachWithImage.division === 'juco' && 'JUCO'}
+                  {coachWithImage.division === 'other' && 'Other'}
+                  {coachWithImage.state && ` • ${coachWithImage.state}`}
+                </p>
+              )}
+            </div>
+            <div className='flex gap-2'>
+              <Button asChild variant='outline'>
+                <Link href='/profile'>View Profile</Link>
+              </Button>
+              <Button asChild variant='outline'>
+                <Link href='/profile/edit'>Edit Profile</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
 
         {/* Saved Players Section */}
         <div className='mb-8'>
@@ -96,7 +159,7 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
             <h3 className='text-2xl font-bold text-white'>
               Saved Players
               <span className='ml-2 text-sm font-normal text-slate-400'>
-                (Registered on Platform)
+                (Registered Users)
               </span>
             </h3>
           </div>

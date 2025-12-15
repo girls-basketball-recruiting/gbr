@@ -20,8 +20,8 @@ export function FormPageLayout({
   maxWidth = 'sm',
 }: FormPageLayoutProps) {
   return (
-    <div className='min-h-svh bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-12'>
-      <div className={`container mx-auto px-4 ${maxWidthClasses[maxWidth]}`}>
+    <div className='p-8'>
+      <div className={`mx-auto ${maxWidthClasses[maxWidth]}`}>
         <div className='text-center mb-8'>
           <h1 className='text-3xl font-bold text-white mb-2'>{title}</h1>
           <p className='text-slate-400'>{description}</p>

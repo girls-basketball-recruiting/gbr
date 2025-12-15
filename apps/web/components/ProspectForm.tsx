@@ -14,6 +14,13 @@ import {
 import { Input } from '@workspace/ui/components/input'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { Checkbox } from '@workspace/ui/components/checkbox'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@workspace/ui/components/select'
 import { useRouter } from 'next/navigation'
 
 interface ProspectFormProps {
@@ -28,7 +35,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     uniformNumber: '',
-    graduationYear: new Date().getFullYear() + 1,
+    graduationYear: (new Date().getFullYear() + 1).toString(),
     height: '',
     highSchool: '',
     aauProgram: '',
@@ -122,14 +129,25 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
               </Field>
               <Field className='gap-1'>
                 <FieldLabel htmlFor='graduationYear'>Graduation Year</FieldLabel>
-                <Input
-                  id='graduationYear'
-                  type='number'
-                  required
+                <Select
                   value={formData.graduationYear}
-                  onChange={(e) => setFormData({ ...formData, graduationYear: parseInt(e.target.value) })}
-                  placeholder='2026'
-                />
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, graduationYear: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select year' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='2026'>2026</SelectItem>
+                    <SelectItem value='2027'>2027</SelectItem>
+                    <SelectItem value='2028'>2028</SelectItem>
+                    <SelectItem value='2029'>2029</SelectItem>
+                    <SelectItem value='2030'>2030</SelectItem>
+                    <SelectItem value='2031'>2031</SelectItem>
+                    <SelectItem value='2032'>2032</SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
             </div>
             <Field className='gap-1'>

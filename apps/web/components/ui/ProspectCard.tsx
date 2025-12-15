@@ -30,7 +30,7 @@ export function ProspectCard({
   action,
 }: ProspectCardProps) {
   return (
-    <Card className='bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors'>
+    <Card className='min-w-72 bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors'>
       <div className='p-6 space-y-4'>
         <div className='flex items-start justify-between'>
           <div>

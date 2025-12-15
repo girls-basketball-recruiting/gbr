@@ -3,6 +3,7 @@ import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactNode } from 'react'
+import { getPositionLabel } from '@/types/positions'
 
 interface Player {
   id: number
@@ -37,7 +38,7 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
   const isArchived = !!player.deletedAt
 
   return (
-    <Card className={`bg-slate-800/50 border-slate-700 transition-colors ${
+    <Card className={`min-w-72 bg-slate-800/50 border-slate-700 transition-colors ${
       isArchived
         ? 'opacity-60 border-orange-600/50'
         : 'hover:border-slate-600'
@@ -76,8 +77,8 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
           {player.primaryPosition && (
             <div className='flex items-center gap-2'>
               <span className='text-slate-400'>Position:</span>
-              <span className='text-white capitalize'>
-                {player.primaryPosition.replace('-', ' ')}
+              <span className='text-white'>
+                {getPositionLabel(player.primaryPosition)}
               </span>
             </div>
           )}

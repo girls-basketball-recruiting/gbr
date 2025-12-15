@@ -9,6 +9,7 @@ import { currentUser } from '@clerk/nextjs/server'
 import { CoachNotesSection } from '@/components/CoachNotesSection'
 import { SavePlayerButton } from '@/components/SavePlayerButton'
 import type { Metadata } from 'next'
+import { getPositionLabel } from '@/types/positions'
 
 // Generate metadata for SEO
 export async function generateMetadata({
@@ -35,7 +36,7 @@ export async function generateMetadata({
 
     const fullName = `${player.firstName} ${player.lastName}`
     const position = player.primaryPosition
-      ? player.primaryPosition.replace('-', ' ')
+      ? getPositionLabel(player.primaryPosition)
       : ''
     const school = player.highSchool || ''
     const graduationYear = player.graduationYear
@@ -141,15 +142,6 @@ export default async function PlayerProfilePage({
     return (
       <div className='min-h-svh bg-slate-900 py-12'>
         <div className='container mx-auto px-4 max-w-3xl'>
-          {/* Back button */}
-          <Link href='/'>
-            <Button
-              variant='outline'
-              className='mb-6 border-slate-600 text-slate-300'
-            >
-              ← Back
-            </Button>
-          </Link>
 
           {/* Public Player Profile */}
           <Card className='bg-slate-800/50 border-slate-700 p-8 mb-8'>
@@ -183,8 +175,8 @@ export default async function PlayerProfilePage({
                 {player.primaryPosition && (
                   <div className='flex items-center justify-center gap-2'>
                     <span className='text-slate-400'>Position:</span>
-                    <span className='font-medium capitalize'>
-                      {player.primaryPosition.replace('-', ' ')}
+                    <span className='font-medium'>
+                      {getPositionLabel(player.primaryPosition)}
                     </span>
                   </div>
                 )}
@@ -230,18 +222,8 @@ export default async function PlayerProfilePage({
   }
 
   return (
-    <div className='min-h-svh bg-slate-900 py-12'>
-      <div className='container mx-auto px-4 max-w-5xl'>
-        {/* Back button */}
-        <Link href='/'>
-          <Button
-            variant='outline'
-            className='mb-6 border-slate-600 text-slate-300'
-          >
-            ← Back
-          </Button>
-        </Link>
-
+    <div className='p-8'>
+      <div className='max-w-5xl mx-auto'>
         {/* Player Header */}
         <Card className='bg-slate-800/50 border-slate-700 p-8 mb-8'>
           <div className='flex items-start justify-between gap-6'>
@@ -290,16 +272,16 @@ export default async function PlayerProfilePage({
               {player.primaryPosition && (
                 <div>
                   <span className='text-slate-400'>Primary Position:</span>{' '}
-                  <span className='font-medium capitalize'>
-                    {player.primaryPosition.replace('-', ' ')}
+                  <span className='font-medium'>
+                    {getPositionLabel(player.primaryPosition)}
                   </span>
                 </div>
               )}
               {player.secondaryPosition && (
                 <div>
                   <span className='text-slate-400'>Secondary Position:</span>{' '}
-                  <span className='font-medium capitalize'>
-                    {player.secondaryPosition.replace('-', ' ')}
+                  <span className='font-medium'>
+                    {getPositionLabel(player.secondaryPosition)}
                   </span>
                 </div>
               )}
@@ -357,20 +339,91 @@ export default async function PlayerProfilePage({
           </Card>
         )}
 
-        {/* Highlight Video */}
-        {player.highlightVideo && (
+        {/* Tournament Schedule */}
+        {player.tournamentSchedule && Array.isArray(player.tournamentSchedule) && player.tournamentSchedule.length > 0 && (
           <Card className='bg-slate-800/50 border-slate-700 p-6 mb-8'>
             <h2 className='text-2xl font-bold text-white mb-4'>
-              Highlight Video
+              Tournament Schedule
             </h2>
-            <a
-              href={player.highlightVideo}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-blue-400 hover:text-blue-300 underline'
-            >
-              {player.highlightVideo}
-            </a>
+            <div className='space-y-3'>
+              {player.tournamentSchedule.map((tournament: any) => {
+                const t = typeof tournament === 'object' ? tournament : null
+                if (!t) return null
+
+                const formatDateRange = (start: string, end: string) => {
+                  const startDate = new Date(start)
+                  const endDate = new Date(end)
+
+                  const options: Intl.DateTimeFormatOptions = {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  }
+
+                  if (startDate.toDateString() === endDate.toDateString()) {
+                    return startDate.toLocaleDateString('en-US', options)
+                  }
+
+                  const startFormatted = startDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                  })
+                  const endFormatted = endDate.toLocaleDateString('en-US', options)
+
+                  return `${startFormatted} - ${endFormatted}`
+                }
+
+                return (
+                  <div
+                    key={t.id}
+                    className='flex items-center justify-between p-4 bg-slate-700/30 rounded-lg border border-slate-600'
+                  >
+                    <div>
+                      <h3 className='font-semibold text-white'>{t.name}</h3>
+                      <p className='text-sm text-slate-400'>
+                        {formatDateRange(t.startDate, t.endDate)} • {t.location}
+                      </p>
+                    </div>
+                    {t.website && (
+                      <a
+                        href={t.website}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-blue-400 hover:text-blue-300 text-sm'
+                      >
+                        View Details →
+                      </a>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </Card>
+        )}
+
+        {/* Highlight Videos */}
+        {player.highlightVideoUrls && Array.isArray(player.highlightVideoUrls) && player.highlightVideoUrls.length > 0 && (
+          <Card className='bg-slate-800/50 border-slate-700 p-6 mb-8'>
+            <h2 className='text-2xl font-bold text-white mb-4'>
+              Highlight Videos
+            </h2>
+            <div className='space-y-2'>
+              {player.highlightVideoUrls.map((item: any, index: number) => {
+                const url = typeof item === 'object' && item.url ? item.url : item
+                return url ? (
+                  <div key={index}>
+                    <a
+                      href={url}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-blue-400 hover:text-blue-300 underline block'
+                    >
+                      {url}
+                    </a>
+                  </div>
+                ) : null
+              })}
+            </div>
           </Card>
         )}
 

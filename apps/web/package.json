@@ -20,7 +20,6 @@
     "@payloadcms/next": "3.68.2",
     "@payloadcms/richtext-lexical": "3.68.2",
     "@payloadcms/storage-vercel-blob": "3.68.2",
-    "@vercel/edge-config": "^1.4.0",
     "@workspace/ui": "workspace:*",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",

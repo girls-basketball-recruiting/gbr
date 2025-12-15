@@ -5,6 +5,7 @@ export const CoachPlayerNotes: CollectionConfig = {
   admin: {
     useAsTitle: 'id',
     defaultColumns: ['coach', 'player', 'updatedAt'],
+    hidden: true, // Hidden from sidebar - accessed via Coach tabs
   },
   fields: [
     {

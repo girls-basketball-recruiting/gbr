@@ -5,6 +5,7 @@ export const Prospects: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'graduationYear', 'highSchool', 'coach'],
+    hidden: true, // Hidden from sidebar - accessed via Coach tabs
   },
   fields: [
     {

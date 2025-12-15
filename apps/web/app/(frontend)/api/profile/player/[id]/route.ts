@@ -108,6 +108,18 @@ export async function PUT(
     const validPositions = ['point-guard', 'shooting-guard', 'small-forward', 'power-forward', 'center'] as const
     type Position = typeof validPositions[number]
 
+    // Parse highlight video URLs
+    const highlightVideoUrlsJson = formData.get('highlightVideoUrls') as string
+    let highlightVideoUrls: Array<{ url: string }> | undefined
+    if (highlightVideoUrlsJson) {
+      try {
+        const urls = JSON.parse(highlightVideoUrlsJson) as string[]
+        highlightVideoUrls = urls.filter(url => url.trim()).map(url => ({ url: url.trim() }))
+      } catch (error) {
+        console.error('Error parsing highlight video URLs:', error)
+      }
+    }
+
     // Update the player profile
     const updatedPlayer = await payload.update({
       collection: 'players',
@@ -131,7 +143,7 @@ export async function PUT(
         primaryPosition: (validPositions.includes(primaryPosition as Position) ? primaryPosition : undefined) as Position | undefined,
         secondaryPosition: (validPositions.includes(secondaryPosition as Position) ? secondaryPosition : undefined) as Position | undefined,
         bio: (formData.get('bio') as string) || undefined,
-        highlightVideo: (formData.get('highlightVideo') as string) || undefined,
+        highlightVideoUrls,
         ...(profileImageId && { profileImage: profileImageId }),
       },
     })

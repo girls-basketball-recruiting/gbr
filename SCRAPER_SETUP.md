@@ -2,103 +2,90 @@
 
 This guide will help you set up and run the college basketball program scraper.
 
-## 1. Create Vercel Edge Config
+## Overview
 
-1. Go to your Vercel dashboard
-2. Navigate to **Storage** → **Edge Config**
-3. Click **Create Edge Config**
-4. Name it `colleges` (or any name you prefer)
-5. After creation, you'll see:
-   - **Edge Config ID** (starts with `ecfg_`)
-   - **Connection String** (starts with `https://edge-config.vercel.com/`)
+The scraper fetches college data from NCSA and imports it into your Payload CMS database. The frontend automatically fetches this data for the college autocomplete functionality.
 
-## 2. Set Environment Variables
-
-### For the Next.js app (`apps/web/.env`):
-```bash
-EDGE_CONFIG=https://edge-config.vercel.com/...your-connection-string
-```
-
-This is automatically set when you deploy to Vercel, but for local development you need to add it manually.
+## 1. Set Environment Variables
 
 ### For the scraper (`packages/scraper/.env`):
 ```bash
-EDGE_CONFIG_ID=ecfg_your_edge_config_id
-VERCEL_TOKEN=your_vercel_token
+# Database - Same connection string as your web app
+DATABASE_URL=postgresql://user:password@host/database?sslmode=require
+
+# PayloadCMS - Same secret as your web app
+PAYLOAD_SECRET=your_random_secret_here_min_32_chars
 ```
 
-To get your Vercel token:
-1. Go to https://vercel.com/account/tokens
-2. Create a new token with scope to access your Edge Config
-3. Copy the token
-
-## 3. Install Dependencies
+## 2. Install Dependencies
 
 From the root of the monorepo:
 ```bash
 pnpm install
 ```
 
-## 4. Run the Scraper
+## 3. Run the Scraper
+
+### Option A: Scrape and Import in One Step
 
 From the root:
 ```bash
-pnpm scrape:colleges
-```
-
-Or from the scraper package:
-```bash
 cd packages/scraper
-pnpm scrape
+pnpm scrape        # Scrapes data and saves to colleges-data.json
+pnpm import        # Imports JSON data into Payload CMS
 ```
 
-This will:
-1. Launch a headless browser
-2. Navigate to the NCSA women's basketball colleges page
-3. Wait for the dynamic table to load
-4. Extract all college data (School, City, State, Type, Conference, Division)
-5. Upload the data to Vercel Edge Config
+### What This Does:
 
-## 5. Verify the Data
+**Scraping:**
+1. Launches a headless browser
+2. Navigates to the NCSA women's basketball colleges page
+3. Waits for the dynamic table to load
+4. Extracts all college data (School, City, State, Type, Conference, Division)
+5. Saves to `colleges-data.json`
 
-After running the scraper, you can verify the data was uploaded:
+**Importing:**
+1. Reads `colleges-data.json`
+2. Clears existing colleges from Payload CMS
+3. Imports all colleges in batches
+4. Data is immediately available to the frontend
 
-1. Check the Vercel Edge Config dashboard
-2. Or test the API endpoint locally:
+## 4. Verify the Data
+
+After importing, you can verify the data:
+
+### Via Payload Admin UI:
+1. Go to `http://localhost:3000/admin` (or your deployed URL)
+2. Navigate to Collections > Colleges
+3. You should see all imported colleges
+
+### Via API:
 ```bash
-curl http://localhost:3000/api/colleges
+curl http://localhost:3000/api/colleges/search?limit=10
 ```
 
 ## API Endpoints
 
-Once the data is uploaded, these endpoints become available:
-
-### Get all colleges
+### Search colleges (used by frontend)
 ```
-GET /api/colleges
-```
-
-Returns all colleges with metadata:
-```json
-{
-  "colleges": [...],
-  "metadata": {
-    "lastUpdated": "2025-01-01T00:00:00.000Z",
-    "totalCount": 1234
-  }
-}
-```
-
-### Search colleges
-```
-GET /api/colleges/search?q=stanford&division=d1&state=CA&type=Private
+GET /api/colleges/search?q=stanford&division=d1&state=CA&limit=20
 ```
 
 Query parameters:
-- `q`: Search query (searches school name, city, conference)
-- `division`: Filter by division (D1, D2, D3, NAIA, etc.)
+- `q`: Search query (searches school name)
+- `division`: Filter by division (d1, d2, d3, naia, juco, other)
 - `state`: Filter by state code (CA, TX, etc.)
-- `type`: Filter by type (Public, Private)
+- `type`: Filter by type (public, private)
+- `limit`: Number of results (default 10)
+
+Returns:
+```json
+{
+  "colleges": [...],
+  "total": 100,
+  "hasMore": true
+}
+```
 
 ### Get statistics
 ```
@@ -108,10 +95,10 @@ GET /api/colleges/stats
 Returns aggregated statistics:
 ```json
 {
-  "total": 1234,
-  "byDivision": { "D1": 350, "D2": 300, ... },
+  "total": 902,
+  "byDivision": { "d1": 350, "d2": 300, ... },
   "byState": { "CA": 45, "TX": 38, ... },
-  "byType": { "Public": 800, "Private": 434 },
+  "byType": { "public": 468, "private": 434 },
   "topStates": [
     { "state": "CA", "count": 45 },
     ...
@@ -119,13 +106,23 @@ Returns aggregated statistics:
 }
 ```
 
+## Manual College Management
+
+You can manually add/edit/delete colleges through the Payload admin UI:
+
+1. Go to `/admin`
+2. Navigate to Collections > Colleges
+3. Add/Edit/Delete colleges as needed
+4. Changes are immediately available to the frontend
+
 ## Maintenance
 
 Run the scraper **once or twice a year** to keep the college list up to date:
 
-1. Run `pnpm scrape:colleges`
-2. Verify the data in Vercel dashboard or via API
-3. The data will be immediately available to your Next.js app (no deployment needed)
+1. Run `pnpm scrape` (in packages/scraper)
+2. Run `pnpm import` (in packages/scraper)
+3. Verify the data in Payload admin
+4. The data is immediately available to your app (no deployment needed)
 
 ## Troubleshooting
 
@@ -134,12 +131,12 @@ Run the scraper **once or twice a year** to keep the college list up to date:
 - Check the console output for errors
 - Verify the selectors in `packages/scraper/src/index.ts`
 
-### Edge Config upload fails
-- Verify your `EDGE_CONFIG_ID` and `VERCEL_TOKEN` are correct
-- Check token permissions include Edge Config access
-- Verify the Edge Config exists in your Vercel account
+### Import fails
+- Verify your `DATABASE_URL` and `PAYLOAD_SECRET` are correct
+- Ensure the database is accessible
+- Check that `colleges-data.json` exists and is valid JSON
 
-### API returns 404
-- Ensure `EDGE_CONFIG` environment variable is set in your Next.js app
-- Verify the data was successfully uploaded to Edge Config
-- Redeploy your Next.js app if needed
+### API returns empty results
+- Ensure data was successfully imported to Payload
+- Check Payload admin UI to verify colleges exist
+- Check browser console for API errors

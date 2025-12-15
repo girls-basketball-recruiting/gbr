@@ -1,4 +1,4 @@
-import { currentUser } from '@clerk/nextjs/server'
+import { currentUser, clerkClient } from '@clerk/nextjs/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { NextResponse } from 'next/server'
@@ -41,6 +41,15 @@ export async function POST(req: Request) {
       const validRoles = ['admin', 'player', 'coach'] as const
       type Role = typeof validRoles[number]
       const role: Role = validRoles.includes(roleFromMetadata as Role) ? (roleFromMetadata as Role) : 'player'
+
+      // Update Clerk publicMetadata to ensure it's set (in case webhook failed)
+      const client = await clerkClient()
+      await client.users.updateUserMetadata(clerkUser.id, {
+        publicMetadata: {
+          role,
+        },
+      })
+      console.log(`✅ Set Clerk publicMetadata.role = ${role} for user ${clerkUser.id}`)
 
       payloadUser = await payload.create({
         collection: 'users',
@@ -119,6 +128,18 @@ export async function POST(req: Request) {
     const validPositions = ['point-guard', 'shooting-guard', 'small-forward', 'power-forward', 'center'] as const
     type Position = typeof validPositions[number]
 
+    // Parse highlight video URLs
+    const highlightVideoUrlsJson = formData.get('highlightVideoUrls') as string
+    let highlightVideoUrls: Array<{ url: string }> | undefined
+    if (highlightVideoUrlsJson) {
+      try {
+        const urls = JSON.parse(highlightVideoUrlsJson) as string[]
+        highlightVideoUrls = urls.filter(url => url.trim()).map(url => ({ url: url.trim() }))
+      } catch (error) {
+        console.error('Error parsing highlight video URLs:', error)
+      }
+    }
+
     // Create the player profile
     const player = await payload.create({
       collection: 'players',
@@ -140,7 +161,7 @@ export async function POST(req: Request) {
         primaryPosition: validPositions.includes(primaryPosition as Position) ? (primaryPosition as Position) : 'point-guard',
         secondaryPosition: (validPositions.includes(secondaryPosition as Position) ? secondaryPosition : undefined) as Position | undefined,
         bio: (formData.get('bio') as string) || undefined,
-        highlightVideo: (formData.get('highlightVideo') as string) || undefined,
+        highlightVideoUrls,
         profileImage: profileImageId,
       },
     })

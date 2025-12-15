@@ -4,7 +4,7 @@ import { SignUp } from '@clerk/nextjs'
 
 export default function PlayerSignUpPage() {
   return (
-    <div className='min-h-svh flex items-center justify-center bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900'>
+    <div className='min-h-svh flex items-center justify-center bg-linear-to-b from-slate-900 via-slate-800 to-slate-900'>
       <div className='w-full max-w-md'>
         <div className='text-center mb-8'>
           <h1 className='text-3xl font-bold text-white mb-2'>
@@ -25,8 +25,7 @@ export default function PlayerSignUpPage() {
           unsafeMetadata={{
             userType: 'player',
           }}
-          afterSignUpUrl='/onboarding/player'
-          redirectUrl='/onboarding/player'
+          forceRedirectUrl='/onboarding/player'
         />
       </div>
     </div>

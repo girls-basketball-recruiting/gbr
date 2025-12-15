@@ -1,7 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server'
 import PlayerDashboard from './PlayerDashboard'
 import CoachDashboard from './CoachDashboard'
-import { SidebarLayout } from './sidebar-layout'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
@@ -34,14 +33,8 @@ export default async function DashboardPage() {
   const isPlayer = role === 'player'
   const isCoach = role === 'coach'
 
-  const user = {
-    name: clerkUser.firstName || clerkUser.emailAddresses[0]?.emailAddress?.split('@')[0] || 'User',
-    email: clerkUser.emailAddresses[0]?.emailAddress || '',
-    role: role,
-  }
-
   return (
-    <SidebarLayout user={user}>
+    <>
       {isPlayer && <PlayerDashboard />}
       {isCoach && <CoachDashboard />}
       {!isPlayer && !isCoach && (
@@ -49,6 +42,6 @@ export default async function DashboardPage() {
           <p className='text-white'>No role assigned yet. Please contact support.</p>
         </div>
       )}
-    </SidebarLayout>
+    </>
   )
 }
