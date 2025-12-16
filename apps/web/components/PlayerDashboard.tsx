@@ -66,10 +66,10 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
       <div className='max-w-6xl mx-auto'>
         {/* Player Profile Header */}
         {playerProfile && (
-          <div className='mb-8 bg-slate-800/50 border border-slate-700 rounded-lg p-6'>
+          <div className='mb-8 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-6'>
             <div className='flex items-center gap-6'>
               {profileImageUrl ? (
-                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
                   <Image
                     src={profileImageUrl}
                     alt={`${playerProfile.firstName} ${playerProfile.lastName}`}
@@ -78,18 +78,18 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
                   />
                 </div>
               ) : (
-                <div className='w-24 h-24 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0'>
-                  <span className='text-3xl font-bold text-white'>
+                <div className='w-24 h-24 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0'>
+                  <span className='text-3xl font-bold text-slate-900 dark:text-white'>
                     {playerProfile.firstName?.[0]}
                     {playerProfile.lastName?.[0]}
                   </span>
                 </div>
               )}
               <div className='flex-1'>
-                <h2 className='text-2xl font-bold text-white mb-1'>
+                <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-1'>
                   {playerProfile.firstName} {playerProfile.lastName}
                 </h2>
-                <p className='text-slate-400'>
+                <p className='text-slate-600 dark:text-slate-400'>
                   {playerProfile.primaryPosition &&
                     getPositionLabel(playerProfile.primaryPosition)}
                   {playerProfile.secondaryPosition &&
@@ -97,7 +97,7 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
                   {' • '}
                   Class of {playerProfile.graduationYear}
                 </p>
-                <p className='text-slate-400 text-sm mt-1'>
+                <p className='text-slate-600 dark:text-slate-400 text-sm mt-1'>
                   {playerProfile.highSchool}
                   {playerProfile.city && ` • ${playerProfile.city}`}
                   {playerProfile.state && `, ${playerProfile.state}`}
@@ -117,7 +117,7 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
 
         {/* Coaches Section */}
         <div className='mb-8'>
-          <h3 className='text-2xl font-bold text-white mb-4'>
+          <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
             College Coaches & Programs
           </h3>
 
@@ -131,14 +131,14 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
               {coaches.map((coach) => (
                 <Card
                   key={coach.id}
-                  className='min-w-72 bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors'
+                  className='min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors'
                 >
                   <div className='p-6 space-y-4'>
                     <div>
-                      <h4 className='text-xl font-semibold text-white'>
+                      <h4 className='text-xl font-semibold text-slate-900 dark:text-white'>
                         {coach.name}
                       </h4>
-                      <p className='text-slate-400 text-sm'>
+                      <p className='text-slate-600 dark:text-slate-400 text-sm'>
                         {coach.collegeName}
                       </p>
                     </div>
@@ -146,41 +146,22 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
                     <div className='space-y-2 text-sm'>
                       {coach.programName && (
                         <div className='flex items-center gap-2'>
-                          <span className='text-slate-400'>Program:</span>
-                          <span className='text-white'>
+                          <span className='text-slate-600 dark:text-slate-400'>Program:</span>
+                          <span className='text-slate-900 dark:text-white'>
                             {coach.programName}
                           </span>
                         </div>
                       )}
                       {coach.position && (
                         <div className='flex items-center gap-2'>
-                          <span className='text-slate-400'>Position:</span>
-                          <span className='text-white'>{coach.position}</span>
-                        </div>
-                      )}
-                      {coach.division && (
-                        <div className='flex items-center gap-2'>
-                          <span className='text-slate-400'>Division:</span>
-                          <span className='text-white uppercase'>
-                            {coach.division === 'd1' && 'NCAA D1'}
-                            {coach.division === 'd2' && 'NCAA D2'}
-                            {coach.division === 'd3' && 'NCAA D3'}
-                            {coach.division === 'naia' && 'NAIA'}
-                            {coach.division === 'juco' && 'JUCO'}
-                            {coach.division === 'other' && 'Other'}
-                          </span>
-                        </div>
-                      )}
-                      {coach.state && (
-                        <div className='flex items-center gap-2'>
-                          <span className='text-slate-400'>Location:</span>
-                          <span className='text-white'>{coach.state}</span>
+                          <span className='text-slate-600 dark:text-slate-400'>Position:</span>
+                          <span className='text-slate-900 dark:text-white'>{coach.position}</span>
                         </div>
                       )}
                     </div>
 
                     {coach.bio && (
-                      <p className='text-slate-300 text-sm line-clamp-3'>
+                      <p className='text-slate-700 dark:text-slate-300 text-sm line-clamp-3'>
                         {coach.bio}
                       </p>
                     )}

@@ -11,7 +11,7 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   const defaultIcon = (
     <svg
-      className='w-10 h-10 text-slate-500'
+      className='w-10 h-10 text-slate-400 dark:text-slate-500'
       fill='none'
       stroke='currentColor'
       viewBox='0 0 24 24'
@@ -26,13 +26,13 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
   )
 
   return (
-    <Card className='bg-slate-800/50 border-slate-700 p-12'>
+    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-12'>
       <div className='text-center space-y-4'>
-        <div className='w-20 h-20 mx-auto bg-slate-700/50 rounded-full flex items-center justify-center'>
+        <div className='w-20 h-20 mx-auto bg-slate-100 dark:bg-slate-700/50 rounded-full flex items-center justify-center'>
           {icon || defaultIcon}
         </div>
-        <h4 className='text-xl font-semibold text-white'>{title}</h4>
-        <p className='text-slate-400 max-w-md mx-auto'>{description}</p>
+        <h4 className='text-xl font-semibold text-slate-900 dark:text-white'>{title}</h4>
+        <p className='text-slate-600 dark:text-slate-400 max-w-md mx-auto'>{description}</p>
         {action && <div className='mt-4'>{action}</div>}
       </div>
     </Card>

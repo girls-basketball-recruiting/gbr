@@ -104,10 +104,10 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
     <div className='container mx-auto px-4 py-8'>
       <div className='max-w-6xl mx-auto'>
         {/* Coach Profile Header */}
-        <div className='mb-8 bg-slate-800/50 border border-slate-700 rounded-lg p-6'>
+        <div className='mb-8 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-6'>
           <div className='flex items-center gap-6'>
             {profileImageUrl ? (
-              <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+              <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
                 <Image
                   src={profileImageUrl}
                   alt={coachWithImage.name}
@@ -116,31 +116,20 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
                 />
               </div>
             ) : (
-              <div className='w-24 h-24 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0'>
-                <span className='text-3xl font-bold text-white'>
+              <div className='w-24 h-24 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0'>
+                <span className='text-3xl font-bold text-slate-900 dark:text-white'>
                   {coachWithImage.name?.[0]}
                 </span>
               </div>
             )}
             <div className='flex-1'>
-              <h2 className='text-2xl font-bold text-white mb-1'>
+              <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-1'>
                 {coachWithImage.name}
               </h2>
-              <p className='text-slate-400'>
+              <p className='text-slate-600 dark:text-slate-400'>
                 {coachWithImage.position && `${coachWithImage.position} • `}
                 {coachWithImage.collegeName}
               </p>
-              {coachWithImage.division && (
-                <p className='text-slate-400 text-sm mt-1'>
-                  {coachWithImage.division === 'd1' && 'NCAA D1'}
-                  {coachWithImage.division === 'd2' && 'NCAA D2'}
-                  {coachWithImage.division === 'd3' && 'NCAA D3'}
-                  {coachWithImage.division === 'naia' && 'NAIA'}
-                  {coachWithImage.division === 'juco' && 'JUCO'}
-                  {coachWithImage.division === 'other' && 'Other'}
-                  {coachWithImage.state && ` • ${coachWithImage.state}`}
-                </p>
-              )}
             </div>
             <div className='flex gap-2'>
               <Button asChild variant='outline'>
@@ -156,9 +145,9 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
         {/* Saved Players Section */}
         <div className='mb-8'>
           <div className='flex items-center justify-between mb-4'>
-            <h3 className='text-2xl font-bold text-white'>
+            <h3 className='text-2xl font-bold text-slate-900 dark:text-white'>
               Saved Players
-              <span className='ml-2 text-sm font-normal text-slate-400'>
+              <span className='ml-2 text-sm font-normal text-slate-600 dark:text-slate-400'>
                 (Registered Users)
               </span>
             </h3>
@@ -188,9 +177,9 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
         {/* My Prospects Section */}
         <div className='mb-8'>
           <div className='flex items-center justify-between mb-4'>
-            <h3 className='text-2xl font-bold text-white'>
+            <h3 className='text-2xl font-bold text-slate-900 dark:text-white'>
               My Prospects
-              <span className='ml-2 text-sm font-normal text-slate-400'>
+              <span className='ml-2 text-sm font-normal text-slate-600 dark:text-slate-400'>
                 (Manual Entries)
               </span>
             </h3>

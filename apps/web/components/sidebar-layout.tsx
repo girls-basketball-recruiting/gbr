@@ -15,7 +15,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className='flex h-16 shrink-0 items-center gap-2 border-b border-slate-700 dark:border-slate-800 bg-slate-800/50 dark:bg-slate-900/50 px-4'>
+        <header className='flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 px-4'>
           <SidebarTrigger className='-ml-1' />
           <Separator orientation='vertical' className='mr-2 h-4' />
           <DynamicBreadcrumbs />

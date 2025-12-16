@@ -1,13 +1,11 @@
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { ProgramFilters } from '@/components/ProgramFilters'
-import { ProgramCard } from '@/components/ui/ProgramCard'
 import { Pagination } from '@/components/Pagination'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { ActiveFilterChips } from '@/components/ActiveFilterChips'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import { currentUser } from '@clerk/nextjs/server'
+import { ProgramsPageContent } from '@/components/ProgramsPageContent'
 
 interface ProgramsPageProps {
   searchParams: Promise<{
@@ -17,6 +15,8 @@ interface ProgramsPageProps {
     hasCoach?: string
     search?: string
     page?: string
+    sortBy?: string
+    view?: 'grid' | 'table'
   }>
 }
 
@@ -48,6 +48,16 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
     where.school = { contains: params.search, options: 'i' }
   }
 
+  // Determine sort order
+  let sort = 'school' // default: alphabetical
+  if (params.sortBy === 'school-desc') {
+    sort = '-school'
+  } else if (params.sortBy === 'division-asc') {
+    sort = 'division'
+  } else if (params.sortBy === 'state-asc') {
+    sort = 'state'
+  }
+
   // Pagination
   const page = parseInt(params.page || '1')
   const limit = 24
@@ -58,7 +68,7 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
     where: Object.keys(where).length > 0 ? where : undefined,
     limit,
     page,
-    sort: 'school',
+    sort,
   })
 
   let programs = collegesData.docs
@@ -120,40 +130,16 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
             )}
 
             {/* Filters */}
-            <div className='mb-6'>
-              <ProgramFilters />
-            </div>
+            <ProgramFilters />
 
-            {/* Active Filters */}
-            <ActiveFilterChips />
-
-            {/* Results count */}
-            <div className='mb-6 flex items-center justify-between'>
-              <p className='text-slate-600 dark:text-slate-400'>
-                {totalDocs.toLocaleString()} college women&apos;s basketball {totalDocs === 1 ? 'program' : 'programs'}
-              </p>
-            </div>
-
-            {/* Programs Grid */}
-            {programsWithCoachStatus.length === 0 ? (
-              <EmptyState
-                title='No Programs Found'
-                description='Try adjusting your filters to see more results.'
-              />
-            ) : (
-              <>
-                <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
-                  {programsWithCoachStatus.map((program) => (
-                    <ProgramCard key={program.id} program={program} />
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <Pagination currentPage={page} totalPages={totalPages} />
-                )}
-              </>
-            )}
+            {/* Content */}
+            <ProgramsPageContent
+              programs={programsWithCoachStatus}
+              totalDocs={totalDocs}
+              totalPages={totalPages}
+              currentPage={page}
+              initialView={(params.view as 'grid' | 'table') || 'grid'}
+            />
           </div>
         </div>
       </div>

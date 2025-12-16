@@ -102,7 +102,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
   }
 
   return (
-    <Card className='bg-slate-800/50 border-slate-700 p-8 max-w-md mx-auto'>
+    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 max-w-md mx-auto'>
       <form onSubmit={handleSubmit}>
         <FieldSet>
           <FieldLegend className="mb-6">Prospect Information</FieldLegend>
@@ -236,7 +236,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 type='button'
                 variant='outline'
                 onClick={() => router.back()}
-                className='flex-1 border-slate-600 text-white hover:bg-slate-800'
+                className='flex-1'
                 disabled={isLoading}
               >
                 Cancel

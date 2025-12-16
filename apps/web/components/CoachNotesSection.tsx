@@ -152,9 +152,9 @@ export function CoachNotesSection({
   return (
     <div className='space-y-6'>
       {/* General Notes */}
-      <Card className='bg-slate-800/50 border-slate-700 p-6'>
+      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
         <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-2xl font-bold text-white'>Your Notes</h2>
+          <h2 className='text-2xl font-bold text-slate-900 dark:text-white'>Your Notes</h2>
           {!isEditing && (
             <Button
               onClick={() => setIsEditing(true)}
@@ -174,7 +174,7 @@ export function CoachNotesSection({
         {isEditing ? (
           <div className='space-y-4'>
             <div>
-              <Label htmlFor='notes' className='text-slate-200'>
+              <Label htmlFor='notes' className='text-slate-700 dark:text-slate-200'>
                 Notes
               </Label>
               <Textarea
@@ -185,12 +185,12 @@ export function CoachNotesSection({
                 }
                 rows={6}
                 placeholder='Add your notes and observations about this player...'
-                className='bg-slate-900 border-slate-600 text-white'
+                className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'
               />
             </div>
 
             <div>
-              <Label htmlFor='interestLevel' className='text-slate-200'>
+              <Label htmlFor='interestLevel' className='text-slate-700 dark:text-slate-200'>
                 Interest Level
               </Label>
               <Select
@@ -199,7 +199,7 @@ export function CoachNotesSection({
                   setNotesData({ ...notesData, interestLevel: value })
                 }
               >
-                <SelectTrigger className='bg-slate-900 border-slate-600 text-white'>
+                <SelectTrigger className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'>
                   <SelectValue placeholder='Select interest level' />
                 </SelectTrigger>
                 <SelectContent>
@@ -223,19 +223,18 @@ export function CoachNotesSection({
               <Button
                 onClick={() => setIsEditing(false)}
                 variant='outline'
-                className='border-slate-600 text-slate-300'
               >
                 Cancel
               </Button>
             </div>
           </div>
         ) : (
-          <div className='text-slate-300 whitespace-pre-wrap'>
+          <div className='text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>
             {notesData.notes ||
               'No notes yet. Click "Edit Notes" to add notes.'}
             {notesData.interestLevel && (
-              <div className='mt-4 pt-4 border-t border-slate-700'>
-                <span className='text-slate-400'>Interest Level: </span>
+              <div className='mt-4 pt-4 border-t border-slate-200 dark:border-slate-700'>
+                <span className='text-slate-600 dark:text-slate-400'>Interest Level: </span>
                 <span className='font-medium capitalize'>
                   {notesData.interestLevel.replace('-', ' ')}
                 </span>
@@ -246,9 +245,9 @@ export function CoachNotesSection({
       </Card>
 
       {/* Contact/Outreach Records */}
-      <Card className='bg-slate-800/50 border-slate-700 p-6'>
+      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
         <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-2xl font-bold text-white'>Contact History</h2>
+          <h2 className='text-2xl font-bold text-slate-900 dark:text-white'>Contact History</h2>
           {!isAddingContact && (
             <Button
               onClick={() => setIsAddingContact(true)}
@@ -261,20 +260,20 @@ export function CoachNotesSection({
 
         {/* Add Contact Form */}
         {isAddingContact && (
-          <div className='bg-slate-900/50 p-4 rounded-lg mb-4 space-y-4'>
+          <div className='bg-slate-100 dark:bg-slate-900/50 p-4 rounded-lg mb-4 space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <div>
-                <Label className='text-slate-200'>Date</Label>
+                <Label className='text-slate-700 dark:text-slate-200'>Date</Label>
                 <DatePicker
                   date={newContact.date}
                   onDateChange={(date) =>
                     setNewContact({ ...newContact, date: date || new Date() })
                   }
-                  className='bg-slate-900 border-slate-600 text-white'
+                  className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'
                 />
               </div>
               <div>
-                <Label htmlFor='contactType' className='text-slate-200'>
+                <Label htmlFor='contactType' className='text-slate-700 dark:text-slate-200'>
                   Type
                 </Label>
                 <Select
@@ -283,7 +282,7 @@ export function CoachNotesSection({
                     setNewContact({ ...newContact, contactType: value })
                   }
                 >
-                  <SelectTrigger className='bg-slate-900 border-slate-600 text-white'>
+                  <SelectTrigger className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -301,7 +300,7 @@ export function CoachNotesSection({
             </div>
 
             <div>
-              <Label htmlFor='contactSummary' className='text-slate-200'>
+              <Label htmlFor='contactSummary' className='text-slate-700 dark:text-slate-200'>
                 Summary
               </Label>
               <Textarea
@@ -312,7 +311,7 @@ export function CoachNotesSection({
                 }
                 rows={3}
                 placeholder='What was discussed or observed...'
-                className='bg-slate-900 border-slate-600 text-white'
+                className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'
               />
             </div>
 
@@ -327,7 +326,6 @@ export function CoachNotesSection({
               <Button
                 onClick={() => setIsAddingContact(false)}
                 variant='outline'
-                className='border-slate-600 text-slate-300'
               >
                 Cancel
               </Button>
@@ -338,7 +336,7 @@ export function CoachNotesSection({
         {/* Contact Records List */}
         <div className='space-y-4'>
           {notesData.contactRecords.length === 0 ? (
-            <p className='text-slate-400 text-center py-8'>
+            <p className='text-slate-600 dark:text-slate-400 text-center py-8'>
               No contact records yet. Click "Add Contact" to log your first
               interaction.
             </p>
@@ -351,19 +349,19 @@ export function CoachNotesSection({
               .map((contact, index) => (
                 <div
                   key={index}
-                  className='bg-slate-900/50 p-4 rounded-lg border border-slate-700'
+                  className='bg-slate-100 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700'
                 >
                   <div className='flex justify-between items-start mb-2'>
                     <div>
-                      <span className='font-medium text-white capitalize'>
+                      <span className='font-medium text-slate-900 dark:text-white capitalize'>
                         {contact.contactType.replace('-', ' ')}
                       </span>
-                      <span className='text-slate-400 text-sm ml-2'>
+                      <span className='text-slate-600 dark:text-slate-400 text-sm ml-2'>
                         {new Date(contact.date).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
-                  <p className='text-slate-300 whitespace-pre-wrap'>
+                  <p className='text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>
                     {contact.summary}
                   </p>
                 </div>

@@ -257,6 +257,22 @@ export interface Player {
    */
   tournamentSchedule?: (number | Tournament)[] | null;
   /**
+   * Points per game
+   */
+  ppg?: number | null;
+  /**
+   * Rebounds per game
+   */
+  rpg?: number | null;
+  /**
+   * Assists per game
+   */
+  apg?: number | null;
+  /**
+   * Desired level of collegiate play
+   */
+  desiredLevelOfPlay?: ('d1' | 'd2' | 'd3' | 'naia' | 'juco') | null;
+  /**
    * Soft delete timestamp - if set, profile is archived
    */
   deletedAt?: string | null;
@@ -319,20 +335,6 @@ export interface Coach {
    * e.g., "Head Coach", "Assistant Coach", "Recruiting Coordinator"
    */
   position?: string | null;
-  division?: ('d1' | 'd2' | 'd3' | 'naia' | 'juco' | 'other') | null;
-  state?: string | null;
-  region?:
-    | (
-        | 'new-england'
-        | 'mid-atlantic'
-        | 'southeast'
-        | 'southwest'
-        | 'midwest'
-        | 'mountain-west'
-        | 'west-coast'
-        | 'pacific-northwest'
-      )
-    | null;
   email?: string | null;
   phone?: string | null;
   bio?: string | null;
@@ -695,6 +697,10 @@ export interface PlayersSelect<T extends boolean = true> {
         id?: T;
       };
   tournamentSchedule?: T;
+  ppg?: T;
+  rpg?: T;
+  apg?: T;
+  desiredLevelOfPlay?: T;
   deletedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -710,9 +716,6 @@ export interface CoachesSelect<T extends boolean = true> {
   collegeName?: T;
   programName?: T;
   position?: T;
-  division?: T;
-  state?: T;
-  region?: T;
   email?: T;
   phone?: T;
   bio?: T;

@@ -12,24 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@workspace/ui/components/popover'
 import { US_STATES_AND_TERRITORIES } from '@/types/states'
 import { getPositionOptions } from '@/types/positions'
 import { getGraduationYearOptions } from '@/types/graduationYears'
-import { X, ChevronDown, GraduationCap, MapPin, Award, Ruler } from 'lucide-react'
-import { cn } from '@workspace/ui/lib/utils'
 import { RangeSlider } from './RangeSlider'
-
-// Helper function to convert inches to feet'inches" format
-const formatHeight = (inches: number): string => {
-  const feet = Math.floor(inches / 12)
-  const remainingInches = inches % 12
-  return `${feet}'${remainingInches}"`
-}
+import { X } from 'lucide-react'
 
 export function PlayerFilters() {
   const router = useRouter()
@@ -41,21 +28,16 @@ export function PlayerFilters() {
     searchParams.get('graduationYear') || '',
   )
   const [position, setPosition] = useState(searchParams.get('position') || '')
-
-  // GPA range state
+  const [state, setState] = useState(searchParams.get('state') || '')
+  const [city, setCity] = useState(searchParams.get('city') || '')
   const [gpaRange, setGpaRange] = useState<[number, number]>([
     parseFloat(searchParams.get('minGpa') || '0'),
     parseFloat(searchParams.get('maxGpa') || '4'),
   ])
-
-  // Height range state (in inches)
   const [heightRange, setHeightRange] = useState<[number, number]>([
     parseInt(searchParams.get('minHeight') || '60'),
     parseInt(searchParams.get('maxHeight') || '90'),
   ])
-
-  const [state, setState] = useState(searchParams.get('state') || '')
-  const [city, setCity] = useState(searchParams.get('city') || '')
 
   // Debounce timer ref
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
@@ -100,10 +82,8 @@ export function PlayerFilters() {
 
   const handleTextChange = (key: string, value: string) => {
     // Update state
-    switch (key) {
-      case 'city':
-        setCity(value)
-        break
+    if (key === 'city') {
+      setCity(value)
     }
 
     // Clear existing timer
@@ -119,51 +99,29 @@ export function PlayerFilters() {
     setDebounceTimer(timer)
   }
 
-  const handleGpaRangeChange = (range: [number, number]) => {
-    setGpaRange(range)
-
-    // Clear existing timer
-    if (debounceTimer) {
-      clearTimeout(debounceTimer)
-    }
-
-    // Debounce URL update
-    const timer = setTimeout(() => {
-      updateURL({
-        minGpa: range[0] > 0 ? range[0].toString() : '',
-        maxGpa: range[1] < 4 ? range[1].toString() : '',
-      })
-    }, 300)
-
-    setDebounceTimer(timer)
+  const handleGpaRangeChange = (value: [number, number]) => {
+    setGpaRange(value)
+    updateURL({ minGpa: value[0].toString(), maxGpa: value[1].toString() })
   }
 
-  const handleHeightRangeChange = (range: [number, number]) => {
-    setHeightRange(range)
+  const handleHeightRangeChange = (value: [number, number]) => {
+    setHeightRange(value)
+    updateURL({ minHeight: value[0].toString(), maxHeight: value[1].toString() })
+  }
 
-    // Clear existing timer
-    if (debounceTimer) {
-      clearTimeout(debounceTimer)
-    }
-
-    // Debounce URL update
-    const timer = setTimeout(() => {
-      updateURL({
-        minHeight: range[0] > 60 ? range[0].toString() : '',
-        maxHeight: range[1] < 90 ? range[1].toString() : '',
-      })
-    }, 300)
-
-    setDebounceTimer(timer)
+  const formatHeight = (inches: number) => {
+    const feet = Math.floor(inches / 12)
+    const remainingInches = inches % 12
+    return `${feet}'${remainingInches}"`
   }
 
   const clearAllFilters = () => {
     setGraduationYear('')
     setPosition('')
-    setGpaRange([0, 4])
-    setHeightRange([60, 90])
     setState('')
     setCity('')
+    setGpaRange([0, 4])
+    setHeightRange([60, 90])
 
     startTransition(() => {
       router.push('/players')
@@ -183,248 +141,142 @@ export function PlayerFilters() {
   const activeFilterCount = [
     graduationYear,
     position,
-    gpaRange[0] > 0 || gpaRange[1] < 4,
-    heightRange[0] > 60 || heightRange[1] < 90,
     state,
     city,
+    gpaRange[0] > 0 || gpaRange[1] < 4,
+    heightRange[0] > 60 || heightRange[1] < 90,
   ].filter(Boolean).length
 
   return (
-    <div className='sticky top-0 z-40 bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 mb-6'>
-      <div className='max-w-7xl mx-auto px-4 py-4'>
-        <div className='flex items-center gap-2 flex-wrap'>
-          {/* Graduation Year Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant='outline'
-                className={cn(
-                  'h-10 px-4 rounded-full border transition-all duration-200 hover:scale-105',
-                  graduationYear
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-white/90 shadow-md'
-                    : 'bg-slate-100 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
-                )}
-              >
-                <GraduationCap className='w-4 h-4 mr-2' />
-                {graduationYear
-                  ? `Class of ${graduationYear}`
-                  : 'Graduation Year'}
-                <ChevronDown className='w-4 h-4 ml-2' />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-64 p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700'>
-              <div className='space-y-3'>
-                <h4 className='font-semibold text-slate-900 dark:text-white text-sm'>
-                  Graduation Year
-                </h4>
-                <Select
-                  value={graduationYear}
-                  onValueChange={(value) =>
-                    handleSelectChange('graduationYear', value)
-                  }
-                >
-                  <SelectTrigger className='w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'>
-                    <SelectValue placeholder='Select year' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getGraduationYearOptions().map((year) => (
-                      <SelectItem key={year.value} value={year.value}>
-                        {year.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </PopoverContent>
-          </Popover>
+    <div className='bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-4 mb-6'>
+      <div className='flex flex-col gap-4'>
+        {/* First Row - Main Filters */}
+        <div className='grid grid-cols-2 lg:grid-cols-4 gap-3'>
+          {/* Graduation Year */}
+          <div className='space-y-1.5'>
+            <Label htmlFor='graduationYear' className='text-slate-600 dark:text-slate-300 text-sm'>
+              Graduation Year
+            </Label>
+            <Select
+              value={graduationYear}
+              onValueChange={(value) => handleSelectChange('graduationYear', value)}
+            >
+              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'>
+                <SelectValue placeholder='All Years' />
+              </SelectTrigger>
+              <SelectContent>
+                {getGraduationYearOptions().map((year) => (
+                  <SelectItem key={year.value} value={year.value}>
+                    {year.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* Position Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant='outline'
-                className={cn(
-                  'h-10 px-4 rounded-full border transition-all duration-200 hover:scale-105',
-                  position
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-white/90 shadow-md'
-                    : 'bg-slate-100 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
-                )}
-              >
-                <Award className='w-4 h-4 mr-2' />
-                {position
-                  ? getPositionOptions().find((p) => p.value === position)
-                      ?.label
-                  : 'Position'}
-                <ChevronDown className='w-4 h-4 ml-2' />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-64 p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700'>
-              <div className='space-y-3'>
-                <h4 className='font-semibold text-slate-900 dark:text-white text-sm'>Position</h4>
-                <Select
-                  value={position}
-                  onValueChange={(value) => handleSelectChange('position', value)}
-                >
-                  <SelectTrigger className='w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'>
-                    <SelectValue placeholder='Select position' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getPositionOptions().map((pos) => (
-                      <SelectItem key={pos.value} value={pos.value}>
-                        {pos.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </PopoverContent>
-          </Popover>
+          {/* Position */}
+          <div className='space-y-1.5'>
+            <Label htmlFor='position' className='text-slate-600 dark:text-slate-300 text-sm'>
+              Position
+            </Label>
+            <Select
+              value={position}
+              onValueChange={(value) => handleSelectChange('position', value)}
+            >
+              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'>
+                <SelectValue placeholder='All Positions' />
+              </SelectTrigger>
+              <SelectContent>
+                {getPositionOptions().map((pos) => (
+                  <SelectItem key={pos.value} value={pos.value}>
+                    {pos.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* Height Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant='outline'
-                className={cn(
-                  'h-10 px-4 rounded-full border transition-all duration-200 hover:scale-105',
-                  heightRange[0] > 60 || heightRange[1] < 90
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-white/90 shadow-md'
-                    : 'bg-slate-100 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
-                )}
-              >
-                <Ruler className='w-4 h-4 mr-2' />
-                {heightRange[0] > 60 || heightRange[1] < 90
-                  ? `${formatHeight(heightRange[0])} - ${formatHeight(heightRange[1])}`
-                  : 'Height'}
-                <ChevronDown className='w-4 h-4 ml-2' />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-80 p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700'>
-              <RangeSlider
-                min={60}
-                max={90}
-                step={1}
-                value={heightRange}
-                onValueChange={handleHeightRangeChange}
-                formatValue={formatHeight}
-                label='Height Range'
-              />
-            </PopoverContent>
-          </Popover>
+          {/* State */}
+          <div className='space-y-1.5'>
+            <Label htmlFor='state' className='text-slate-600 dark:text-slate-300 text-sm'>
+              State
+            </Label>
+            <Select
+              value={state}
+              onValueChange={(value) => handleSelectChange('state', value)}
+            >
+              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'>
+                <SelectValue placeholder='All States' />
+              </SelectTrigger>
+              <SelectContent>
+                {US_STATES_AND_TERRITORIES.map((stateOption) => (
+                  <SelectItem key={stateOption.value} value={stateOption.value}>
+                    {stateOption.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* Location Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant='outline'
-                className={cn(
-                  'h-10 px-4 rounded-full border transition-all duration-200 hover:scale-105',
-                  state || city
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-white/90 shadow-md'
-                    : 'bg-slate-100 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
-                )}
-              >
-                <MapPin className='w-4 h-4 mr-2' />
-                {city && state
-                  ? `${city}, ${state}`
-                  : state || city || 'Location'}
-                <ChevronDown className='w-4 h-4 ml-2' />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-80 p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700'>
-              <div className='space-y-4'>
-                <h4 className='font-semibold text-slate-900 dark:text-white text-sm'>Location</h4>
-                <div className='space-y-3'>
-                  <div>
-                    <Label htmlFor='state' className='text-slate-600 dark:text-slate-300 text-xs mb-2'>
-                      State
-                    </Label>
-                    <Select
-                      value={state}
-                      onValueChange={(value) => handleSelectChange('state', value)}
-                    >
-                      <SelectTrigger className='w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'>
-                        <SelectValue placeholder='All states' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {US_STATES_AND_TERRITORIES.map((stateOption) => (
-                          <SelectItem
-                            key={stateOption.value}
-                            value={stateOption.value}
-                          >
-                            {stateOption.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor='city' className='text-slate-600 dark:text-slate-300 text-xs mb-2'>
-                      City
-                    </Label>
-                    <Input
-                      id='city'
-                      value={city}
-                      onChange={(e) => handleTextChange('city', e.target.value)}
-                      className='w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
-                      placeholder='Enter city'
-                    />
-                  </div>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+          {/* City */}
+          <div className='space-y-1.5'>
+            <Label htmlFor='city' className='text-slate-600 dark:text-slate-300 text-sm'>
+              City
+            </Label>
+            <Input
+              id='city'
+              type='text'
+              placeholder='Enter City'
+              value={city}
+              onChange={(e) => handleTextChange('city', e.target.value)}
+              className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'
+            />
+          </div>
+        </div>
 
-          {/* GPA Filter */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant='outline'
-                className={cn(
-                  'h-10 px-4 rounded-full border transition-all duration-200 hover:scale-105',
-                  gpaRange[0] > 0 || gpaRange[1] < 4
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white hover:bg-slate-800 dark:hover:bg-white/90 shadow-md'
-                    : 'bg-slate-100 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
-                )}
-              >
-                GPA
-                {(gpaRange[0] > 0 || gpaRange[1] < 4) && (
-                  <span className='ml-1'>
-                    : {gpaRange[0].toFixed(1)} - {gpaRange[1].toFixed(1)}
-                  </span>
-                )}
-                <ChevronDown className='w-4 h-4 ml-2' />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-80 p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700'>
-              <RangeSlider
-                min={0}
-                max={4}
-                step={0.1}
-                value={gpaRange}
-                onValueChange={handleGpaRangeChange}
-                formatValue={(v) => v.toFixed(1)}
-                label='GPA Range'
-              />
-            </PopoverContent>
-          </Popover>
+        {/* Second Row - Range Filters */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+          {/* GPA Range */}
+          <div>
+            <RangeSlider
+              min={0}
+              max={4}
+              step={0.1}
+              value={gpaRange}
+              onValueChange={handleGpaRangeChange}
+              formatValue={(v) => v.toFixed(1)}
+              label='GPA Range'
+            />
+          </div>
 
-          {/* Spacer */}
-          <div className='flex-1' />
+          {/* Height Range */}
+          <div>
+            <RangeSlider
+              min={60}
+              max={90}
+              step={1}
+              value={heightRange}
+              onValueChange={handleHeightRangeChange}
+              formatValue={formatHeight}
+              label='Height Range'
+            />
+          </div>
 
           {/* Clear All Button */}
-          {activeFilterCount > 0 && (
-            <Button
-              onClick={clearAllFilters}
-              variant='ghost'
-              size='sm'
-              disabled={isPending}
-              className='h-10 px-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all'
-            >
-              <X className='w-4 h-4 mr-2' />
-              Clear all ({activeFilterCount})
-            </Button>
-          )}
+          <div className='flex items-end'>
+            {activeFilterCount > 0 && (
+              <Button
+                onClick={clearAllFilters}
+                variant='ghost'
+                size='sm'
+                disabled={isPending}
+                className='h-9 w-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              >
+                <X className='w-4 h-4 mr-1' />
+                Clear {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

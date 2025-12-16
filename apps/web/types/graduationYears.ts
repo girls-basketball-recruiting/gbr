@@ -1,5 +1,5 @@
 // Generate graduation years dynamically based on current year
-// Shows current year + next 4 years (e.g., if 2025, shows 2025-2029)
+// Shows current year + next 6 years (e.g., if 2025, shows 2025-2031)
 export function getGraduationYears(): number[] {
   const currentYear = new Date().getFullYear()
   const years: number[] = []

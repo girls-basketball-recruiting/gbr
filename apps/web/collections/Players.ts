@@ -120,6 +120,41 @@ export const Players: CollectionConfig = {
       },
     },
     {
+      name: 'ppg',
+      type: 'number',
+      admin: {
+        description: 'Points per game',
+      },
+    },
+    {
+      name: 'rpg',
+      type: 'number',
+      admin: {
+        description: 'Rebounds per game',
+      },
+    },
+    {
+      name: 'apg',
+      type: 'number',
+      admin: {
+        description: 'Assists per game',
+      },
+    },
+    {
+      name: 'desiredLevelOfPlay',
+      type: 'select',
+      options: [
+        { label: 'NCAA D1', value: 'd1' },
+        { label: 'NCAA D2', value: 'd2' },
+        { label: 'NCAA D3', value: 'd3' },
+        { label: 'NAIA', value: 'naia' },
+        { label: 'JUCO', value: 'juco' },
+      ],
+      admin: {
+        description: 'Desired level of collegiate play',
+      },
+    },
+    {
       name: 'deletedAt',
       type: 'date',
       admin: {

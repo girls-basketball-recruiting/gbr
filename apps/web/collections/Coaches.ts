@@ -59,36 +59,6 @@ export const Coaches: CollectionConfig = {
               },
             },
             {
-              name: 'division',
-              type: 'select',
-              options: [
-                { label: 'NCAA D1', value: 'd1' },
-                { label: 'NCAA D2', value: 'd2' },
-                { label: 'NCAA D3', value: 'd3' },
-                { label: 'NAIA', value: 'naia' },
-                { label: 'JUCO', value: 'juco' },
-                { label: 'Other', value: 'other' },
-              ],
-            },
-            {
-              name: 'state',
-              type: 'text',
-            },
-            {
-              name: 'region',
-              type: 'select',
-              options: [
-                { label: 'New England', value: 'new-england' },
-                { label: 'Mid-Atlantic', value: 'mid-atlantic' },
-                { label: 'Southeast', value: 'southeast' },
-                { label: 'Southwest', value: 'southwest' },
-                { label: 'Midwest', value: 'midwest' },
-                { label: 'Mountain West', value: 'mountain-west' },
-                { label: 'West Coast', value: 'west-coast' },
-                { label: 'Pacific Northwest', value: 'pacific-northwest' },
-              ],
-            },
-            {
               name: 'email',
               type: 'email',
             },

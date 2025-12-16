@@ -9,8 +9,8 @@ export default async function DashboardPage() {
 
   if (!clerkUser) {
     return (
-      <div className='min-h-svh flex items-center justify-center bg-slate-900'>
-        <p className='text-white'>Loading...</p>
+      <div className='min-h-svh flex items-center justify-center bg-slate-50 dark:bg-slate-900'>
+        <p className='text-slate-900 dark:text-white'>Loading...</p>
       </div>
     )
   }
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
       {isCoach && <CoachDashboard />}
       {!isPlayer && !isCoach && (
         <div className='flex items-center justify-center p-16'>
-          <p className='text-white'>No role assigned yet. Please contact support.</p>
+          <p className='text-slate-900 dark:text-white'>No role assigned yet. Please contact support.</p>
         </div>
       )}
     </>

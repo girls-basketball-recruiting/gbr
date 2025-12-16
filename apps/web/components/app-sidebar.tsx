@@ -51,11 +51,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       icon: Users,
     },
     {
-      title: 'My Prospects',
-      url: '/prospects',
-      icon: UserPlus,
-    },
-    {
       title: 'Programs',
       url: '/programs',
       icon: School,

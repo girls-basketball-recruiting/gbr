@@ -133,7 +133,7 @@ export function ProgramFilters() {
             <Input
               id='search'
               type='text'
-              placeholder='e.g., Stanford, UConn...'
+              placeholder='Enter school name'
               value={filters.search}
               onChange={(e) => handleTextChange('search', e.target.value)}
               className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'
@@ -187,7 +187,7 @@ export function ProgramFilters() {
           {/* Type Filter */}
           <div className='space-y-1.5'>
             <Label htmlFor='type' className='text-slate-600 dark:text-slate-300 text-sm'>
-              Type
+              Institution Type
             </Label>
             <Select
               value={filters.type}

@@ -5,26 +5,6 @@ interface CoachProfileViewProps {
   coach: any
 }
 
-const divisionLabels: Record<string, string> = {
-  d1: 'NCAA D1',
-  d2: 'NCAA D2',
-  d3: 'NCAA D3',
-  naia: 'NAIA',
-  juco: 'JUCO',
-  other: 'Other',
-}
-
-const regionLabels: Record<string, string> = {
-  'new-england': 'New England',
-  'mid-atlantic': 'Mid-Atlantic',
-  southeast: 'Southeast',
-  southwest: 'Southwest',
-  midwest: 'Midwest',
-  'mountain-west': 'Mountain West',
-  'west-coast': 'West Coast',
-  'pacific-northwest': 'Pacific Northwest',
-}
-
 export function CoachProfileView({ coach }: CoachProfileViewProps) {
   return (
     <>
@@ -75,28 +55,6 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
                 <div>
                   <span className='text-slate-600 dark:text-slate-400'>Program:</span>{' '}
                   <span className='font-medium'>{coach.programName}</span>
-                </div>
-              )}
-              {coach.division && (
-                <div>
-                  <span className='text-slate-600 dark:text-slate-400'>Division:</span>{' '}
-                  <span className='font-medium'>
-                    {divisionLabels[coach.division] || coach.division}
-                  </span>
-                </div>
-              )}
-              {coach.state && (
-                <div>
-                  <span className='text-slate-600 dark:text-slate-400'>State:</span>{' '}
-                  <span className='font-medium'>{coach.state}</span>
-                </div>
-              )}
-              {coach.region && (
-                <div>
-                  <span className='text-slate-600 dark:text-slate-400'>Region:</span>{' '}
-                  <span className='font-medium'>
-                    {regionLabels[coach.region] || coach.region}
-                  </span>
                 </div>
               )}
             </div>

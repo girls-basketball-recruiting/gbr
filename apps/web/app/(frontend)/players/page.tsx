@@ -2,7 +2,6 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { PlayerFilters } from '@/components/PlayerFilters'
 import { SavePlayerButton } from '@/components/SavePlayerButton'
-import { ActiveFilterChips } from '@/components/ActiveFilterChips'
 import { SortByDropdown } from '@/components/SortByDropdown'
 import { Pagination } from '@/components/Pagination'
 import { currentUser } from '@clerk/nextjs/server'
@@ -10,6 +9,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { PlayerCard } from '@/components/ui/PlayerCard'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
+import { PlayersPageContent } from '@/components/PlayersPageContent'
 
 interface PlayersPageProps {
   searchParams: Promise<{
@@ -23,6 +23,7 @@ interface PlayersPageProps {
     city?: string
     sortBy?: string
     page?: string
+    view?: 'grid' | 'table'
   }>
 }
 
@@ -185,61 +186,19 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
               </div>
             )}
 
-            <div className='flex flex-col lg:flex-row gap-8'>
-              {/* Filters Sidebar - Desktop: fixed width sidebar, Mobile: hidden by default */}
-              <aside className='lg:w-80 shrink-0'>
-                <div className='lg:sticky lg:top-4'>
-                  <PlayerFilters />
-                </div>
-              </aside>
+            {/* Filters */}
+            <PlayerFilters />
 
-              {/* Players Grid */}
-              <div className='flex-1 min-w-0'>
-                {/* Active Filters and Sort */}
-                <div className='mb-6 space-y-4'>
-                  {/* Active filter chips */}
-                  <ActiveFilterChips />
-
-                  {/* Results count and sort */}
-                  <div className='flex items-center justify-between'>
-                    <p className='text-slate-600 dark:text-slate-400'>
-                      {totalDocs} {totalDocs === 1 ? 'player' : 'players'} found
-                    </p>
-                    <SortByDropdown />
-                  </div>
-                </div>
-
-                {/* Players grid */}
-                {players.length === 0 ? (
-                  <EmptyState
-                    title='No Players Found'
-                    description='No players match your current filters. Try adjusting your search criteria.'
-                  />
-                ) : (
-                  <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
-                    {players.map((player) => (
-                      <PlayerCard
-                        key={player.id}
-                        player={player}
-                        action={
-                          isCoach ? (
-                            <SavePlayerButton
-                              playerId={player.id}
-                              initialIsSaved={savedPlayerIds.includes(player.id)}
-                              variant='outline'
-                              className='border-slate-600 text-white hover:bg-slate-800'
-                            />
-                          ) : undefined
-                        }
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {/* Pagination */}
-                <Pagination currentPage={page} totalPages={totalPages} />
-              </div>
-            </div>
+            {/* Content */}
+            <PlayersPageContent
+              players={players}
+              totalDocs={totalDocs}
+              totalPages={totalPages}
+              currentPage={page}
+              savedPlayerIds={savedPlayerIds}
+              isCoach={isCoach}
+              initialView={(params.view as 'grid' | 'table') || 'grid'}
+            />
           </div>
         </div>
       </div>

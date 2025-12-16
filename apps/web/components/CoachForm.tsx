@@ -24,7 +24,6 @@ import {
 } from '@workspace/ui/components/select'
 import { CollegeCombobox } from '@/components/CollegeCombobox'
 import type { Coach } from '@/payload-types'
-import { US_STATES_AND_TERRITORIES } from '@/types/states'
 
 interface CoachFormProps {
   profile?: Coach
@@ -48,9 +47,6 @@ export function CoachForm({
     collegeName: profile?.collegeName || '',
     programName: profile?.programName || '',
     position: profile?.position || '',
-    division: profile?.division || '',
-    state: profile?.state || '',
-    region: profile?.region || '',
     email: profile?.email || '',
     phone: profile?.phone || '',
     bio: profile?.bio || '',
@@ -180,7 +176,7 @@ export function CoachForm({
               </Field>
             </div>
 
-            <div className='grid grid-cols-2 gap-4'>
+            {/* <div className='grid grid-cols-2 gap-4'>
               <Field className='gap-1'>
                 <FieldLabel htmlFor='division'>Division</FieldLabel>
                 <Select
@@ -227,28 +223,7 @@ export function CoachForm({
                   </SelectContent>
                 </Select>
               </Field>
-            </div>
-
-            <Field className='gap-1'>
-              <FieldLabel htmlFor='state'>State</FieldLabel>
-              <Select
-                value={formData.state}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, state: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder='Select state' />
-                </SelectTrigger>
-                <SelectContent>
-                  {US_STATES_AND_TERRITORIES.map((state) => (
-                    <SelectItem key={state.value} value={state.value}>
-                      {state.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+            </div> */}
 
             <div className='grid grid-cols-2 gap-4'>
               <Field className='gap-1'>
