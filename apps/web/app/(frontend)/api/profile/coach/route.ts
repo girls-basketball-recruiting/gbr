@@ -88,13 +88,22 @@ export async function POST(req: Request) {
     // Parse the request body
     const body = await req.json()
 
+    // Validate collegeId is provided
+    if (!body.collegeId || body.collegeId === 0) {
+      return NextResponse.json(
+        { error: 'College selection is required' },
+        { status: 400 },
+      )
+    }
+
     // Create the coach profile
     const coach = await payload.create({
       collection: 'coaches',
       data: {
         user: payloadUser.id,
         name: body.name,
-        university: body.university,
+        collegeId: body.collegeId,
+        collegeName: body.collegeName,
         programName: body.programName || undefined,
         position: body.position || undefined,
         division: body.division || undefined,

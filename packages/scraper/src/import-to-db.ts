@@ -2,15 +2,7 @@ import 'dotenv/config'
 import { readFileSync } from 'fs'
 import { getPayload } from 'payload'
 import config from '../../../apps/web/payload.config.js'
-
-interface College {
-  school: string
-  city: string
-  state: string
-  type: string
-  conference: string
-  division: string
-}
+import { College } from './types'
 
 // Map scraped division names to database values
 function normalizeDivision(division: string): string {

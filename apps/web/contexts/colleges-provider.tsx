@@ -1,18 +1,7 @@
 'use client'
 
 import * as React from 'react'
-
-interface College {
-  id: string
-  school: string
-  state: string
-  division: string
-  // Note: Only essential fields are fetched for autocomplete performance.
-  // Full college details (city, conference, type) available in Payload CMS if needed.
-  city?: string
-  conference?: string
-  type?: string
-}
+import type { College } from '@/payload-types'
 
 interface CollegesContextValue {
   colleges: College[]

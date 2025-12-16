@@ -140,16 +140,16 @@ export default async function PlayerProfilePage({
   // If not authenticated, show limited public view for SEO
   if (!isAuthenticated) {
     return (
-      <div className='min-h-svh bg-slate-900 py-12'>
+      <div className='min-h-svh bg-slate-50 dark:bg-slate-900 py-12'>
         <div className='container mx-auto px-4 max-w-3xl'>
 
           {/* Public Player Profile */}
-          <Card className='bg-slate-800/50 border-slate-700 p-8 mb-8'>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
             <div className='text-center space-y-6'>
               {/* Profile Image */}
               {player.profileImage && typeof player.profileImage === 'object' && player.profileImage.url && (
                 <div className='flex justify-center'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden bg-slate-700 relative'>
+                  <div className='w-32 h-32 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative'>
                     <Image
                       src={player.profileImage.url}
                       alt={`${player.firstName} ${player.lastName}`}
@@ -162,19 +162,19 @@ export default async function PlayerProfilePage({
 
               {/* Name */}
               <div>
-                <h1 className='text-4xl font-bold text-white mb-2'>
+                <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
                   {player.firstName} {player.lastName}
                 </h1>
-                <p className='text-xl text-slate-400'>
+                <p className='text-xl text-slate-600 dark:text-slate-400'>
                   Class of {player.graduationYear}
                 </p>
               </div>
 
               {/* Limited Info */}
-              <div className='space-y-3 text-slate-300 max-w-md mx-auto'>
+              <div className='space-y-3 text-slate-700 dark:text-slate-300 max-w-md mx-auto'>
                 {player.primaryPosition && (
                   <div className='flex items-center justify-center gap-2'>
-                    <span className='text-slate-400'>Position:</span>
+                    <span className='text-slate-600 dark:text-slate-400'>Position:</span>
                     <span className='font-medium'>
                       {getPositionLabel(player.primaryPosition)}
                     </span>
@@ -182,15 +182,15 @@ export default async function PlayerProfilePage({
                 )}
                 {player.highSchool && (
                   <div className='flex items-center justify-center gap-2'>
-                    <span className='text-slate-400'>School:</span>
+                    <span className='text-slate-600 dark:text-slate-400'>School:</span>
                     <span className='font-medium'>{player.highSchool}</span>
                   </div>
                 )}
               </div>
 
               {/* CTA to Sign Up */}
-              <div className='pt-6 border-t border-slate-700'>
-                <p className='text-slate-400 mb-4'>
+              <div className='pt-6 border-t border-slate-200 dark:border-slate-700'>
+                <p className='text-slate-600 dark:text-slate-400 mb-4'>
                   Sign in to view full profile including stats, highlight videos, and
                   contact information
                 </p>
@@ -225,12 +225,12 @@ export default async function PlayerProfilePage({
     <div className='p-8'>
       <div className='max-w-5xl mx-auto'>
         {/* Player Header */}
-        <Card className='bg-slate-800/50 border-slate-700 p-8 mb-8'>
+        <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
           <div className='flex items-start justify-between gap-6'>
             <div className='flex items-start gap-6 flex-1'>
               {/* Profile Image */}
               {player.profileImage && typeof player.profileImage === 'object' && player.profileImage.url && (
-                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
                   <Image
                     src={player.profileImage.url}
                     alt={`${player.firstName} ${player.lastName}`}
@@ -242,10 +242,10 @@ export default async function PlayerProfilePage({
 
               {/* Player Info */}
               <div>
-                <h1 className='text-4xl font-bold text-white mb-2'>
+                <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
                   {player.firstName} {player.lastName}
                 </h1>
-                <p className='text-xl text-slate-400'>
+                <p className='text-xl text-slate-600 dark:text-slate-400'>
                   Class of {player.graduationYear}
                 </p>
               </div>
@@ -264,14 +264,14 @@ export default async function PlayerProfilePage({
 
         {/* Player Details */}
         <div className='grid md:grid-cols-2 gap-8 mb-8'>
-          <Card className='bg-slate-800/50 border-slate-700 p-6'>
-            <h2 className='text-2xl font-bold text-white mb-4'>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+            <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
               Athletic Info
             </h2>
-            <div className='space-y-3 text-slate-300'>
+            <div className='space-y-3 text-slate-700 dark:text-slate-300'>
               {player.primaryPosition && (
                 <div>
-                  <span className='text-slate-400'>Primary Position:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Primary Position:</span>{' '}
                   <span className='font-medium'>
                     {getPositionLabel(player.primaryPosition)}
                   </span>
@@ -279,7 +279,7 @@ export default async function PlayerProfilePage({
               )}
               {player.secondaryPosition && (
                 <div>
-                  <span className='text-slate-400'>Secondary Position:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Secondary Position:</span>{' '}
                   <span className='font-medium'>
                     {getPositionLabel(player.secondaryPosition)}
                   </span>
@@ -287,27 +287,27 @@ export default async function PlayerProfilePage({
               )}
               {player.height && (
                 <div>
-                  <span className='text-slate-400'>Height:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Height:</span>{' '}
                   <span className='font-medium'>{player.height}</span>
                 </div>
               )}
             </div>
           </Card>
 
-          <Card className='bg-slate-800/50 border-slate-700 p-6'>
-            <h2 className='text-2xl font-bold text-white mb-4'>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+            <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
               Academic & Contact
             </h2>
-            <div className='space-y-3 text-slate-300'>
+            <div className='space-y-3 text-slate-700 dark:text-slate-300'>
               {player.highSchool && (
                 <div>
-                  <span className='text-slate-400'>High School:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>High School:</span>{' '}
                   <span className='font-medium'>{player.highSchool}</span>
                 </div>
               )}
               {(player.city || player.state) && (
                 <div>
-                  <span className='text-slate-400'>Location:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Location:</span>{' '}
                   <span className='font-medium'>
                     {player.city}
                     {player.city && player.state && ', '}
@@ -317,13 +317,13 @@ export default async function PlayerProfilePage({
               )}
               {player.weightedGpa && (
                 <div>
-                  <span className='text-slate-400'>Weighted GPA:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Weighted GPA:</span>{' '}
                   <span className='font-medium'>{player.weightedGpa}</span>
                 </div>
               )}
               {player.unweightedGpa && (
                 <div>
-                  <span className='text-slate-400'>Unweighted GPA:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Unweighted GPA:</span>{' '}
                   <span className='font-medium'>{player.unweightedGpa}</span>
                 </div>
               )}
@@ -333,16 +333,16 @@ export default async function PlayerProfilePage({
 
         {/* Bio */}
         {player.bio && (
-          <Card className='bg-slate-800/50 border-slate-700 p-6 mb-8'>
-            <h2 className='text-2xl font-bold text-white mb-4'>About</h2>
-            <p className='text-slate-300 whitespace-pre-wrap'>{player.bio}</p>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6 mb-8'>
+            <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>About</h2>
+            <p className='text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>{player.bio}</p>
           </Card>
         )}
 
         {/* Tournament Schedule */}
         {player.tournamentSchedule && Array.isArray(player.tournamentSchedule) && player.tournamentSchedule.length > 0 && (
-          <Card className='bg-slate-800/50 border-slate-700 p-6 mb-8'>
-            <h2 className='text-2xl font-bold text-white mb-4'>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6 mb-8'>
+            <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
               Tournament Schedule
             </h2>
             <div className='space-y-3'>
@@ -376,11 +376,11 @@ export default async function PlayerProfilePage({
                 return (
                   <div
                     key={t.id}
-                    className='flex items-center justify-between p-4 bg-slate-700/30 rounded-lg border border-slate-600'
+                    className='flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-600'
                   >
                     <div>
-                      <h3 className='font-semibold text-white'>{t.name}</h3>
-                      <p className='text-sm text-slate-400'>
+                      <h3 className='font-semibold text-slate-900 dark:text-white'>{t.name}</h3>
+                      <p className='text-sm text-slate-600 dark:text-slate-400'>
                         {formatDateRange(t.startDate, t.endDate)} • {t.location}
                       </p>
                     </div>
@@ -389,7 +389,7 @@ export default async function PlayerProfilePage({
                         href={t.website}
                         target='_blank'
                         rel='noopener noreferrer'
-                        className='text-blue-400 hover:text-blue-300 text-sm'
+                        className='text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm'
                       >
                         View Details →
                       </a>
@@ -403,8 +403,8 @@ export default async function PlayerProfilePage({
 
         {/* Highlight Videos */}
         {player.highlightVideoUrls && Array.isArray(player.highlightVideoUrls) && player.highlightVideoUrls.length > 0 && (
-          <Card className='bg-slate-800/50 border-slate-700 p-6 mb-8'>
-            <h2 className='text-2xl font-bold text-white mb-4'>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6 mb-8'>
+            <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
               Highlight Videos
             </h2>
             <div className='space-y-2'>
@@ -416,7 +416,7 @@ export default async function PlayerProfilePage({
                       href={url}
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='text-blue-400 hover:text-blue-300 underline block'
+                      className='text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline block'
                     >
                       {url}
                     </a>

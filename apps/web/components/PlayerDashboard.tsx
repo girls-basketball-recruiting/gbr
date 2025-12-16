@@ -139,7 +139,7 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
                         {coach.name}
                       </h4>
                       <p className='text-slate-400 text-sm'>
-                        {coach.university}
+                        {coach.collegeName}
                       </p>
                     </div>
 

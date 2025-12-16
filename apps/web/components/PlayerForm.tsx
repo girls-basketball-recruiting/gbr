@@ -27,6 +27,7 @@ import type { Player } from '@/payload-types'
 import { isValidPosition, getPositionOptions } from '@/types/positions'
 import { US_STATES_AND_TERRITORIES } from '@/types/states'
 import { HeightSelect } from '@/components/HeightSelect'
+import { getGraduationYearOptions } from '@/types/graduationYears'
 
 interface PlayerFormProps {
   profile?: Player
@@ -135,6 +136,13 @@ export function PlayerForm({
     e.preventDefault()
     setIsSubmitting(true)
     setError(null)
+
+    // Frontend validation
+    if (!formData.graduationYear) {
+      setError('Please select a graduation year')
+      setIsSubmitting(false)
+      return
+    }
 
     try {
       const url =
@@ -265,24 +273,25 @@ export function PlayerForm({
 
             <div className='grid grid-cols-2 gap-4'>
               <Field className='gap-1'>
-                <FieldLabel htmlFor='graduationYear'>Graduation Year</FieldLabel>
+                <FieldLabel htmlFor='graduationYear'>
+                  Graduation Year <span className='text-red-500'>*</span>
+                </FieldLabel>
                 <Select
                   value={formData.graduationYear}
                   onValueChange={(value) =>
                     setFormData((prev) => ({ ...prev, graduationYear: value }))
                   }
+                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder='Select year' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='2026'>2026</SelectItem>
-                    <SelectItem value='2027'>2027</SelectItem>
-                    <SelectItem value='2028'>2028</SelectItem>
-                    <SelectItem value='2029'>2029</SelectItem>
-                    <SelectItem value='2030'>2030</SelectItem>
-                    <SelectItem value='2031'>2031</SelectItem>
-                    <SelectItem value='2032'>2032</SelectItem>
+                    {getGraduationYearOptions().map((year) => (
+                      <SelectItem key={year.value} value={year.value}>
+                        {year.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </Field>

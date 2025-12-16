@@ -5,7 +5,12 @@
       "mcp__shadcn__list_items_in_registries",
       "mcp__shadcn__search_items_in_registries",
       "WebFetch(domain:www.ncsasports.org)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(pnpm run payload:generate-types:*)",
+      "WebFetch(domain:www.airbnb.com)",
+      "Bash(grep:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

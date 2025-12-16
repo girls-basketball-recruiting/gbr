@@ -8,7 +8,10 @@ const isPublicRoute = createRouteMatcher([
   '/register-coach(.*)',
   '/onboarding/player(.*)',
   '/onboarding/coach(.*)',
-  '/players/(.*)', // Public player profiles for SEO
+  '/players(.*)', // Public player profiles for SEO
+  '/programs(.*)', // Public college programs browsing
+  '/tournaments(.*)', // Public tournament browsing
+  '/coaches(.*)', // Public coach profiles
   '/api/webhooks(.*)', // Webhooks should be public but verified
   '/admin(.*)', // PayloadCMS handles its own authentication
   '/api/graphql(.*)', // PayloadCMS GraphQL API
@@ -23,6 +26,7 @@ const isPayloadRoute = createRouteMatcher([
   '/api/players(.*)', // PayloadCMS players collection API
   '/api/coaches(.*)', // PayloadCMS coaches collection API
   '/api/colleges(.*)', // PayloadCMS colleges collection API
+  '/api/programs(.*)', // Custom programs API (public)
   '/api/tournaments(.*)', // PayloadCMS tournaments collection API
   '/api/prospects(.*)', // PayloadCMS prospects collection API
   '/api/saved-players(.*)', // PayloadCMS saved-players collection API

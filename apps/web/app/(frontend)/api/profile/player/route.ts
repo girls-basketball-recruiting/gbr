@@ -3,6 +3,57 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { NextResponse } from 'next/server'
 
+export async function GET() {
+  try {
+    const clerkUser = await currentUser()
+    if (!clerkUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const payloadConfig = await config
+    const payload = await getPayload({ config: payloadConfig })
+
+    // Find the PayloadCMS user
+    const users = await payload.find({
+      collection: 'users',
+      where: {
+        clerkId: {
+          equals: clerkUser.id,
+        },
+      },
+    })
+
+    if (users.docs.length === 0) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    const payloadUser = users.docs[0]!
+
+    // Find the player profile
+    const players = await payload.find({
+      collection: 'players',
+      where: {
+        user: {
+          equals: payloadUser.id,
+        },
+      },
+      depth: 2, // Include related data like tournament schedule
+    })
+
+    if (players.docs.length === 0) {
+      return NextResponse.json({ error: 'Player profile not found' }, { status: 404 })
+    }
+
+    return NextResponse.json({ player: players.docs[0] })
+  } catch (error) {
+    console.error('Error fetching player profile:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch player profile' },
+      { status: 500 },
+    )
+  }
+}
+
 export async function POST(req: Request) {
   try {
     // Get the current Clerk user
@@ -118,6 +169,11 @@ export async function POST(req: Request) {
         profileImageId = uploadedImage.id as number
       } catch (uploadError) {
         console.error('Error uploading profile image:', uploadError)
+        // Check if it's a HEIF format error
+        const errorMessage = uploadError instanceof Error ? uploadError.message : String(uploadError)
+        if (errorMessage.includes('heif') || errorMessage.includes('HEIF')) {
+          console.warn('HEIF image format not supported. Please convert to JPG/PNG.')
+        }
         // Continue without profile image rather than failing the whole request
       }
     }
@@ -141,13 +197,30 @@ export async function POST(req: Request) {
     }
 
     // Create the player profile
+    const graduationYearValue = formData.get('graduationYear') as string
+    const parsedGraduationYear = parseInt(graduationYearValue)
+
+    // Validate graduation year
+    if (!graduationYearValue || isNaN(parsedGraduationYear)) {
+      return NextResponse.json(
+        { error: 'Graduation year is required' },
+        { status: 400 }
+      )
+    }
+
+    console.log('Creating player with graduationYear:', {
+      raw: graduationYearValue,
+      parsed: parsedGraduationYear,
+      isNaN: isNaN(parsedGraduationYear)
+    })
+
     const player = await payload.create({
       collection: 'players',
       data: {
         user: payloadUser.id,
         firstName: formData.get('firstName') as string,
         lastName: formData.get('lastName') as string,
-        graduationYear: parseInt(formData.get('graduationYear') as string),
+        graduationYear: parsedGraduationYear,
         city: (formData.get('city') as string) || undefined,
         state: (formData.get('state') as string) || undefined,
         highSchool: formData.get('highSchool') as string,

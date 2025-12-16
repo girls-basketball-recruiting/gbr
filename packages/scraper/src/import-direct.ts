@@ -1,15 +1,7 @@
 import 'dotenv/config'
 import { readFileSync } from 'fs'
 import { sql } from '@vercel/postgres'
-
-interface College {
-  school: string
-  city: string
-  state: string
-  type: string
-  conference: string
-  division: string
-}
+import { College } from './types'
 
 // Map scraped division names to database values
 function normalizeDivision(division: string): string {

@@ -56,6 +56,13 @@ export const Players: CollectionConfig = {
       },
     },
     {
+      name: 'heightInInches',
+      type: 'number',
+      admin: {
+        description: 'Height in total inches (auto-calculated from height field)',
+      },
+    },
+    {
       name: 'weightedGpa',
       type: 'number',
     },
@@ -121,6 +128,22 @@ export const Players: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        // Auto-calculate heightInInches from height field (format: "5'10"")
+        if (data?.height && typeof data.height === 'string') {
+          const match = data.height.match(/(\d+)'(\d+)"?/)
+          if (match) {
+            const feet = parseInt(match[1] || '0')
+            const inches = parseInt(match[2] || '0')
+            data.heightInInches = feet * 12 + inches
+          }
+        }
+        return data
+      },
+    ],
+  },
   access: {
     // Admins can do everything
     admin: ({ req: { user } }) => {

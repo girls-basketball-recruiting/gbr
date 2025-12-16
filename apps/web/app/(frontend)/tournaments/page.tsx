@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react'
 import { TournamentCard } from '@/components/ui/TournamentCard'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useUser } from '@clerk/nextjs'
-import { Loader2 } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { PublicNav } from '@/components/PublicNav'
+import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 
 interface Tournament {
   id: number
@@ -27,6 +29,8 @@ export default function TournamentsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('upcoming')
 
   const isPlayer = user?.publicMetadata?.role === 'player'
+  const isAuthenticated = !!user
+  const isLoggedOut = !user
 
   useEffect(() => {
     fetchData()
@@ -114,99 +118,121 @@ export default function TournamentsPage() {
 
   if (isLoading) {
     return (
-      <div className='p-8'>
-        <div className='max-w-7xl mx-auto'>
-          <div className='flex items-center justify-center py-20'>
-            <Loader2 className='w-8 h-8 text-slate-400 animate-spin' />
+      <>
+        {isLoggedOut && <PublicNav activePage='tournaments' />}
+        <div className='min-h-screen bg-slate-50 dark:bg-slate-900'>
+          <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
+            <div className='max-w-7xl mx-auto'>
+              <LoadingSpinner size='lg' text='Loading tournaments...' />
+            </div>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className='p-8'>
-      <div className='max-w-7xl mx-auto'>
-        {/* Header */}
-        <div className='mb-8'>
-          <h1 className='text-4xl font-bold text-white mb-2'>Tournaments</h1>
-          <p className='text-slate-400'>
-            {isPlayer
-              ? "View upcoming tournaments and mark which ones you'll be attending"
-              : 'View upcoming tournaments and see which players are attending'}
-          </p>
-        </div>
+    <>
+      {isLoggedOut && <PublicNav activePage='tournaments' />}
+      <div className='min-h-screen bg-slate-50 dark:bg-slate-900'>
+        <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
+          <div className='max-w-7xl mx-auto'>
+            {/* Header */}
+            <div className='mb-8'>
+              <h1 className='text-4xl font-bold mb-2 text-slate-900 dark:text-white'>
+                Tournaments
+              </h1>
+              <p className='text-slate-600 dark:text-slate-400'>
+                {isPlayer
+                  ? "View upcoming tournaments and mark which ones you'll be attending"
+                  : 'View upcoming tournaments and see which players are attending'}
+              </p>
+            </div>
 
-        {/* Filter Tabs */}
-        <div className='mb-6 flex gap-2 border-b border-slate-700'>
-          <button
-            onClick={() => setActiveFilter('upcoming')}
-            className={`px-4 py-2 font-medium transition-colors border-b-2 ${
-              activeFilter === 'upcoming'
-                ? 'text-blue-400 border-blue-400'
-                : 'text-slate-400 border-transparent hover:text-slate-300'
-            }`}
-          >
-            Upcoming
-          </button>
-          <button
-            onClick={() => setActiveFilter('past')}
-            className={`px-4 py-2 font-medium transition-colors border-b-2 ${
-              activeFilter === 'past'
-                ? 'text-blue-400 border-blue-400'
-                : 'text-slate-400 border-transparent hover:text-slate-300'
-            }`}
-          >
-            Past
-          </button>
-          <button
-            onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 font-medium transition-colors border-b-2 ${
-              activeFilter === 'all'
-                ? 'text-blue-400 border-blue-400'
-                : 'text-slate-400 border-transparent hover:text-slate-300'
-            }`}
-          >
-            All
-          </button>
-        </div>
+            {/* Unauthenticated CTA */}
+            {isLoggedOut && (
+              <div className='mb-8'>
+                <UnauthenticatedCTA
+                  title='Join to Track Your Schedule'
+                  description="Sign up as a player to mark tournaments you're attending and get discovered by college coaches. Coaches can see which events have the most talent."
+                  variant='premium'
+                />
+              </div>
+            )}
 
-        {/* Results count */}
-        <div className='mb-6'>
-          <p className='text-slate-400'>
-            {sortedTournaments.length}{' '}
-            {sortedTournaments.length === 1 ? 'tournament' : 'tournaments'}
-          </p>
-        </div>
+            {/* Filter Tabs */}
+            <div className='mb-6 flex gap-2 border-b border-slate-300 dark:border-slate-700'>
+              <button
+                onClick={() => setActiveFilter('upcoming')}
+                className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                  activeFilter === 'upcoming'
+                    ? 'text-orange-600 dark:text-orange-500 border-orange-600 dark:border-orange-500'
+                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-300'
+                }`}
+              >
+                Upcoming
+              </button>
+              <button
+                onClick={() => setActiveFilter('past')}
+                className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                  activeFilter === 'past'
+                    ? 'text-orange-600 dark:text-orange-500 border-orange-600 dark:border-orange-500'
+                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-300'
+                }`}
+              >
+                Past
+              </button>
+              <button
+                onClick={() => setActiveFilter('all')}
+                className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+                  activeFilter === 'all'
+                    ? 'text-orange-600 dark:text-orange-500 border-orange-600 dark:border-orange-500'
+                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-300'
+                }`}
+              >
+                All
+              </button>
+            </div>
 
-        {/* Tournaments Grid */}
-        {sortedTournaments.length === 0 ? (
-          <EmptyState
-            title='No Tournaments Found'
-            description={
-              activeFilter === 'upcoming'
-                ? 'There are no upcoming tournaments at this time.'
-                : activeFilter === 'past'
-                  ? 'No past tournaments to display.'
-                  : 'No tournaments available.'
-            }
-          />
-        ) : (
-          <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
-            {sortedTournaments.map((tournament) => (
-              <TournamentCard
-                key={tournament.id}
-                tournament={tournament}
-                isAttending={attendingIds.includes(tournament.id)}
-                isPlayer={isPlayer}
-                onToggleAttendance={
-                  isPlayer ? handleToggleAttendance : undefined
+            {/* Results count */}
+            <div className='mb-6'>
+              <p className='text-slate-600 dark:text-slate-400'>
+                {sortedTournaments.length}{' '}
+                {sortedTournaments.length === 1 ? 'tournament' : 'tournaments'}
+              </p>
+            </div>
+
+            {/* Tournaments Grid */}
+            {sortedTournaments.length === 0 ? (
+              <EmptyState
+                title='No Tournaments Found'
+                description={
+                  activeFilter === 'upcoming'
+                    ? 'There are no upcoming tournaments at this time.'
+                    : activeFilter === 'past'
+                      ? 'No past tournaments to display.'
+                      : 'No tournaments available.'
                 }
               />
-            ))}
+            ) : (
+              <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
+                {sortedTournaments.map((tournament) => (
+                  <TournamentCard
+                    key={tournament.id}
+                    tournament={tournament}
+                    isAttending={attendingIds.includes(tournament.id)}
+                    isPlayer={isPlayer}
+                    isAuthenticated={isAuthenticated}
+                    onToggleAttendance={
+                      isPlayer ? handleToggleAttendance : undefined
+                    }
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

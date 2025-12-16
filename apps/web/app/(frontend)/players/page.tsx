@@ -8,6 +8,8 @@ import { Pagination } from '@/components/Pagination'
 import { currentUser } from '@clerk/nextjs/server'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PlayerCard } from '@/components/ui/PlayerCard'
+import { PublicNav } from '@/components/PublicNav'
+import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 
 interface PlayersPageProps {
   searchParams: Promise<{
@@ -16,6 +18,7 @@ interface PlayersPageProps {
     minGpa?: string
     maxGpa?: string
     minHeight?: string
+    maxHeight?: string
     state?: string
     city?: string
     sortBy?: string
@@ -103,8 +106,14 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     }
   }
 
-  if (params.minHeight) {
-    where.height = { contains: params.minHeight }
+  if (params.minHeight || params.maxHeight) {
+    where.heightInInches = {}
+    if (params.minHeight) {
+      where.heightInInches.greater_than_equal = parseInt(params.minHeight)
+    }
+    if (params.maxHeight) {
+      where.heightInInches.less_than_equal = parseInt(params.maxHeight)
+    }
   }
 
   if (params.state) {
@@ -147,73 +156,93 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   const totalPages = playersData.totalPages
   const totalDocs = playersData.totalDocs
 
+  const isLoggedOut = !clerkUser
+
   return (
-    <div className='p-8'>
-      <div className='max-w-7xl mx-auto'>
-        {/* Header */}
-        <div className='mb-8'>
-          <h1 className='text-4xl font-bold text-white mb-2'>Browse Players</h1>
-          <p className='text-slate-400'>
-            Find talented recruits and save them to your board
-          </p>
-        </div>
-
-        <div className='flex flex-col lg:flex-row gap-8'>
-          {/* Filters Sidebar - Desktop: fixed width sidebar, Mobile: hidden by default */}
-          <aside className='lg:w-80 shrink-0'>
-            <div className='lg:sticky lg:top-4'>
-              <PlayerFilters />
-            </div>
-          </aside>
-
-          {/* Players Grid */}
-          <div className='flex-1 min-w-0'>
-            {/* Active Filters and Sort */}
-            <div className='mb-6 space-y-4'>
-              {/* Active filter chips */}
-              <ActiveFilterChips />
-
-              {/* Results count and sort */}
-              <div className='flex items-center justify-between'>
-                <p className='text-slate-400'>
-                  {totalDocs} {totalDocs === 1 ? 'player' : 'players'} found
-                </p>
-                <SortByDropdown />
-              </div>
+    <>
+      {isLoggedOut && <PublicNav activePage='players' />}
+      <div className='min-h-screen bg-slate-50 dark:bg-slate-900'>
+        <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
+          <div className='max-w-7xl mx-auto'>
+            {/* Header */}
+            <div className='mb-8'>
+              <h1 className='text-4xl font-bold mb-2 text-slate-900 dark:text-white'>
+                Browse Players
+              </h1>
+              <p className='text-slate-600 dark:text-slate-400'>
+                Find talented recruits and save them to your board
+              </p>
             </div>
 
-            {/* Players grid */}
-            {players.length === 0 ? (
-              <EmptyState
-                title='No Players Found'
-                description='No players match your current filters. Try adjusting your search criteria.'
-              />
-            ) : (
-              <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
-                {players.map((player) => (
-                  <PlayerCard
-                    key={player.id}
-                    player={player}
-                    action={
-                      isCoach ? (
-                        <SavePlayerButton
-                          playerId={player.id}
-                          initialIsSaved={savedPlayerIds.includes(player.id)}
-                          variant='outline'
-                          className='border-slate-600 text-white hover:bg-slate-800'
-                        />
-                      ) : undefined
-                    }
-                  />
-                ))}
+            {/* Unauthenticated CTA */}
+            {isLoggedOut && (
+              <div className='mb-8'>
+                <UnauthenticatedCTA
+                  title='Create an Account to Connect'
+                  description='Sign up as a coach to save players, take notes, and build your recruiting board. Sign up as a player to create your profile and get discovered.'
+                  variant='premium'
+                />
               </div>
             )}
 
-            {/* Pagination */}
-            <Pagination currentPage={page} totalPages={totalPages} />
+            <div className='flex flex-col lg:flex-row gap-8'>
+              {/* Filters Sidebar - Desktop: fixed width sidebar, Mobile: hidden by default */}
+              <aside className='lg:w-80 shrink-0'>
+                <div className='lg:sticky lg:top-4'>
+                  <PlayerFilters />
+                </div>
+              </aside>
+
+              {/* Players Grid */}
+              <div className='flex-1 min-w-0'>
+                {/* Active Filters and Sort */}
+                <div className='mb-6 space-y-4'>
+                  {/* Active filter chips */}
+                  <ActiveFilterChips />
+
+                  {/* Results count and sort */}
+                  <div className='flex items-center justify-between'>
+                    <p className='text-slate-600 dark:text-slate-400'>
+                      {totalDocs} {totalDocs === 1 ? 'player' : 'players'} found
+                    </p>
+                    <SortByDropdown />
+                  </div>
+                </div>
+
+                {/* Players grid */}
+                {players.length === 0 ? (
+                  <EmptyState
+                    title='No Players Found'
+                    description='No players match your current filters. Try adjusting your search criteria.'
+                  />
+                ) : (
+                  <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
+                    {players.map((player) => (
+                      <PlayerCard
+                        key={player.id}
+                        player={player}
+                        action={
+                          isCoach ? (
+                            <SavePlayerButton
+                              playerId={player.id}
+                              initialIsSaved={savedPlayerIds.includes(player.id)}
+                              variant='outline'
+                              className='border-slate-600 text-white hover:bg-slate-800'
+                            />
+                          ) : undefined
+                        }
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Pagination */}
+                <Pagination currentPage={page} totalPages={totalPages} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

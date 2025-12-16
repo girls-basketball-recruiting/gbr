@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 import { useRouter } from 'next/navigation'
+import { getGraduationYearOptions } from '@/types/graduationYears'
 
 interface ProspectFormProps {
   coachId?: string | number
@@ -139,13 +140,11 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                     <SelectValue placeholder='Select year' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='2026'>2026</SelectItem>
-                    <SelectItem value='2027'>2027</SelectItem>
-                    <SelectItem value='2028'>2028</SelectItem>
-                    <SelectItem value='2029'>2029</SelectItem>
-                    <SelectItem value='2030'>2030</SelectItem>
-                    <SelectItem value='2031'>2031</SelectItem>
-                    <SelectItem value='2032'>2032</SelectItem>
+                    {getGraduationYearOptions().map((year) => (
+                      <SelectItem key={year.value} value={year.value}>
+                        {year.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </Field>

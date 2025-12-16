@@ -128,7 +128,7 @@ export default async function CoachDashboard({}: CoachDashboardProps) {
               </h2>
               <p className='text-slate-400'>
                 {coachWithImage.position && `${coachWithImage.position} • `}
-                {coachWithImage.university}
+                {coachWithImage.collegeName}
               </p>
               {coachWithImage.division && (
                 <p className='text-slate-400 text-sm mt-1'>

@@ -1,11 +1,12 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Button } from '@workspace/ui/components/button'
 import { useTransition } from 'react'
 
 export function ActiveFilterChips() {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
@@ -35,7 +36,7 @@ export function ActiveFilterChips() {
     newParams.delete(key)
 
     startTransition(() => {
-      router.push(`/players?${newParams.toString()}`)
+      router.push(`${pathname}?${newParams.toString()}`)
     })
   }
 
@@ -58,7 +59,7 @@ export function ActiveFilterChips() {
           size='sm'
           onClick={() => removeFilter(filter.key)}
           disabled={isPending}
-          className='border-slate-600 bg-slate-800 text-white hover:bg-slate-700 h-7 px-2'
+          className='border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 h-7 px-2'
         >
           <span className='text-xs'>
             {filter.label}: {formatValue(filter.key, filter.value!)}

@@ -44,7 +44,8 @@ export function CoachForm({
 
   const [formData, setFormData] = useState({
     name: profile?.name || initialName || '',
-    university: profile?.university || '',
+    collegeId: profile?.collegeId || 0,
+    collegeName: profile?.collegeName || '',
     programName: profile?.programName || '',
     position: profile?.position || '',
     division: profile?.division || '',
@@ -130,15 +131,30 @@ export function CoachForm({
             </Field>
 
             <Field className='gap-1'>
-              <FieldLabel htmlFor='university'>College</FieldLabel>
+              <FieldLabel htmlFor='college'>College</FieldLabel>
               <CollegeCombobox
-                value={formData.university}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, university: value }))
-                }
+                value={formData.collegeName}
+                onSelect={(college) => {
+                  if (college) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      collegeId: college.id,
+                      collegeName: college.school,
+                    }))
+                  } else {
+                    setFormData((prev) => ({
+                      ...prev,
+                      collegeId: 0,
+                      collegeName: '',
+                    }))
+                  }
+                }}
                 placeholder='Search for your college...'
                 required
               />
+              {formData.collegeId === 0 && (
+                <FieldError>Please select a college from the list</FieldError>
+              )}
             </Field>
 
             <div className='grid grid-cols-2 gap-4'>

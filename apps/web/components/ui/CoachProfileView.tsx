@@ -29,13 +29,13 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
   return (
     <>
       {/* Coach Header */}
-      <Card className='bg-slate-800/50 border-slate-700 p-8 mb-8'>
+      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
           <div className='flex items-start gap-6'>
             {/* Profile Image */}
             {coach.profileImage &&
               typeof coach.profileImage === 'object' &&
               coach.profileImage.url && (
-                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-700 relative flex-shrink-0'>
+                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
                   <Image
                     src={coach.profileImage.url}
                     alt={coach.name}
@@ -47,39 +47,39 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
 
             {/* Coach Info */}
             <div className='flex-1'>
-              <h1 className='text-4xl font-bold text-white mb-2'>
+              <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
                 {coach.name}
               </h1>
               {coach.position && (
-                <p className='text-xl text-slate-400 mb-1'>{coach.position}</p>
+                <p className='text-xl text-slate-600 dark:text-slate-400 mb-1'>{coach.position}</p>
               )}
-              <p className='text-lg text-blue-400'>{coach.university}</p>
+              <p className='text-lg text-blue-600 dark:text-blue-400'>{coach.collegeName}</p>
             </div>
           </div>
         </Card>
 
         {/* Coach Details */}
         <div className='grid md:grid-cols-2 gap-8 mb-8'>
-          <Card className='bg-slate-800/50 border-slate-700 p-6'>
-            <h2 className='text-2xl font-bold text-white mb-4'>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+            <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
               Program Information
             </h2>
-            <div className='space-y-3 text-slate-300'>
-              {coach.university && (
+            <div className='space-y-3 text-slate-700 dark:text-slate-300'>
+              {coach.collegeName && (
                 <div>
-                  <span className='text-slate-400'>University:</span>{' '}
-                  <span className='font-medium'>{coach.university}</span>
+                  <span className='text-slate-600 dark:text-slate-400'>College:</span>{' '}
+                  <span className='font-medium'>{coach.collegeName}</span>
                 </div>
               )}
               {coach.programName && (
                 <div>
-                  <span className='text-slate-400'>Program:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Program:</span>{' '}
                   <span className='font-medium'>{coach.programName}</span>
                 </div>
               )}
               {coach.division && (
                 <div>
-                  <span className='text-slate-400'>Division:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Division:</span>{' '}
                   <span className='font-medium'>
                     {divisionLabels[coach.division] || coach.division}
                   </span>
@@ -87,13 +87,13 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
               )}
               {coach.state && (
                 <div>
-                  <span className='text-slate-400'>State:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>State:</span>{' '}
                   <span className='font-medium'>{coach.state}</span>
                 </div>
               )}
               {coach.region && (
                 <div>
-                  <span className='text-slate-400'>Region:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Region:</span>{' '}
                   <span className='font-medium'>
                     {regionLabels[coach.region] || coach.region}
                   </span>
@@ -102,15 +102,15 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
             </div>
           </Card>
 
-          <Card className='bg-slate-800/50 border-slate-700 p-6'>
-            <h2 className='text-2xl font-bold text-white mb-4'>Contact</h2>
-            <div className='space-y-3 text-slate-300'>
+          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+            <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>Contact</h2>
+            <div className='space-y-3 text-slate-700 dark:text-slate-300'>
               {coach.email && (
                 <div>
-                  <span className='text-slate-400'>Email:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Email:</span>{' '}
                   <a
                     href={`mailto:${coach.email}`}
-                    className='font-medium text-blue-400 hover:text-blue-300'
+                    className='font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'
                   >
                     {coach.email}
                   </a>
@@ -118,10 +118,10 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
               )}
               {coach.phone && (
                 <div>
-                  <span className='text-slate-400'>Phone:</span>{' '}
+                  <span className='text-slate-600 dark:text-slate-400'>Phone:</span>{' '}
                   <a
                     href={`tel:${coach.phone}`}
-                    className='font-medium text-blue-400 hover:text-blue-300'
+                    className='font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'
                   >
                     {coach.phone}
                   </a>
@@ -133,9 +133,9 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
 
       {/* Bio */}
       {coach.bio && (
-        <Card className='bg-slate-800/50 border-slate-700 p-6'>
-          <h2 className='text-2xl font-bold text-white mb-4'>About</h2>
-          <p className='text-slate-300 whitespace-pre-wrap'>{coach.bio}</p>
+        <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+          <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>About</h2>
+          <p className='text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>{coach.bio}</p>
         </Card>
       )}
     </>

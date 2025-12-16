@@ -50,13 +50,22 @@ export async function PUT(
       )
     }
 
+    // Validate collegeId is provided
+    if (!body.collegeId || body.collegeId === 0) {
+      return NextResponse.json(
+        { error: 'College selection is required' },
+        { status: 400 },
+      )
+    }
+
     // Update the coach profile
     const updatedCoach = await payload.update({
       collection: 'coaches',
       id: parseInt(id),
       data: {
         name: body.name,
-        university: body.university,
+        collegeId: body.collegeId,
+        collegeName: body.collegeName,
         programName: body.programName || undefined,
         position: body.position || undefined,
         division: body.division || undefined,

@@ -2,8 +2,10 @@
 
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
-import { Calendar, MapPin, Users, ExternalLink } from 'lucide-react'
+import { Calendar, MapPin, Users, ExternalLink, Bookmark, Lock } from 'lucide-react'
 import { useState } from 'react'
+import { Toggle } from '@workspace/ui/components/toggle'
+import Link from 'next/link'
 
 interface Tournament {
   id: number
@@ -20,6 +22,7 @@ interface TournamentCardProps {
   tournament: Tournament
   isAttending?: boolean
   isPlayer?: boolean
+  isAuthenticated?: boolean
   onToggleAttendance?: (tournamentId: number) => Promise<void>
 }
 
@@ -27,6 +30,7 @@ export function TournamentCard({
   tournament,
   isAttending = false,
   isPlayer = false,
+  isAuthenticated = false,
   onToggleAttendance,
 }: TournamentCardProps) {
   const [attending, setAttending] = useState(isAttending)
@@ -80,23 +84,23 @@ export function TournamentCard({
 
   return (
     <Card
-      className={`min-w-72 bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors ${
+      className={`min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors ${
         !upcoming ? 'opacity-75' : ''
       }`}
     >
-      <div className='p-6 space-y-4'>
+      <div className='p-6 space-y-6'>
         {/* Header with badge */}
         <div className='flex items-start justify-between gap-4'>
           <div className='flex-1'>
             <div className='flex items-center gap-2 mb-2'>
-              <h3 className='text-xl font-semibold text-white'>
+              <h3 className='text-xl font-semibold text-slate-900 dark:text-white'>
                 {tournament.name}
               </h3>
               <span
                 className={`text-xs px-2 py-1 rounded ${
                   upcoming
-                    ? 'bg-blue-600/20 text-blue-300 border border-blue-600/50'
-                    : 'bg-slate-600/20 text-slate-400 border border-slate-600/50'
+                    ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-700 dark:text-blue-300 border border-blue-500/50'
+                    : 'bg-slate-100 dark:bg-slate-600/20 text-slate-600 dark:text-slate-400 border border-slate-400/50 dark:border-slate-600/50'
                 }`}
               >
                 {upcoming ? 'Upcoming' : 'Past'}
@@ -107,34 +111,41 @@ export function TournamentCard({
 
         {/* Date and Location */}
         <div className='space-y-2'>
-          <div className='flex items-center gap-2 text-slate-300'>
-            <Calendar className='w-4 h-4 text-slate-400' />
+          <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
+            <Calendar className='w-4 h-4 text-slate-500 dark:text-slate-400' />
             <span className='font-medium'>
               {formatDateRange(tournament.startDate, tournament.endDate)}
             </span>
           </div>
-          <div className='flex items-center gap-2 text-slate-300'>
-            <MapPin className='w-4 h-4 text-slate-400' />
+          <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
+            <MapPin className='w-4 h-4 text-slate-500 dark:text-slate-400' />
             <span>{tournament.location}</span>
           </div>
         </div>
 
         {/* Description */}
         {tournament.description && (
-          <p className='text-sm text-slate-400 line-clamp-2'>
+          <p className='text-sm text-slate-600 dark:text-slate-400 line-clamp-2'>
             {tournament.description}
           </p>
         )}
 
         {/* Footer */}
-        <div className='flex items-center justify-between pt-4 border-t border-slate-700'>
-          <div className='flex items-center gap-2 text-sm text-slate-400'>
-            <Users className='w-4 h-4' />
-            <span>
-              {tournament.attendeeCount}{' '}
-              {tournament.attendeeCount === 1 ? 'player' : 'players'} attending
-            </span>
-          </div>
+        <div className='flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700'>
+          {isAuthenticated ? (
+            <div className='flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400'>
+              <Users className='w-4 h-4' />
+              <span>
+                {tournament.attendeeCount}{' '}
+                {tournament.attendeeCount === 1 ? 'player' : 'players'} attending
+              </span>
+            </div>
+          ) : (
+            <div className='flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400'>
+              <Lock className='w-4 h-4' />
+              <span>Sign in to see who's attending</span>
+            </div>
+          )}
 
           <div className='flex items-center gap-2'>
             {tournament.website && (
@@ -142,7 +153,7 @@ export function TournamentCard({
                 variant='outline'
                 size='sm'
                 asChild
-                className='border-slate-600 hover:bg-slate-700'
+                className='border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700'
               >
                 <a
                   href={tournament.website}
@@ -155,23 +166,32 @@ export function TournamentCard({
                 </a>
               </Button>
             )}
-
-            {isPlayer && onToggleAttendance && (
-              <Button
-                variant={attending ? 'default' : 'outline'}
-                size='sm'
-                onClick={handleToggle}
+          </div>
+        </div>
+        <div className='mt-4'>
+          {isAuthenticated ? (
+            isPlayer && onToggleAttendance && (
+              <Toggle
+                variant='outline'
+                pressed={attending}
+                onPressedChange={handleToggle}
                 disabled={isLoading}
                 className={
                   attending
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'border-slate-600 hover:bg-slate-700'
+                    ? 'bg-blue-600 hover:bg-blue-700 w-full'
+                    : 'border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 w-full'
                 }
+                aria-label={attending ? 'Mark as Not Attending' : 'Mark as Attending'}
               >
-                {attending ? 'Attending' : 'Mark as Attending'}
-              </Button>
-            )}
-          </div>
+                <Bookmark className={attending ? 'fill-current' : ''} />
+                <span className='ml-2'>{attending ? 'Attending' : 'Mark as Attending'}</span>
+              </Toggle>
+            )
+          ) : (
+            <Button className='w-full bg-blue-600 hover:bg-blue-700' asChild>
+              <Link href='/register-player'>Sign Up to RSVP</Link>
+            </Button>
+          )}
         </div>
       </div>
     </Card>

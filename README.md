@@ -217,31 +217,9 @@ To use the components in your app, import them from the `ui` package.
 import { Button } from "@workspace/ui/components/button";
 ```
 
-## 🧪 Testing Strategy (TODO)
-
-- **Unit Tests**: Vitest for utilities and components
-- **Integration Tests**: React Testing Library
-- **E2E Tests**: Playwright for critical user flows
-- **Visual Regression**: Chromatic or Percy (TBD)
-
-## 📈 Performance Targets
-
-- **Lighthouse Score**: >90 across all metrics
-- **First Contentful Paint**: <1.5s
-- **Time to Interactive**: <3.5s
-- **Core Web Vitals**: All "Good" ratings
-
 ## 🚢 Deployment
 
-### Staging
-
-- Automatic deployment on push to `develop` branch
-- URL: https://staging.basketball-recruiting.com (TODO)
-
-### Production
-
-- Manual deployment from `main` branch
-- URL: https://basketball-recruiting.com (TODO)
+### TODO
 
 ## 🤝 Contributing
 
@@ -257,17 +235,15 @@ This is currently a private project. Contributing guidelines will be added when 
 
 - [x] Project setup and monorepo architecture
 - [x] Design system and UI component library
-- [ ] Player profile creation
-- [ ] Basic search functionality
+- [x] Player profile creation
+- [x] Basic search functionality
 - [ ] Video upload integration
-- [ ] Authentication system
+- [x] Authentication system
 
 ### Phase 2: Core Features
 
-- [ ] Advanced search and filtering
-- [ ] Messaging system
-- [ ] Coach dashboard
-- [ ] Mobile app (React Native - TBD)
+- [x] Advanced search and filtering
+- [x] Coach dashboard
 
 ### Phase 3: Growth Features
 

@@ -18,10 +18,12 @@ import {
 } from '@workspace/ui/components/popover'
 import { useColleges } from '@/contexts/colleges-provider'
 import { cn } from '@workspace/ui/lib/utils'
+import type { College } from '@/payload-types'
 
 interface CollegeComboboxProps {
   value?: string
-  onValueChange: (value: string) => void
+  onValueChange?: (value: string) => void
+  onSelect?: (college: College | null) => void
   placeholder?: string
   disabled?: boolean
   required?: boolean
@@ -30,6 +32,7 @@ interface CollegeComboboxProps {
 export function CollegeCombobox({
   value = '',
   onValueChange,
+  onSelect,
   placeholder = 'Select college...',
   disabled = false,
   required = false,
@@ -88,11 +91,18 @@ export function CollegeCombobox({
                   key={college.id}
                   value={college.school}
                   onSelect={(currentValue) => {
-                    onValueChange(
-                      currentValue.toLowerCase() === value.toLowerCase()
-                        ? ''
-                        : college.school,
-                    )
+                    const isDeselecting = currentValue.toLowerCase() === value.toLowerCase()
+
+                    // Call legacy onValueChange if provided
+                    if (onValueChange) {
+                      onValueChange(isDeselecting ? '' : college.school)
+                    }
+
+                    // Call new onSelect with full college object
+                    if (onSelect) {
+                      onSelect(isDeselecting ? null : college)
+                    }
+
                     setOpen(false)
                   }}
                 >

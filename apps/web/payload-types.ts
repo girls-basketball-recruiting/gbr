@@ -230,6 +230,10 @@ export interface Player {
    * e.g., "5'10"
    */
   height?: string | null;
+  /**
+   * Height in total inches (auto-calculated from height field)
+   */
+  heightInInches?: number | null;
   weightedGpa?: number | null;
   unweightedGpa?: number | null;
   primaryPosition: 'point-guard' | 'shooting-guard' | 'small-forward' | 'power-forward' | 'center';
@@ -300,13 +304,13 @@ export interface Coach {
   user: number | User;
   name: string;
   /**
-   * Link to college/university from database
+   * College ID from database
    */
-  college?: (number | null) | College;
+  collegeId: number;
   /**
-   * University name (use this if college not in database)
+   * College name (denormalized for quick display)
    */
-  university: string;
+  collegeName: string;
   /**
    * e.g., "Women's Basketball"
    */
@@ -677,6 +681,7 @@ export interface PlayersSelect<T extends boolean = true> {
   state?: T;
   highSchool?: T;
   height?: T;
+  heightInInches?: T;
   weightedGpa?: T;
   unweightedGpa?: T;
   primaryPosition?: T;
@@ -701,8 +706,8 @@ export interface PlayersSelect<T extends boolean = true> {
 export interface CoachesSelect<T extends boolean = true> {
   user?: T;
   name?: T;
-  college?: T;
-  university?: T;
+  collegeId?: T;
+  collegeName?: T;
   programName?: T;
   position?: T;
   division?: T;
