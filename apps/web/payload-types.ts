@@ -64,18 +64,19 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    'payload-mcp-api-keys': PayloadMcpApiKeyAuthOperations;
   };
   blocks: {};
   collections: {
     users: User;
-    media: Media;
     players: Player;
     coaches: Coach;
     colleges: College;
     'coach-player-notes': CoachPlayerNote;
-    'saved-players': SavedPlayer;
+    'coach-prospects': CoachProspect;
+    'coach-saved-players': CoachSavedPlayer;
     tournaments: Tournament;
-    prospects: Prospect;
+    'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,14 +85,14 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
     players: PlayersSelect<false> | PlayersSelect<true>;
     coaches: CoachesSelect<false> | CoachesSelect<true>;
     colleges: CollegesSelect<false> | CollegesSelect<true>;
     'coach-player-notes': CoachPlayerNotesSelect<false> | CoachPlayerNotesSelect<true>;
-    'saved-players': SavedPlayersSelect<false> | SavedPlayersSelect<true>;
+    'coach-prospects': CoachProspectsSelect<false> | CoachProspectsSelect<true>;
+    'coach-saved-players': CoachSavedPlayersSelect<false> | CoachSavedPlayersSelect<true>;
     tournaments: TournamentsSelect<false> | TournamentsSelect<true>;
-    prospects: ProspectsSelect<false> | ProspectsSelect<true>;
+    'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -104,15 +105,37 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user:
+    | (User & {
+        collection: 'users';
+      })
+    | (PayloadMcpApiKey & {
+        collection: 'payload-mcp-api-keys';
+      });
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface PayloadMcpApiKeyAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -145,13 +168,29 @@ export interface User {
    */
   roles: ('admin' | 'player' | 'coach')[];
   /**
-   * First name from Clerk profile
+   * First name
    */
-  firstName?: string | null;
+  firstName: string;
   /**
-   * Last name from Clerk profile
+   * Last name
    */
-  lastName?: string | null;
+  lastName: string;
+  /**
+   * Stripe customer ID for subscription management
+   */
+  stripeCustomerId?: string | null;
+  /**
+   * Stripe subscription ID for subscription management
+   */
+  stripeSubscriptionId?: string | null;
+  /**
+   * Stripe price ID for subscription management
+   */
+  stripePriceId?: string | null;
+  /**
+   * End date of the current Stripe billing period
+   */
+  stripeCurrentPeriodEnd?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -172,43 +211,6 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "players".
  */
 export interface Player {
@@ -217,32 +219,139 @@ export interface Player {
    * Link to the Clerk user account
    */
   user: number | User;
+  /**
+   * First name
+   */
   firstName: string;
+  /**
+   * Last name
+   */
   lastName: string;
   /**
-   * High school graduation year
+   * Email address (denormalized from user for easier querying)
    */
-  graduationYear: number;
-  city?: string | null;
-  state?: string | null;
+  email: string;
+  /**
+   * High school graduation year (e.g., "2025")
+   */
+  graduationYear: string;
+  city: string;
+  state: string;
   highSchool: string;
   /**
-   * e.g., "5'10"
+   * Add up to 10 awards, honors, and achievements
    */
-  height?: string | null;
+  awards?:
+    | {
+        title: string;
+        /**
+         * Year received (optional)
+         */
+        year?: string | null;
+        /**
+         * Additional details (optional)
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
-   * Height in total inches (auto-calculated from height field)
+   * Height in total inches
    */
-  heightInInches?: number | null;
-  weightedGpa?: number | null;
+  heightInInches: number;
+  /**
+   * Weight in pounds (lbs)
+   */
+  weight?: number | null;
+  /**
+   * Unweighted GPA
+   */
   unweightedGpa?: number | null;
-  primaryPosition: 'point-guard' | 'shooting-guard' | 'small-forward' | 'power-forward' | 'center';
-  secondaryPosition?: ('point-guard' | 'shooting-guard' | 'small-forward' | 'power-forward' | 'center') | null;
+  /**
+   * Weighted GPA
+   */
+  weightedGpa?: number | null;
+  /**
+   * Potential areas of study
+   */
+  potentialAreasOfStudy?:
+    | (
+        | 'undecided'
+        | 'stem'
+        | 'business-professional'
+        | 'arts-humanities'
+        | 'social-science-education'
+        | 'health-medicine'
+        | 'public-service-law'
+        | 'other'
+      )[]
+    | null;
+  primaryPosition: 'point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post';
+  secondaryPosition?: ('point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post') | null;
   /**
    * Tell coaches about yourself, your playing style, and goals
    */
   bio?: string | null;
-  profileImage?: (number | null) | Media;
+  /**
+   * AAU Program name
+   */
+  aauProgramName?: string | null;
+  /**
+   * AAU Team name
+   */
+  aauTeamName?: string | null;
+  /**
+   * AAU Circuit/League
+   */
+  aauCircuit?:
+    | (
+        | 'nike-eybl'
+        | 'uaa'
+        | 'power24'
+        | 'adidas-3ssb'
+        | 'select-40'
+        | 'new-balance-lady-p32'
+        | 'puma-nxtpro-16'
+        | 'elite-40'
+        | 'hoop-group'
+        | 'nike-ecyl'
+        | 'ua-rise'
+        | 'crossroads'
+        | 'adidas-gold'
+        | 'prep-girls-hoops'
+        | 'new-balance-lady-e32'
+        | 'puma-nxt-league'
+        | 'insider-exposure'
+        | 'hype-her-hoops'
+        | 'other'
+        | 'independent'
+      )
+    | null;
+  /**
+   * AAU Coach name
+   */
+  aauCoach?: string | null;
+  /**
+   * Contact phone number
+   */
+  phoneNumber?: string | null;
+  /**
+   * X handle
+   */
+  xHandle?: string | null;
+  /**
+   * Instagram handle
+   */
+  instaHandle?: string | null;
+  /**
+   * TikTok handle
+   */
+  tiktokHandle?: string | null;
+  /**
+   * NCAA Eligibility Center ID
+   */
+  ncaaId?: string | null;
+  profileImageUrl: string;
   /**
    * Add up to 10 highlight video URLs (YouTube, Hudl, etc.)
    */
@@ -253,7 +362,7 @@ export interface Player {
       }[]
     | null;
   /**
-   * Select tournaments you will be attending during exposure periods
+   * Select tournaments you will be attending
    */
   tournamentSchedule?: (number | Tournament)[] | null;
   /**
@@ -269,9 +378,62 @@ export interface Player {
    */
   apg?: number | null;
   /**
-   * Desired level of collegiate play
+   * Desired levels of collegiate play
    */
-  desiredLevelOfPlay?: ('d1' | 'd2' | 'd3' | 'naia' | 'juco') | null;
+  desiredLevelsOfPlay?: ('any' | 'ncaa-d1' | 'ncaa-d2' | 'ncaa-d3' | 'naia' | 'uscaa' | 'nccaa' | 'juco')[] | null;
+  /**
+   * Desired geographic areas
+   */
+  desiredGeographicAreas?:
+    | (
+        | 'anywhere'
+        | 'northeast'
+        | 'mid-atlantic'
+        | 'deep-south'
+        | 'midwest'
+        | 'south'
+        | 'rocky-mountain'
+        | 'west-coast'
+        | 'pacific-northwest'
+        | 'other'
+      )[]
+    | null;
+  /**
+   * Desired distance from home
+   */
+  desiredDistanceFromHome?: ('anywhere' | 'less-than-2' | 'less-than-4' | 'less-than-8') | null;
+  /**
+   * Interested in Military Academies
+   */
+  interestedInMilitaryAcademies?: boolean | null;
+  /**
+   * Interested in Ultra High Academics
+   */
+  interestedInUltraHighAcademics?: boolean | null;
+  /**
+   * Interested in Faith-Based institutions
+   */
+  interestedInFaithBased?: boolean | null;
+  /**
+   * Interested in All Girls schools
+   */
+  interestedInAllGirls?: boolean | null;
+  /**
+   * Interested in HBCUs
+   */
+  interestedInHBCU?: boolean | null;
+  /**
+   * Is this player profile active?
+   */
+  isActive?: boolean | null;
+  /**
+   * Has the player committed to a school?
+   */
+  isCommitted?: boolean | null;
+  /**
+   * School the player has committed to (if applicable)
+   */
+  committedWhere?: string | null;
   /**
    * Soft delete timestamp - if set, profile is archived
    */
@@ -292,9 +454,13 @@ export interface Tournament {
    */
   name: string;
   /**
-   * City and State (e.g., "Las Vegas, NV")
+   * Tournament City (e.g., "Las Vegas")
    */
-  location: string;
+  city: string;
+  /**
+   * Tournament State (e.g., "NV")
+   */
+  state: string;
   startDate: string;
   endDate: string;
   /**
@@ -318,7 +484,18 @@ export interface Coach {
    * Link to the Clerk user account
    */
   user: number | User;
-  name: string;
+  /**
+   * First name
+   */
+  firstName: string;
+  /**
+   * Last name
+   */
+  lastName: string;
+  /**
+   * Email address (denormalized from user for easier querying)
+   */
+  email: string;
   /**
    * College ID from database
    */
@@ -328,17 +505,25 @@ export interface Coach {
    */
   collegeName: string;
   /**
-   * e.g., "Women's Basketball"
+   * Your coaching position
    */
-  programName?: string | null;
-  /**
-   * e.g., "Head Coach", "Assistant Coach", "Recruiting Coordinator"
-   */
-  position?: string | null;
-  email?: string | null;
+  jobTitle?:
+    | (
+        | 'head-coach'
+        | 'associate-head-coach'
+        | 'assistant-coach'
+        | 'director-of-recruiting'
+        | 'recruiting-coordinator'
+        | 'director-of-operations'
+        | 'director-of-player-development'
+        | 'assistant-director-of-player-personnel'
+        | 'graduate-assistant'
+        | 'other'
+      )
+    | null;
   phone?: string | null;
   bio?: string | null;
-  profileImage?: (number | null) | Media;
+  profileImageUrl?: string | null;
   /**
    * Soft delete timestamp - if set, profile is archived
    */
@@ -424,39 +609,22 @@ export interface CoachPlayerNote {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "saved-players".
+ * via the `definition` "coach-prospects".
  */
-export interface SavedPlayer {
-  id: number;
-  /**
-   * The coach who saved this player
-   */
-  coach: number | Coach;
-  /**
-   * The player that was saved
-   */
-  player: number | Player;
-  /**
-   * When the player was saved
-   */
-  savedAt: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "prospects".
- */
-export interface Prospect {
+export interface CoachProspect {
   id: number;
   /**
    * The coach who created this prospect entry
    */
   coach: number | Coach;
   /**
-   * Full name of the prospect
+   * First name of the prospect
    */
-  name: string;
+  firstName: string;
+  /**
+   * Last name of the prospect
+   */
+  lastName: string;
   /**
    * Jersey/uniform number
    */
@@ -466,9 +634,13 @@ export interface Prospect {
    */
   graduationYear: number;
   /**
-   * Height (e.g., "5'10")
+   * Height in total inches
    */
-  height?: string | null;
+  heightInInches?: number | null;
+  /**
+   * Weight in pounds (lbs)
+   */
+  weight?: number | null;
   /**
    * High school name
    */
@@ -502,6 +674,197 @@ export interface Prospect {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coach-saved-players".
+ */
+export interface CoachSavedPlayer {
+  id: number;
+  /**
+   * The coach who saved this player
+   */
+  coach: number | Coach;
+  /**
+   * The player that was saved
+   */
+  player: number | Player;
+  /**
+   * When the player was saved
+   */
+  savedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * API keys control which collections, resources, tools, and prompts MCP clients can access
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-mcp-api-keys".
+ */
+export interface PayloadMcpApiKey {
+  id: number;
+  /**
+   * The user that the API key is associated with.
+   */
+  user: number | User;
+  /**
+   * A useful label for the API key.
+   */
+  label?: string | null;
+  /**
+   * The purpose of the API key.
+   */
+  description?: string | null;
+  coaches?: {
+    /**
+     * Allow clients to find coaches.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create coaches.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update coaches.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete coaches.
+     */
+    delete?: boolean | null;
+  };
+  coachPlayerNotes?: {
+    /**
+     * Allow clients to find coach-player-notes.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create coach-player-notes.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update coach-player-notes.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete coach-player-notes.
+     */
+    delete?: boolean | null;
+  };
+  coachProspects?: {
+    /**
+     * Allow clients to find coach-prospects.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create coach-prospects.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update coach-prospects.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete coach-prospects.
+     */
+    delete?: boolean | null;
+  };
+  coachSavedPlayers?: {
+    /**
+     * Allow clients to find coach-saved-players.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create coach-saved-players.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update coach-saved-players.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete coach-saved-players.
+     */
+    delete?: boolean | null;
+  };
+  colleges?: {
+    /**
+     * Allow clients to find colleges.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create colleges.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update colleges.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete colleges.
+     */
+    delete?: boolean | null;
+  };
+  players?: {
+    /**
+     * Allow clients to find players.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create players.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update players.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete players.
+     */
+    delete?: boolean | null;
+  };
+  tournaments?: {
+    /**
+     * Allow clients to find tournaments.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create tournaments.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update tournaments.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete tournaments.
+     */
+    delete?: boolean | null;
+  };
+  users?: {
+    /**
+     * Allow clients to find users.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create users.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update users.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete users.
+     */
+    delete?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -529,10 +892,6 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
         relationTo: 'players';
         value: number | Player;
       } | null)
@@ -549,22 +908,31 @@ export interface PayloadLockedDocument {
         value: number | CoachPlayerNote;
       } | null)
     | ({
-        relationTo: 'saved-players';
-        value: number | SavedPlayer;
+        relationTo: 'coach-prospects';
+        value: number | CoachProspect;
+      } | null)
+    | ({
+        relationTo: 'coach-saved-players';
+        value: number | CoachSavedPlayer;
       } | null)
     | ({
         relationTo: 'tournaments';
         value: number | Tournament;
       } | null)
     | ({
-        relationTo: 'prospects';
-        value: number | Prospect;
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -574,10 +942,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
+      };
   key?: string | null;
   value?:
     | {
@@ -611,6 +984,10 @@ export interface UsersSelect<T extends boolean = true> {
   roles?: T;
   firstName?: T;
   lastName?: T;
+  stripeCustomerId?: T;
+  stripeSubscriptionId?: T;
+  stripePriceId?: T;
+  stripeCurrentPeriodEnd?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -630,66 +1007,43 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
-    | T
-    | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        card?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "players_select".
  */
 export interface PlayersSelect<T extends boolean = true> {
   user?: T;
   firstName?: T;
   lastName?: T;
+  email?: T;
   graduationYear?: T;
   city?: T;
   state?: T;
   highSchool?: T;
-  height?: T;
+  awards?:
+    | T
+    | {
+        title?: T;
+        year?: T;
+        description?: T;
+        id?: T;
+      };
   heightInInches?: T;
-  weightedGpa?: T;
+  weight?: T;
   unweightedGpa?: T;
+  weightedGpa?: T;
+  potentialAreasOfStudy?: T;
   primaryPosition?: T;
   secondaryPosition?: T;
   bio?: T;
-  profileImage?: T;
+  aauProgramName?: T;
+  aauTeamName?: T;
+  aauCircuit?: T;
+  aauCoach?: T;
+  phoneNumber?: T;
+  xHandle?: T;
+  instaHandle?: T;
+  tiktokHandle?: T;
+  ncaaId?: T;
+  profileImageUrl?: T;
   highlightVideoUrls?:
     | T
     | {
@@ -700,7 +1054,17 @@ export interface PlayersSelect<T extends boolean = true> {
   ppg?: T;
   rpg?: T;
   apg?: T;
-  desiredLevelOfPlay?: T;
+  desiredLevelsOfPlay?: T;
+  desiredGeographicAreas?: T;
+  desiredDistanceFromHome?: T;
+  interestedInMilitaryAcademies?: T;
+  interestedInUltraHighAcademics?: T;
+  interestedInFaithBased?: T;
+  interestedInAllGirls?: T;
+  interestedInHBCU?: T;
+  isActive?: T;
+  isCommitted?: T;
+  committedWhere?: T;
   deletedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -711,15 +1075,15 @@ export interface PlayersSelect<T extends boolean = true> {
  */
 export interface CoachesSelect<T extends boolean = true> {
   user?: T;
-  name?: T;
+  firstName?: T;
+  lastName?: T;
+  email?: T;
   collegeId?: T;
   collegeName?: T;
-  programName?: T;
-  position?: T;
-  email?: T;
+  jobTitle?: T;
   phone?: T;
   bio?: T;
-  profileImage?: T;
+  profileImageUrl?: T;
   deletedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -768,9 +1132,31 @@ export interface CoachPlayerNotesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "saved-players_select".
+ * via the `definition` "coach-prospects_select".
  */
-export interface SavedPlayersSelect<T extends boolean = true> {
+export interface CoachProspectsSelect<T extends boolean = true> {
+  coach?: T;
+  firstName?: T;
+  lastName?: T;
+  uniformNumber?: T;
+  graduationYear?: T;
+  heightInInches?: T;
+  weight?: T;
+  highSchool?: T;
+  aauProgram?: T;
+  tournamentSchedule?: T;
+  twitterHandle?: T;
+  phoneNumber?: T;
+  notes?: T;
+  linkedPlayer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coach-saved-players_select".
+ */
+export interface CoachSavedPlayersSelect<T extends boolean = true> {
   coach?: T;
   player?: T;
   savedAt?: T;
@@ -783,7 +1169,8 @@ export interface SavedPlayersSelect<T extends boolean = true> {
  */
 export interface TournamentsSelect<T extends boolean = true> {
   name?: T;
-  location?: T;
+  city?: T;
+  state?: T;
   startDate?: T;
   endDate?: T;
   description?: T;
@@ -793,23 +1180,81 @@ export interface TournamentsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "prospects_select".
+ * via the `definition` "payload-mcp-api-keys_select".
  */
-export interface ProspectsSelect<T extends boolean = true> {
-  coach?: T;
-  name?: T;
-  uniformNumber?: T;
-  graduationYear?: T;
-  height?: T;
-  highSchool?: T;
-  aauProgram?: T;
-  tournamentSchedule?: T;
-  twitterHandle?: T;
-  phoneNumber?: T;
-  notes?: T;
-  linkedPlayer?: T;
+export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
+  user?: T;
+  label?: T;
+  description?: T;
+  coaches?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  coachPlayerNotes?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  coachProspects?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  coachSavedPlayers?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  colleges?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  players?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  tournaments?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  users?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

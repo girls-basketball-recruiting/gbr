@@ -23,7 +23,7 @@ export default function PlayerSignUpPage() {
             },
           }}
           unsafeMetadata={{
-            userType: 'player',
+            role: 'player',
           }}
           forceRedirectUrl='/onboarding/player'
         />

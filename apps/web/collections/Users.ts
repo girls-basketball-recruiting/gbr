@@ -1,10 +1,12 @@
 import type { CollectionConfig } from 'payload'
+import { baseUserFields } from './shared/baseFields'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: true,
   admin: {
     useAsTitle: 'email',
+    hidden: true, // Hide from sidebar - managed via Clerk
   },
   fields: [
     // Email added by default
@@ -14,10 +16,9 @@ export const Users: CollectionConfig = {
       unique: true,
       index: true,
       admin: {
-        hidden: true,
+        readOnly: true,
         description: 'Clerk ID for synced users. Null for PayloadCMS-only admin users.',
       },
-      // This field is optional - null for PayloadCMS admins, populated for Clerk-synced users
     },
     {
       name: 'roles',
@@ -28,24 +29,43 @@ export const Users: CollectionConfig = {
         { label: 'Coach', value: 'coach' },
       ],
       hasMany: true,
-      defaultValue: ['player'],
       required: true,
       admin: {
+        readOnly: true,
         description: 'User roles determine access levels across the platform',
       },
     },
+    ...baseUserFields,
     {
-      name: 'firstName',
+      name: 'stripeCustomerId',
       type: 'text',
       admin: {
-        description: 'First name from Clerk profile',
+        readOnly: true,
+        description: 'Stripe customer ID for subscription management',
       },
     },
     {
-      name: 'lastName',
+      name: 'stripeSubscriptionId',
       type: 'text',
       admin: {
-        description: 'Last name from Clerk profile',
+        readOnly: true,
+        description: 'Stripe subscription ID for subscription management',
+      },
+    },
+    {
+      name: 'stripePriceId',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Stripe price ID for subscription management',
+      },
+    },
+    {
+      name: 'stripeCurrentPeriodEnd',
+      type: 'date',
+      admin: {
+        readOnly: true,
+        description: 'End date of the current Stripe billing period',
       },
     },
   ],

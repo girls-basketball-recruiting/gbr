@@ -1,62 +1,41 @@
-import { getPayload } from 'payload'
-import config from '@/payload.config'
-import { NextRequest, NextResponse } from 'next/server'
-import { currentUser } from '@clerk/nextjs/server'
+import {
+  withCoach,
+  parseJsonBody,
+  apiSuccess,
+  handleApiError,
+} from '@/lib/api-helpers'
+import { findAll, create } from '@/lib/payload-helpers'
 
-export async function GET() {
-  try {
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
+/**
+ * Get all prospects for the current coach
+ */
+export const GET = handleApiError(async () => {
+  const [auth, authError] = await withCoach()
+  if (authError) return authError
 
-    const prospects = await payload.find({
-      collection: 'prospects',
-      limit: 100,
-    })
+  const prospects = await findAll(
+    'coach-prospects',
+    { coach: { equals: auth.coachProfile.id } },
+    { sort: '-createdAt' }
+  )
 
-    return NextResponse.json(prospects)
-  } catch (error) {
-    console.error('Error fetching prospects:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch prospects' },
-      { status: 500 }
-    )
-  }
-}
+  return apiSuccess({ prospects })
+})
 
-export async function POST(request: NextRequest) {
-  try {
-    const clerkUser = await currentUser()
+/**
+ * Create a new prospect
+ */
+export const POST = handleApiError(async (req: Request) => {
+  const [auth, authError] = await withCoach()
+  if (authError) return authError
 
-    if (!clerkUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const [body, bodyError] = await parseJsonBody(req)
+  if (bodyError) return bodyError
 
-    // Verify user is a coach
-    const role = clerkUser.publicMetadata?.role as string | undefined
-    if (role !== 'coach') {
-      return NextResponse.json(
-        { error: 'Only coaches can create prospects' },
-        { status: 403 }
-      )
-    }
+  const prospect = await create('coach-prospects', {
+    ...body,
+    coach: auth.coachProfile.id,
+  })
 
-    const body = await request.json()
-
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
-
-    // Create the prospect
-    const prospect = await payload.create({
-      collection: 'prospects',
-      data: body,
-    })
-
-    return NextResponse.json(prospect, { status: 201 })
-  } catch (error) {
-    console.error('Error creating prospect:', error)
-    return NextResponse.json(
-      { error: 'Failed to create prospect' },
-      { status: 500 }
-    )
-  }
-}
+  return apiSuccess({ prospect }, 201)
+})

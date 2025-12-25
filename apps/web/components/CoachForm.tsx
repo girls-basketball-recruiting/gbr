@@ -7,7 +7,6 @@ import { Input } from '@workspace/ui/components/input'
 import {
   Field,
   FieldLabel,
-  FieldDescription,
   FieldSet,
   FieldLegend,
   FieldGroup,
@@ -24,30 +23,32 @@ import {
 } from '@workspace/ui/components/select'
 import { CollegeCombobox } from '@/components/CollegeCombobox'
 import type { Coach } from '@/payload-types'
+import { ACTIVE_COACH_POSITIONS } from '@/lib/zod/CoachPositions'
+import { ProfileImageUpload } from '@/components/ui/ProfileImageUpload'
 
 interface CoachFormProps {
   profile?: Coach
   mode?: 'create' | 'edit'
-  initialName?: string
+  initialFirstName?: string
+  initialLastName?: string
 }
 
 export function CoachForm({
   profile,
   mode = 'create',
-  initialName,
 }: CoachFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
 
   const [formData, setFormData] = useState({
-    name: profile?.name || initialName || '',
+    firstName: profile?.firstName || '',
+    lastName: profile?.lastName || '',
     collegeId: profile?.collegeId || 0,
     collegeName: profile?.collegeName || '',
-    programName: profile?.programName || '',
-    position: profile?.position || '',
-    email: profile?.email || '',
+    jobTitle: profile?.jobTitle || '',
     phone: profile?.phone || '',
     bio: profile?.bio || '',
   })
@@ -69,31 +70,45 @@ export function CoachForm({
     try {
       const url =
         mode === 'edit'
-          ? `/api/profile/coach/${profile?.id}`
-          : '/api/profile/coach'
+          ? `/api/coaches/${profile?.id}`
+          : '/api/coaches'
       const method = mode === 'edit' ? 'PUT' : 'POST'
+
+      const formDataToSend = new FormData()
+      
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value) {
+          formDataToSend.append(key, value.toString())
+        }
+      })
+
+      if (profileImageFile) {
+        formDataToSend.append('profileImage', profileImageFile)
+      }
 
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const data = await response.json()
         throw new Error(
           data.error ||
             `Failed to ${mode === 'edit' ? 'update' : 'create'} profile`,
         )
       }
 
+      // Success - navigate to home
       if (mode === 'edit') {
         startTransition(() => {
           router.push('/')
           router.refresh()
         })
       } else {
-        router.push('/')
+        // For profile creation, do a hard navigation to bypass cache
+        window.location.href = '/'
       }
     } catch (err) {
       setError(
@@ -108,18 +123,38 @@ export function CoachForm({
   const isLoading = isSubmitting || isPending
 
   return (
-    <Card className='bg-slate-800/50 border-slate-700 p-8 max-w-md mx-auto'>
+    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 max-w-md mx-auto'>
       <form onSubmit={handleSubmit}>
         <FieldSet>
           <FieldLegend className='mb-6'>Coach Profile</FieldLegend>
           {error && <FieldError className='mb-6'>{error}</FieldError>}
           <FieldGroup>
+            <ProfileImageUpload
+              label='Coach Photo'
+              description='Upload a coach photo (JPG, PNG, or GIF)'
+              initialImageUrl={profile?.profileImageUrl}
+              onImageChange={setProfileImageFile}
+              userType='coach'
+            />
+
             <Field className='gap-1'>
-              <FieldLabel htmlFor='name'>Your Name</FieldLabel>
+              <FieldLabel htmlFor='name'>First Name</FieldLabel>
               <Input
-                id='name'
-                name='name'
-                value={formData.name}
+                id='firstName'
+                name='firstName'
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                placeholder='Required'
+              />
+            </Field>
+
+            <Field className='gap-1'>
+              <FieldLabel htmlFor='name'>Last Name</FieldLabel>
+              <Input
+                id='lastName'
+                name='lastName'
+                value={formData.lastName}
                 onChange={handleChange}
                 required
                 placeholder='Required'
@@ -153,28 +188,26 @@ export function CoachForm({
               )}
             </Field>
 
-            <div className='grid grid-cols-2 gap-4'>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='programName'>Program Name</FieldLabel>
-                <Input
-                  id='programName'
-                  name='programName'
-                  value={formData.programName}
-                  onChange={handleChange}
-                  placeholder="Women's Basketball"
-                />
-              </Field>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='position'>Position</FieldLabel>
-                <Input
-                  id='position'
-                  name='position'
-                  value={formData.position}
-                  onChange={handleChange}
-                  placeholder='Head Coach, etc.'
-                />
-              </Field>
-            </div>
+            <Field className='gap-1'>
+              <FieldLabel htmlFor='position'>Position</FieldLabel>
+              <Select
+                value={formData.jobTitle}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, jobTitle: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='Select position' />
+                </SelectTrigger>
+                <SelectContent>
+                  {ACTIVE_COACH_POSITIONS.map((position) => (
+                    <SelectItem key={position.value} value={position.value}>
+                      {position.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
 
             {/* <div className='grid grid-cols-2 gap-4'>
               <Field className='gap-1'>
@@ -227,17 +260,6 @@ export function CoachForm({
 
             <div className='grid grid-cols-2 gap-4'>
               <Field className='gap-1'>
-                <FieldLabel htmlFor='email'>Contact Email</FieldLabel>
-                <Input
-                  id='email'
-                  name='email'
-                  type='email'
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder='coach@university.edu'
-                />
-              </Field>
-              <Field className='gap-1'>
                 <FieldLabel htmlFor='phone'>Phone Number</FieldLabel>
                 <Input
                   id='phone'
@@ -260,9 +282,6 @@ export function CoachForm({
                 placeholder="Tell players about your coaching philosophy, program culture, and what you're looking for in recruits..."
                 rows={4}
               />
-              <FieldDescription>
-                Share your coaching philosophy and what you look for in recruits.
-              </FieldDescription>
             </Field>
 
             <div className='flex gap-3'>

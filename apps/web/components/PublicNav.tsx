@@ -59,11 +59,6 @@ export function PublicNav({ activePage }: PublicNavProps) {
                 Sign In
               </Button>
             </Link>
-            <Link href='/register-player' className='hidden sm:block'>
-              <Button size='sm'>
-                Get Started
-              </Button>
-            </Link>
           </div>
         </div>
       </div>

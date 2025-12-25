@@ -1,19 +1,18 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
 import { ListPageToolbar } from './ListPageToolbar'
 import { ProgramCard } from './ui/ProgramCard'
 import { ProgramsTable } from './ProgramsTable'
 import { EmptyState } from './ui/EmptyState'
 import { Pagination } from './Pagination'
 import { ProgramSortSelector } from './ProgramSortSelector'
+import { useViewPreference } from '@/hooks/useViewPreference'
 
 interface ProgramsPageContentProps {
   programs: any[]
   totalDocs: number
   totalPages: number
   currentPage: number
-  initialView?: 'grid' | 'table'
 }
 
 export function ProgramsPageContent({
@@ -21,17 +20,8 @@ export function ProgramsPageContent({
   totalDocs,
   totalPages,
   currentPage,
-  initialView = 'grid',
 }: ProgramsPageContentProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const view = (searchParams.get('view') as 'grid' | 'table') || initialView
-
-  const handleViewChange = (newView: 'grid' | 'table') => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('view', newView)
-    router.push(`/programs?${params.toString()}`)
-  }
+  const { view, handleViewChange } = useViewPreference('programs', 'grid')
 
   return (
     <>

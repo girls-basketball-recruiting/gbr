@@ -23,7 +23,7 @@ export default function CoachSignUpPage() {
             },
           }}
           unsafeMetadata={{
-            userType: 'coach',
+            role: 'coach',
           }}
           forceRedirectUrl='/onboarding/coach'
         />

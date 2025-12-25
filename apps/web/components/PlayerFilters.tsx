@@ -12,11 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select'
-import { US_STATES_AND_TERRITORIES } from '@/types/states'
-import { getPositionOptions } from '@/types/positions'
-import { getGraduationYearOptions } from '@/types/graduationYears'
+import { US_STATES_AND_TERRITORIES } from '@/lib/zod/States'
+import { getPositionOptions } from '@/lib/zod/Positions'
+import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
 import { RangeSlider } from './RangeSlider'
 import { X } from 'lucide-react'
+import { formatHeight } from '@/lib/formatters'
 
 export function PlayerFilters() {
   const router = useRouter()
@@ -107,12 +108,6 @@ export function PlayerFilters() {
   const handleHeightRangeChange = (value: [number, number]) => {
     setHeightRange(value)
     updateURL({ minHeight: value[0].toString(), maxHeight: value[1].toString() })
-  }
-
-  const formatHeight = (inches: number) => {
-    const feet = Math.floor(inches / 12)
-    const remainingInches = inches % 12
-    return `${feet}'${remainingInches}"`
   }
 
   const clearAllFilters = () => {

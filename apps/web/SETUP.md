@@ -58,7 +58,7 @@ CLERK_SECRET_KEY=sk_test_your_key
 openssl rand -base64 32
 ```
 
-2. Add to `.env`:
+1. Add to `.env`:
 
 ```bash
 PAYLOAD_SECRET=your_generated_secret
@@ -143,8 +143,7 @@ apps/web/
 │   ├── Users.ts            # User collection with roles
 │   └── Players.ts          # Player profiles
 ├── lib/
-│   ├── syncClerkUser.ts    # User sync utilities
-│   └── getPayloadUser.ts   # Get PayloadCMS user
+│   └── stripe.ts   # Stripe methods
 ├── proxy.ts           # Route protection
 └── payload.config.ts       # PayloadCMS config
 ```
@@ -289,11 +288,10 @@ Make sure all these are set in Vercel:
 
 ## Next Steps
 
-1. Review [CLERK_PAYLOAD_SYNC.md](./CLERK_PAYLOAD_SYNC.md) for detailed sync documentation
-2. Customize the Players collection in `collections/Players.ts`
-3. Build out your player profile features
-4. Add more collections as needed
-5. Customize the frontend UI
+1. Customize the Players collection in `collections/Players.ts`
+2. Build out your player profile features
+3. Add more collections as needed
+4. Customize the frontend UI
 
 ## Getting Help
 

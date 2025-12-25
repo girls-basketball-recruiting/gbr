@@ -9,8 +9,7 @@
     "parse": "tsx src/parse-html.ts",
     "parse:cli": "tsx src/parse-html-cli.ts",
     "parse:save": "tsx src/save-local.ts",
-    "import": "tsx src/import-to-db.ts",
-    "import:direct": "tsx src/import-direct.ts",
+    "import": "tsx src/import-direct.ts",
     "postinstall": "puppeteer browsers install chrome"
   },
   "dependencies": {

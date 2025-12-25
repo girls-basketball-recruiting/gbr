@@ -1,10 +1,16 @@
 import type { CollectionConfig } from 'payload'
-import { getPositionOptions } from '../types/positions'
+import { getPositionOptions } from '@/lib/zod/Positions'
+import { AAU_CIRCUITS } from '@/lib/zod/AauCircuits'
+import { AREAS_OF_STUDY } from '@/lib/zod/AreasOfStudy'
+import { LEVELS_OF_PLAY } from '@/lib/zod/LevelsOfPlay'
+import { GEOGRAPHIC_AREAS } from '@/lib/zod/GeographicAreas'
+import { DISTANCE_FROM_HOME_OPTIONS } from '@/lib/zod/DistanceFromHome'
+import { baseUserFields } from './shared/baseFields'
 
 export const Players: CollectionConfig = {
   slug: 'players',
   admin: {
-    useAsTitle: 'firstName',
+    useAsTitle: 'user',
   },
   fields: [
     {
@@ -13,35 +19,37 @@ export const Players: CollectionConfig = {
       relationTo: 'users',
       required: true,
       hasMany: false,
+      unique: true,
       admin: {
         description: 'Link to the Clerk user account',
       },
     },
+    ...baseUserFields,
     {
-      name: 'firstName',
-      type: 'text',
+      name: 'email',
+      type: 'email',
       required: true,
-    },
-    {
-      name: 'lastName',
-      type: 'text',
-      required: true,
+      admin: {
+        description: 'Email address (denormalized from user for easier querying)',
+      },
     },
     {
       name: 'graduationYear',
-      type: 'number',
+      type: 'text',
       required: true,
       admin: {
-        description: 'High school graduation year',
+        description: 'High school graduation year (e.g., "2025")',
       },
     },
     {
       name: 'city',
       type: 'text',
+      required: true,
     },
     {
       name: 'state',
       type: 'text',
+      required: true,
     },
     {
       name: 'highSchool',
@@ -49,26 +57,71 @@ export const Players: CollectionConfig = {
       required: true,
     },
     {
-      name: 'height',
-      type: 'text',
+      name: 'awards',
+      type: 'array',
+      maxRows: 10,
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'year',
+          type: 'text',
+          admin: {
+            description: 'Year received (optional)',
+          },
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          admin: {
+            description: 'Additional details (optional)',
+          },
+        },
+      ],
       admin: {
-        description: 'e.g., "5\'10"',
+        description: 'Add up to 10 awards, honors, and achievements',
       },
     },
     {
       name: 'heightInInches',
       type: 'number',
+      required: true,
       admin: {
-        description: 'Height in total inches (auto-calculated from height field)',
+        description: 'Height in total inches',
+      },
+    },
+    {
+      name: 'weight',
+      type: 'number',
+      admin: {
+        description: 'Weight in pounds (lbs)',
+      },
+    },
+    {
+      name: 'unweightedGpa',
+      type: 'number',
+      admin: {
+        description: 'Unweighted GPA',
       },
     },
     {
       name: 'weightedGpa',
       type: 'number',
+      admin: {
+        description: 'Weighted GPA',
+      },
     },
     {
-      name: 'unweightedGpa',
-      type: 'number',
+      name: 'potentialAreasOfStudy',
+      type: 'select',
+      hasMany: true,
+      options: AREAS_OF_STUDY,
+      admin: {
+        description: 'Potential areas of study',
+      },
     },
     {
       name: 'primaryPosition',
@@ -89,10 +142,76 @@ export const Players: CollectionConfig = {
           'Tell coaches about yourself, your playing style, and goals',
       },
     },
+    // AAU Info Section
     {
-      name: 'profileImage',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'aauProgramName',
+      type: 'text',
+      admin: {
+        description: 'AAU Program name',
+      },
+    },
+    {
+      name: 'aauTeamName',
+      type: 'text',
+      admin: {
+        description: 'AAU Team name',
+      },
+    },
+    {
+      name: 'aauCircuit',
+      type: 'select',
+      options: AAU_CIRCUITS,
+      admin: {
+        description: 'AAU Circuit/League',
+      },
+    },
+    {
+      name: 'aauCoach',
+      type: 'text',
+      admin: {
+        description: 'AAU Coach name',
+      },
+    },
+    // Contact Info Section
+    {
+      name: 'phoneNumber',
+      type: 'text',
+      admin: {
+        description: 'Contact phone number',
+      },
+    },
+    {
+      name: 'xHandle',
+      type: 'text',
+      admin: {
+        description: 'X handle',
+      },
+    },
+    {
+      name: 'instaHandle',
+      type: 'text',
+      admin: {
+        description: 'Instagram handle',
+      },
+    },
+    {
+      name: 'tiktokHandle',
+      type: 'text',
+      admin: {
+        description: 'TikTok handle',
+      },
+    },
+    {
+      name: 'ncaaId',
+      type: 'text',
+      admin: {
+        description: 'NCAA Eligibility Center ID',
+      },
+    },
+    {
+      name: 'profileImageUrl',
+      required: true,
+      type: 'text',
     },
     {
       name: 'highlightVideoUrls',
@@ -116,7 +235,7 @@ export const Players: CollectionConfig = {
       hasMany: true,
       admin: {
         description:
-          'Select tournaments you will be attending during exposure periods',
+          'Select tournaments you will be attending',
       },
     },
     {
@@ -140,18 +259,90 @@ export const Players: CollectionConfig = {
         description: 'Assists per game',
       },
     },
+    // Potential School Info Section
     {
-      name: 'desiredLevelOfPlay',
+      name: 'desiredLevelsOfPlay',
       type: 'select',
-      options: [
-        { label: 'NCAA D1', value: 'd1' },
-        { label: 'NCAA D2', value: 'd2' },
-        { label: 'NCAA D3', value: 'd3' },
-        { label: 'NAIA', value: 'naia' },
-        { label: 'JUCO', value: 'juco' },
-      ],
+      hasMany: true,
+      options: LEVELS_OF_PLAY,
       admin: {
-        description: 'Desired level of collegiate play',
+        description: 'Desired levels of collegiate play',
+      },
+    },
+    {
+      name: 'desiredGeographicAreas',
+      type: 'select',
+      hasMany: true,
+      options: GEOGRAPHIC_AREAS,
+      admin: {
+        description: 'Desired geographic areas',
+      },
+    },
+    {
+      name: 'desiredDistanceFromHome',
+      type: 'select',
+      options: DISTANCE_FROM_HOME_OPTIONS,
+      admin: {
+        description: 'Desired distance from home',
+      },
+    },
+    {
+      name: 'interestedInMilitaryAcademies',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in Military Academies',
+      },
+    },
+    {
+      name: 'interestedInUltraHighAcademics',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in Ultra High Academics',
+      },
+    },
+    {
+      name: 'interestedInFaithBased',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in Faith-Based institutions',
+      },
+    },
+    {
+      name: 'interestedInAllGirls',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in All Girls schools',
+      },
+    },
+    {
+      name: 'interestedInHBCU',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in HBCUs',
+      },
+    },
+    // Status Section
+    {
+      name: 'isActive',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        description: 'Is this player profile active?',
+      },
+    },
+    {
+      name: 'isCommitted',
+      type: 'checkbox',
+      admin: {
+        description: 'Has the player committed to a school?',
+      },
+    },
+    {
+      name: 'committedWhere',
+      type: 'text',
+      admin: {
+        description: 'School the player has committed to (if applicable)',
+        condition: (data) => Boolean(data?.isCommitted),
       },
     },
     {
@@ -166,15 +357,6 @@ export const Players: CollectionConfig = {
   hooks: {
     beforeValidate: [
       ({ data }) => {
-        // Auto-calculate heightInInches from height field (format: "5'10"")
-        if (data?.height && typeof data.height === 'string') {
-          const match = data.height.match(/(\d+)'(\d+)"?/)
-          if (match) {
-            const feet = parseInt(match[1] || '0')
-            const inches = parseInt(match[2] || '0')
-            data.heightInInches = feet * 12 + inches
-          }
-        }
         return data
       },
     ],

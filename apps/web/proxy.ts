@@ -1,57 +1,80 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
-// Define public routes that don't require authentication
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/register-player(.*)',
-  '/register-coach(.*)',
-  '/onboarding/player(.*)',
-  '/onboarding/coach(.*)',
-  '/players(.*)', // Public player profiles for SEO
-  '/programs(.*)', // Public college programs browsing
-  '/tournaments(.*)', // Public tournament browsing
-  '/coaches(.*)', // Public coach profiles
-  '/api/webhooks(.*)', // Webhooks should be public but verified
-  '/admin(.*)', // PayloadCMS handles its own authentication
-  '/api/graphql(.*)', // PayloadCMS GraphQL API
+// Routes that require authentication (editing/managing, not viewing)
+// Viewing routes like /players, /programs, /tournaments are all public
+const isProtectedRoute = createRouteMatcher([
+  '/profile(.*)',      // Your own profile (view/edit)
+  '/prospects(.*)',    // Prospect management (coach only)
 ])
 
-// PayloadCMS has its own auth - exclude ALL its API routes from Clerk
-const isPayloadRoute = createRouteMatcher([
-  '/api/users(.*)', // PayloadCMS users collection (auth, me, login, logout, etc.)
-  '/api/admin(.*)', // PayloadCMS admin API
-  '/api/payload-preferences(.*)', // PayloadCMS user preferences
-  '/api/media(.*)', // PayloadCMS media collection
-  '/api/players(.*)', // PayloadCMS players collection API
-  '/api/coaches(.*)', // PayloadCMS coaches collection API
-  '/api/colleges(.*)', // PayloadCMS colleges collection API
-  '/api/programs(.*)', // Custom programs API (public)
-  '/api/tournaments(.*)', // PayloadCMS tournaments collection API
-  '/api/prospects(.*)', // PayloadCMS prospects collection API
-  '/api/saved-players(.*)', // PayloadCMS saved-players collection API
-  '/api/coach-player-notes(.*)', // PayloadCMS coach-player-notes collection API
+// PayloadCMS admin routes - completely separate from frontend app
+// These use PayloadCMS's own authentication system
+const isPayloadAdminRoute = createRouteMatcher([
+  '/admin(.*)', // PayloadCMS admin UI
+])
+
+// Public routes that don't require Clerk authentication
+// These have their own verification mechanisms (webhook signatures, etc.)
+const isPublicRoute = createRouteMatcher([
+  '/api/webhooks/clerk(.*)', // Clerk webhooks (verified by Svix signature)
+  '/api/webhooks/stripe(.*)', // Stripe webhooks (verified by Stripe signature)
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/register-player(.*)',
+  '/register-coach(.*)',
+  '/', // Home page is public
 ])
 
 export default clerkMiddleware(async (auth, request) => {
-  // Allow public routes (including /admin since PayloadCMS handles auth)
+  // Add pathname to request headers so layout can access it
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-pathname', request.nextUrl.pathname)
+
+  // Allow PayloadCMS admin routes (PayloadCMS handles its own auth)
+  if (isPayloadAdminRoute(request)) {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    })
+  }
+
+  // Allow public routes without authentication
   if (isPublicRoute(request)) {
-    return
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    })
   }
 
-  // Allow all PayloadCMS API routes (PayloadCMS handles its own auth)
-  if (isPayloadRoute(request)) {
-    return
+  // All other routes require Clerk authentication
+  const { userId } = await auth()
+
+  if (userId) {
+    requestHeaders.set('x-clerk-id', userId)
   }
 
-  // Protect all other routes - require Clerk authentication
-  await auth.protect()
+  // If accessing a protected route without auth, require login
+  if (isProtectedRoute(request) && !userId) {
+    return NextResponse.redirect(new URL('/sign-in', request.url))
+  }
+
+  // Onboarding check should be handled in Layout or Page components
+  // to allow using Payload Local API which requires Node environment.
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  })
 })
 
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/((?!_next|[^?]*.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],

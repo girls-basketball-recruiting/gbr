@@ -1,49 +1,30 @@
-import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { apiSuccess, apiNotFound, handleApiError } from '@/lib/api-helpers'
+import { findById, findAll } from '@/lib/payload-helpers'
 
-export async function GET(
-  request: Request,
+/**
+ * Get a specific college program by ID with coaches
+ */
+export const GET = handleApiError(async (
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
+) => {
+  const { id } = await params
+  const collegeId = parseInt(id)
 
-    // Fetch the college
-    const college = await payload.findByID({
-      collection: 'colleges',
-      id: parseInt(id),
-    })
+  // Fetch the college
+  const college = await findById('colleges', collegeId)
 
-    if (!college) {
-      return NextResponse.json(
-        { error: 'Program not found' },
-        { status: 404 }
-      )
-    }
-
-    // Find coaches for this college
-    const coaches = await payload.find({
-      collection: 'coaches',
-      where: {
-        collegeId: {
-          equals: parseInt(id),
-        },
-      },
-      depth: 1, // Include profile images
-    })
-
-    return NextResponse.json({
-      program: college,
-      coaches: coaches.docs,
-    })
-  } catch (error) {
-    console.error('Error fetching program:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch program' },
-      { status: 500 }
-    )
+  if (!college) {
+    return apiNotFound('Program not found')
   }
-}
+
+  // Find coaches for this college
+  const coaches = await findAll('coaches', {
+    college: { equals: collegeId },
+  })
+
+  return apiSuccess({
+    program: college,
+    coaches,
+  })
+})

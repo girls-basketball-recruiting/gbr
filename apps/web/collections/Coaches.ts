@@ -1,9 +1,11 @@
 import type { CollectionConfig } from 'payload'
+import { ACTIVE_COACH_POSITIONS } from '@/lib/zod/CoachPositions'
+import { baseUserFields } from './shared/baseFields'
 
 export const Coaches: CollectionConfig = {
   slug: 'coaches',
   admin: {
-    useAsTitle: 'name',
+    useAsTitle: 'user',
   },
   fields: [
     {
@@ -22,10 +24,14 @@ export const Coaches: CollectionConfig = {
                 description: 'Link to the Clerk user account',
               },
             },
+            ...baseUserFields,
             {
-              name: 'name',
-              type: 'text',
+              name: 'email',
+              type: 'email',
               required: true,
+              admin: {
+                description: 'Email address (denormalized from user for easier querying)',
+              },
             },
             {
               name: 'collegeId',
@@ -44,23 +50,15 @@ export const Coaches: CollectionConfig = {
               },
             },
             {
-              name: 'programName',
-              type: 'text',
+              name: 'jobTitle',
+              type: 'select',
+              options: ACTIVE_COACH_POSITIONS.map(pos => ({
+                label: pos.label,
+                value: pos.value,
+              })),
               admin: {
-                description: 'e.g., "Women\'s Basketball"',
+                description: 'Your coaching position',
               },
-            },
-            {
-              name: 'position',
-              type: 'text',
-              admin: {
-                description:
-                  'e.g., "Head Coach", "Assistant Coach", "Recruiting Coordinator"',
-              },
-            },
-            {
-              name: 'email',
-              type: 'email',
             },
             {
               name: 'phone',
@@ -71,9 +69,8 @@ export const Coaches: CollectionConfig = {
               type: 'textarea',
             },
             {
-              name: 'profileImage',
-              type: 'upload',
-              relationTo: 'media',
+              name: 'profileImageUrl',
+              type: 'text',
             },
             {
               name: 'deletedAt',

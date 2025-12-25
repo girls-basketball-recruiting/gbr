@@ -1,84 +1,34 @@
-import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
-import { EmptyState } from './ui/EmptyState'
+
 import { StatCard } from './ui/StatCard'
-import { currentUser } from '@clerk/nextjs/server'
 import Image from 'next/image'
-import { getPositionLabel } from '@/types/positions'
+import { getPositionLabel } from '@/lib/zod/Positions'
+import { CoachesSection } from './dashboard/CoachesSection'
+import { CoachCardsSkeleton } from './ui/skeletons/CoachCardSkeleton'
+import { Suspense } from 'react'
+import { getAuthContext } from '@/lib/auth-context'
 
-interface PlayerDashboardProps {
-  // Empty for now
-}
-
-export default async function PlayerDashboard({}: PlayerDashboardProps) {
-  // Fetch all coaches from the database
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-
-  // Get current user and their player profile
-  const clerkUser = await currentUser()
-  let playerProfile = null
-
-  if (clerkUser) {
-    const users = await payload.find({
-      collection: 'users',
-      where: {
-        clerkId: {
-          equals: clerkUser.id,
-        },
-      },
-    })
-
-    if (users.docs.length > 0) {
-      const payloadUser = users.docs[0]!
-      const players = await payload.find({
-        collection: 'players',
-        where: {
-          user: {
-            equals: payloadUser.id,
-          },
-        },
-        depth: 1, // Populate profileImage relationship to get URL
-      })
-      playerProfile = players.docs[0]
-    }
-  }
-
-  const coachesData = await payload.find({
-    collection: 'coaches',
-    limit: 12,
-    sort: '-createdAt',
-  })
-
-  const coaches = coachesData.docs
-
-  const profileImageUrl =
-    playerProfile?.profileImage &&
-    typeof playerProfile.profileImage === 'object'
-      ? playerProfile.profileImage.url
-      : null
+export default async function PlayerDashboard() {
+  const { playerProfile } = await getAuthContext()
 
   return (
     <div className='container mx-auto px-4 py-8'>
       <div className='max-w-6xl mx-auto'>
-        {/* Player Profile Header */}
         {playerProfile && (
           <div className='mb-8 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-6'>
             <div className='flex items-center gap-6'>
-              {profileImageUrl ? (
-                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
+              {playerProfile.profileImageUrl ? (
+                <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative shrink-0'>
                   <Image
-                    src={profileImageUrl}
-                    alt={`${playerProfile.firstName} ${playerProfile.lastName}`}
+                    src={playerProfile.profileImageUrl}
+                    alt={`${playerProfile.firstName} ${playerProfile.lastName} profile image`}
                     fill
                     className='object-cover'
                   />
                 </div>
               ) : (
-                <div className='w-24 h-24 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0'>
+                <div className='w-24 h-24 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0'>
                   <span className='text-3xl font-bold text-slate-900 dark:text-white'>
                     {playerProfile.firstName?.[0]}
                     {playerProfile.lastName?.[0]}
@@ -115,77 +65,20 @@ export default async function PlayerDashboard({}: PlayerDashboardProps) {
           </div>
         )}
 
-        {/* Coaches Section */}
         <div className='mb-8'>
           <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
-            College Coaches & Programs
+            College Programs
           </h3>
 
-          {coaches.length === 0 ? (
-            <EmptyState
-              title='No Coaches Yet'
-              description='No coaches have created profiles yet. Check back soon to explore college programs!'
-            />
-          ) : (
-            <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {coaches.map((coach) => (
-                <Card
-                  key={coach.id}
-                  className='min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors'
-                >
-                  <div className='p-6 space-y-4'>
-                    <div>
-                      <h4 className='text-xl font-semibold text-slate-900 dark:text-white'>
-                        {coach.name}
-                      </h4>
-                      <p className='text-slate-600 dark:text-slate-400 text-sm'>
-                        {coach.collegeName}
-                      </p>
-                    </div>
-
-                    <div className='space-y-2 text-sm'>
-                      {coach.programName && (
-                        <div className='flex items-center gap-2'>
-                          <span className='text-slate-600 dark:text-slate-400'>Program:</span>
-                          <span className='text-slate-900 dark:text-white'>
-                            {coach.programName}
-                          </span>
-                        </div>
-                      )}
-                      {coach.position && (
-                        <div className='flex items-center gap-2'>
-                          <span className='text-slate-600 dark:text-slate-400'>Position:</span>
-                          <span className='text-slate-900 dark:text-white'>{coach.position}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {coach.bio && (
-                      <p className='text-slate-700 dark:text-slate-300 text-sm line-clamp-3'>
-                        {coach.bio}
-                      </p>
-                    )}
-
-                    <div className='pt-4 flex gap-2'>
-                      <Button
-                        className='flex-1 bg-blue-600 hover:bg-blue-700'
-                        asChild
-                      >
-                        <Link href={`/coaches/${coach.id}`}>View Profile</Link>
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )}
+          <Suspense fallback={<CoachCardsSkeleton count={12} />}>
+            <CoachesSection />
+          </Suspense>
         </div>
 
-        {/* Quick Stats Section */}
         <div className='grid md:grid-cols-3 gap-6 mb-8'>
           <StatCard label='Profile Views' value={0} />
-          <StatCard label='Available Coaches' value={coachesData.totalDocs} />
-          <StatCard label='This Month' value={coaches.length} />
+          <StatCard label='Available Coaches' value={0} />
+          <StatCard label='This Month' value={0} />
         </div>
       </div>
     </div>

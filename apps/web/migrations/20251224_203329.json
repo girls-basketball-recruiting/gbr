@@ -1,0 +1,3906 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.users_roles": {
+      "name": "users_roles",
+      "schema": "",
+      "columns": {
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "enum_users_roles",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "users_roles_order_idx": {
+          "name": "users_roles_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "users_roles_parent_idx": {
+          "name": "users_roles_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "users_roles_parent_fk": {
+          "name": "users_roles_parent_fk",
+          "tableFrom": "users_roles",
+          "tableTo": "users",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users_sessions": {
+      "name": "users_sessions",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "users_sessions_order_idx": {
+          "name": "users_sessions_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "users_sessions_parent_id_idx": {
+          "name": "users_sessions_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "users_sessions_parent_id_fk": {
+          "name": "users_sessions_parent_id_fk",
+          "tableFrom": "users_sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "clerk_id": {
+          "name": "clerk_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stripe_customer_id": {
+          "name": "stripe_customer_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripe_subscription_id": {
+          "name": "stripe_subscription_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripe_price_id": {
+          "name": "stripe_price_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripe_current_period_end": {
+          "name": "stripe_current_period_end",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reset_password_token": {
+          "name": "reset_password_token",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reset_password_expiration": {
+          "name": "reset_password_expiration",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "salt": {
+          "name": "salt",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hash": {
+          "name": "hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "login_attempts": {
+          "name": "login_attempts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "lock_until": {
+          "name": "lock_until",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "users_clerk_id_idx": {
+          "name": "users_clerk_id_idx",
+          "columns": [
+            {
+              "expression": "clerk_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "users_updated_at_idx": {
+          "name": "users_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "users_created_at_idx": {
+          "name": "users_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "users_email_idx": {
+          "name": "users_email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players_awards": {
+      "name": "players_awards",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "players_awards_order_idx": {
+          "name": "players_awards_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_awards_parent_id_idx": {
+          "name": "players_awards_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_awards_parent_id_fk": {
+          "name": "players_awards_parent_id_fk",
+          "tableFrom": "players_awards",
+          "tableTo": "players",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players_potential_areas_of_study": {
+      "name": "players_potential_areas_of_study",
+      "schema": "",
+      "columns": {
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "enum_players_potential_areas_of_study",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "players_potential_areas_of_study_order_idx": {
+          "name": "players_potential_areas_of_study_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_potential_areas_of_study_parent_idx": {
+          "name": "players_potential_areas_of_study_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_potential_areas_of_study_parent_fk": {
+          "name": "players_potential_areas_of_study_parent_fk",
+          "tableFrom": "players_potential_areas_of_study",
+          "tableTo": "players",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players_highlight_video_urls": {
+      "name": "players_highlight_video_urls",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "players_highlight_video_urls_order_idx": {
+          "name": "players_highlight_video_urls_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_highlight_video_urls_parent_id_idx": {
+          "name": "players_highlight_video_urls_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_highlight_video_urls_parent_id_fk": {
+          "name": "players_highlight_video_urls_parent_id_fk",
+          "tableFrom": "players_highlight_video_urls",
+          "tableTo": "players",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players_desired_levels_of_play": {
+      "name": "players_desired_levels_of_play",
+      "schema": "",
+      "columns": {
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "enum_players_desired_levels_of_play",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "players_desired_levels_of_play_order_idx": {
+          "name": "players_desired_levels_of_play_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_desired_levels_of_play_parent_idx": {
+          "name": "players_desired_levels_of_play_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_desired_levels_of_play_parent_fk": {
+          "name": "players_desired_levels_of_play_parent_fk",
+          "tableFrom": "players_desired_levels_of_play",
+          "tableTo": "players",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players_desired_geographic_areas": {
+      "name": "players_desired_geographic_areas",
+      "schema": "",
+      "columns": {
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "enum_players_desired_geographic_areas",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "players_desired_geographic_areas_order_idx": {
+          "name": "players_desired_geographic_areas_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_desired_geographic_areas_parent_idx": {
+          "name": "players_desired_geographic_areas_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_desired_geographic_areas_parent_fk": {
+          "name": "players_desired_geographic_areas_parent_fk",
+          "tableFrom": "players_desired_geographic_areas",
+          "tableTo": "players",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players": {
+      "name": "players",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "graduation_year": {
+          "name": "graduation_year",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "high_school": {
+          "name": "high_school",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height_in_inches": {
+          "name": "height_in_inches",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weight": {
+          "name": "weight",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unweighted_gpa": {
+          "name": "unweighted_gpa",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weighted_gpa": {
+          "name": "weighted_gpa",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "primary_position": {
+          "name": "primary_position",
+          "type": "enum_players_primary_position",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "secondary_position": {
+          "name": "secondary_position",
+          "type": "enum_players_secondary_position",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio": {
+          "name": "bio",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aau_program_name": {
+          "name": "aau_program_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aau_team_name": {
+          "name": "aau_team_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aau_circuit": {
+          "name": "aau_circuit",
+          "type": "enum_players_aau_circuit",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aau_coach": {
+          "name": "aau_coach",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "x_handle": {
+          "name": "x_handle",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "insta_handle": {
+          "name": "insta_handle",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tiktok_handle": {
+          "name": "tiktok_handle",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ncaa_id": {
+          "name": "ncaa_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "profile_image_url": {
+          "name": "profile_image_url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ppg": {
+          "name": "ppg",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rpg": {
+          "name": "rpg",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "apg": {
+          "name": "apg",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "desired_distance_from_home": {
+          "name": "desired_distance_from_home",
+          "type": "enum_players_desired_distance_from_home",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interested_in_military_academies": {
+          "name": "interested_in_military_academies",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interested_in_ultra_high_academics": {
+          "name": "interested_in_ultra_high_academics",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interested_in_faith_based": {
+          "name": "interested_in_faith_based",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interested_in_all_girls": {
+          "name": "interested_in_all_girls",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interested_in_h_b_c_u": {
+          "name": "interested_in_h_b_c_u",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "is_committed": {
+          "name": "is_committed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "committed_where": {
+          "name": "committed_where",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "players_user_idx": {
+          "name": "players_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_updated_at_idx": {
+          "name": "players_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_created_at_idx": {
+          "name": "players_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_user_id_users_id_fk": {
+          "name": "players_user_id_users_id_fk",
+          "tableFrom": "players",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players_rels": {
+      "name": "players_rels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tournaments_id": {
+          "name": "tournaments_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "players_rels_order_idx": {
+          "name": "players_rels_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_rels_parent_idx": {
+          "name": "players_rels_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_rels_path_idx": {
+          "name": "players_rels_path_idx",
+          "columns": [
+            {
+              "expression": "path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_rels_tournaments_id_idx": {
+          "name": "players_rels_tournaments_id_idx",
+          "columns": [
+            {
+              "expression": "tournaments_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_rels_parent_fk": {
+          "name": "players_rels_parent_fk",
+          "tableFrom": "players_rels",
+          "tableTo": "players",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "players_rels_tournaments_fk": {
+          "name": "players_rels_tournaments_fk",
+          "tableFrom": "players_rels",
+          "tableTo": "tournaments",
+          "columnsFrom": [
+            "tournaments_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coaches": {
+      "name": "coaches",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "college_id": {
+          "name": "college_id",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "college_name": {
+          "name": "college_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "job_title": {
+          "name": "job_title",
+          "type": "enum_coaches_job_title",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio": {
+          "name": "bio",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "profile_image_url": {
+          "name": "profile_image_url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "coaches_user_idx": {
+          "name": "coaches_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coaches_updated_at_idx": {
+          "name": "coaches_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coaches_created_at_idx": {
+          "name": "coaches_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coaches_user_id_users_id_fk": {
+          "name": "coaches_user_id_users_id_fk",
+          "tableFrom": "coaches",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.colleges": {
+      "name": "colleges",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "school": {
+          "name": "school",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "enum_colleges_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conference": {
+          "name": "conference",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "division": {
+          "name": "division",
+          "type": "enum_colleges_division",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "colleges_school_idx": {
+          "name": "colleges_school_idx",
+          "columns": [
+            {
+              "expression": "school",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "colleges_state_idx": {
+          "name": "colleges_state_idx",
+          "columns": [
+            {
+              "expression": "state",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "colleges_division_idx": {
+          "name": "colleges_division_idx",
+          "columns": [
+            {
+              "expression": "division",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "colleges_updated_at_idx": {
+          "name": "colleges_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "colleges_created_at_idx": {
+          "name": "colleges_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coach_player_notes_contact_records": {
+      "name": "coach_player_notes_contact_records",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_type": {
+          "name": "contact_type",
+          "type": "enum_coach_player_notes_contact_records_contact_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "summary": {
+          "name": "summary",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "follow_up_needed": {
+          "name": "follow_up_needed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "follow_up_date": {
+          "name": "follow_up_date",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "coach_player_notes_contact_records_order_idx": {
+          "name": "coach_player_notes_contact_records_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_player_notes_contact_records_parent_id_idx": {
+          "name": "coach_player_notes_contact_records_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coach_player_notes_contact_records_parent_id_fk": {
+          "name": "coach_player_notes_contact_records_parent_id_fk",
+          "tableFrom": "coach_player_notes_contact_records",
+          "tableTo": "coach_player_notes",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coach_player_notes_tags": {
+      "name": "coach_player_notes_tags",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tag": {
+          "name": "tag",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "coach_player_notes_tags_order_idx": {
+          "name": "coach_player_notes_tags_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_player_notes_tags_parent_id_idx": {
+          "name": "coach_player_notes_tags_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coach_player_notes_tags_parent_id_fk": {
+          "name": "coach_player_notes_tags_parent_id_fk",
+          "tableFrom": "coach_player_notes_tags",
+          "tableTo": "coach_player_notes",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coach_player_notes": {
+      "name": "coach_player_notes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "coach_id": {
+          "name": "coach_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "player_id": {
+          "name": "player_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interest_level": {
+          "name": "interest_level",
+          "type": "enum_coach_player_notes_interest_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "coach_player_notes_coach_idx": {
+          "name": "coach_player_notes_coach_idx",
+          "columns": [
+            {
+              "expression": "coach_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_player_notes_player_idx": {
+          "name": "coach_player_notes_player_idx",
+          "columns": [
+            {
+              "expression": "player_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_player_notes_updated_at_idx": {
+          "name": "coach_player_notes_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_player_notes_created_at_idx": {
+          "name": "coach_player_notes_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_player_idx": {
+          "name": "coach_player_idx",
+          "columns": [
+            {
+              "expression": "coach_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "player_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coach_player_notes_coach_id_coaches_id_fk": {
+          "name": "coach_player_notes_coach_id_coaches_id_fk",
+          "tableFrom": "coach_player_notes",
+          "tableTo": "coaches",
+          "columnsFrom": [
+            "coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "coach_player_notes_player_id_players_id_fk": {
+          "name": "coach_player_notes_player_id_players_id_fk",
+          "tableFrom": "coach_player_notes",
+          "tableTo": "players",
+          "columnsFrom": [
+            "player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coach_prospects": {
+      "name": "coach_prospects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "coach_id": {
+          "name": "coach_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uniform_number": {
+          "name": "uniform_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "graduation_year": {
+          "name": "graduation_year",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height_in_inches": {
+          "name": "height_in_inches",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weight": {
+          "name": "weight",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "high_school": {
+          "name": "high_school",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aau_program": {
+          "name": "aau_program",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "twitter_handle": {
+          "name": "twitter_handle",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "linked_player_id": {
+          "name": "linked_player_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "coach_prospects_coach_idx": {
+          "name": "coach_prospects_coach_idx",
+          "columns": [
+            {
+              "expression": "coach_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_prospects_linked_player_idx": {
+          "name": "coach_prospects_linked_player_idx",
+          "columns": [
+            {
+              "expression": "linked_player_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_prospects_updated_at_idx": {
+          "name": "coach_prospects_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_prospects_created_at_idx": {
+          "name": "coach_prospects_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coach_prospects_coach_id_coaches_id_fk": {
+          "name": "coach_prospects_coach_id_coaches_id_fk",
+          "tableFrom": "coach_prospects",
+          "tableTo": "coaches",
+          "columnsFrom": [
+            "coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "coach_prospects_linked_player_id_players_id_fk": {
+          "name": "coach_prospects_linked_player_id_players_id_fk",
+          "tableFrom": "coach_prospects",
+          "tableTo": "players",
+          "columnsFrom": [
+            "linked_player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coach_prospects_rels": {
+      "name": "coach_prospects_rels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tournaments_id": {
+          "name": "tournaments_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "coach_prospects_rels_order_idx": {
+          "name": "coach_prospects_rels_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_prospects_rels_parent_idx": {
+          "name": "coach_prospects_rels_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_prospects_rels_path_idx": {
+          "name": "coach_prospects_rels_path_idx",
+          "columns": [
+            {
+              "expression": "path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_prospects_rels_tournaments_id_idx": {
+          "name": "coach_prospects_rels_tournaments_id_idx",
+          "columns": [
+            {
+              "expression": "tournaments_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coach_prospects_rels_parent_fk": {
+          "name": "coach_prospects_rels_parent_fk",
+          "tableFrom": "coach_prospects_rels",
+          "tableTo": "coach_prospects",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "coach_prospects_rels_tournaments_fk": {
+          "name": "coach_prospects_rels_tournaments_fk",
+          "tableFrom": "coach_prospects_rels",
+          "tableTo": "tournaments",
+          "columnsFrom": [
+            "tournaments_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.coach_saved_players": {
+      "name": "coach_saved_players",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "coach_id": {
+          "name": "coach_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "player_id": {
+          "name": "player_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "saved_at": {
+          "name": "saved_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "coach_saved_players_coach_idx": {
+          "name": "coach_saved_players_coach_idx",
+          "columns": [
+            {
+              "expression": "coach_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_saved_players_player_idx": {
+          "name": "coach_saved_players_player_idx",
+          "columns": [
+            {
+              "expression": "player_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_saved_players_updated_at_idx": {
+          "name": "coach_saved_players_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_saved_players_created_at_idx": {
+          "name": "coach_saved_players_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "coach_player_1_idx": {
+          "name": "coach_player_1_idx",
+          "columns": [
+            {
+              "expression": "coach_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "player_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "coach_saved_players_coach_id_coaches_id_fk": {
+          "name": "coach_saved_players_coach_id_coaches_id_fk",
+          "tableFrom": "coach_saved_players",
+          "tableTo": "coaches",
+          "columnsFrom": [
+            "coach_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "coach_saved_players_player_id_players_id_fk": {
+          "name": "coach_saved_players_player_id_players_id_fk",
+          "tableFrom": "coach_saved_players",
+          "tableTo": "players",
+          "columnsFrom": [
+            "player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tournaments": {
+      "name": "tournaments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "tournaments_updated_at_idx": {
+          "name": "tournaments_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "tournaments_created_at_idx": {
+          "name": "tournaments_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_mcp_api_keys": {
+      "name": "payload_mcp_api_keys",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coaches_find": {
+          "name": "coaches_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coaches_create": {
+          "name": "coaches_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coaches_update": {
+          "name": "coaches_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coaches_delete": {
+          "name": "coaches_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_player_notes_find": {
+          "name": "coach_player_notes_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_player_notes_create": {
+          "name": "coach_player_notes_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_player_notes_update": {
+          "name": "coach_player_notes_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_player_notes_delete": {
+          "name": "coach_player_notes_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_prospects_find": {
+          "name": "coach_prospects_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_prospects_create": {
+          "name": "coach_prospects_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_prospects_update": {
+          "name": "coach_prospects_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_prospects_delete": {
+          "name": "coach_prospects_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_saved_players_find": {
+          "name": "coach_saved_players_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_saved_players_create": {
+          "name": "coach_saved_players_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_saved_players_update": {
+          "name": "coach_saved_players_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "coach_saved_players_delete": {
+          "name": "coach_saved_players_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "colleges_find": {
+          "name": "colleges_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "colleges_create": {
+          "name": "colleges_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "colleges_update": {
+          "name": "colleges_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "colleges_delete": {
+          "name": "colleges_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "players_find": {
+          "name": "players_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "players_create": {
+          "name": "players_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "players_update": {
+          "name": "players_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "players_delete": {
+          "name": "players_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "tournaments_find": {
+          "name": "tournaments_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "tournaments_create": {
+          "name": "tournaments_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "tournaments_update": {
+          "name": "tournaments_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "tournaments_delete": {
+          "name": "tournaments_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "users_find": {
+          "name": "users_find",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "users_create": {
+          "name": "users_create",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "users_update": {
+          "name": "users_update",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "users_delete": {
+          "name": "users_delete",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "enable_a_p_i_key": {
+          "name": "enable_a_p_i_key",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "api_key": {
+          "name": "api_key",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "api_key_index": {
+          "name": "api_key_index",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "payload_mcp_api_keys_user_idx": {
+          "name": "payload_mcp_api_keys_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_mcp_api_keys_updated_at_idx": {
+          "name": "payload_mcp_api_keys_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_mcp_api_keys_created_at_idx": {
+          "name": "payload_mcp_api_keys_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "payload_mcp_api_keys_user_id_users_id_fk": {
+          "name": "payload_mcp_api_keys_user_id_users_id_fk",
+          "tableFrom": "payload_mcp_api_keys",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_kv": {
+      "name": "payload_kv",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "payload_kv_key_idx": {
+          "name": "payload_kv_key_idx",
+          "columns": [
+            {
+              "expression": "key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_locked_documents": {
+      "name": "payload_locked_documents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "global_slug": {
+          "name": "global_slug",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "payload_locked_documents_global_slug_idx": {
+          "name": "payload_locked_documents_global_slug_idx",
+          "columns": [
+            {
+              "expression": "global_slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_updated_at_idx": {
+          "name": "payload_locked_documents_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_created_at_idx": {
+          "name": "payload_locked_documents_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_locked_documents_rels": {
+      "name": "payload_locked_documents_rels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "users_id": {
+          "name": "users_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coaches_id": {
+          "name": "coaches_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "colleges_id": {
+          "name": "colleges_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coach_player_notes_id": {
+          "name": "coach_player_notes_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coach_prospects_id": {
+          "name": "coach_prospects_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coach_saved_players_id": {
+          "name": "coach_saved_players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tournaments_id": {
+          "name": "tournaments_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payload_mcp_api_keys_id": {
+          "name": "payload_mcp_api_keys_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "payload_locked_documents_rels_order_idx": {
+          "name": "payload_locked_documents_rels_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_parent_idx": {
+          "name": "payload_locked_documents_rels_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_path_idx": {
+          "name": "payload_locked_documents_rels_path_idx",
+          "columns": [
+            {
+              "expression": "path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_users_id_idx": {
+          "name": "payload_locked_documents_rels_users_id_idx",
+          "columns": [
+            {
+              "expression": "users_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_players_id_idx": {
+          "name": "payload_locked_documents_rels_players_id_idx",
+          "columns": [
+            {
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_coaches_id_idx": {
+          "name": "payload_locked_documents_rels_coaches_id_idx",
+          "columns": [
+            {
+              "expression": "coaches_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_colleges_id_idx": {
+          "name": "payload_locked_documents_rels_colleges_id_idx",
+          "columns": [
+            {
+              "expression": "colleges_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_coach_player_notes_id_idx": {
+          "name": "payload_locked_documents_rels_coach_player_notes_id_idx",
+          "columns": [
+            {
+              "expression": "coach_player_notes_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_coach_prospects_id_idx": {
+          "name": "payload_locked_documents_rels_coach_prospects_id_idx",
+          "columns": [
+            {
+              "expression": "coach_prospects_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_coach_saved_players_id_idx": {
+          "name": "payload_locked_documents_rels_coach_saved_players_id_idx",
+          "columns": [
+            {
+              "expression": "coach_saved_players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_tournaments_id_idx": {
+          "name": "payload_locked_documents_rels_tournaments_id_idx",
+          "columns": [
+            {
+              "expression": "tournaments_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_payload_mcp_api_keys_id_idx": {
+          "name": "payload_locked_documents_rels_payload_mcp_api_keys_id_idx",
+          "columns": [
+            {
+              "expression": "payload_mcp_api_keys_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "payload_locked_documents_rels_parent_fk": {
+          "name": "payload_locked_documents_rels_parent_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "payload_locked_documents",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_users_fk": {
+          "name": "payload_locked_documents_rels_users_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "users",
+          "columnsFrom": [
+            "users_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_players_fk": {
+          "name": "payload_locked_documents_rels_players_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "players",
+          "columnsFrom": [
+            "players_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_coaches_fk": {
+          "name": "payload_locked_documents_rels_coaches_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "coaches",
+          "columnsFrom": [
+            "coaches_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_colleges_fk": {
+          "name": "payload_locked_documents_rels_colleges_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "colleges",
+          "columnsFrom": [
+            "colleges_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_coach_player_notes_fk": {
+          "name": "payload_locked_documents_rels_coach_player_notes_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "coach_player_notes",
+          "columnsFrom": [
+            "coach_player_notes_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_coach_prospects_fk": {
+          "name": "payload_locked_documents_rels_coach_prospects_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "coach_prospects",
+          "columnsFrom": [
+            "coach_prospects_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_coach_saved_players_fk": {
+          "name": "payload_locked_documents_rels_coach_saved_players_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "coach_saved_players",
+          "columnsFrom": [
+            "coach_saved_players_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_tournaments_fk": {
+          "name": "payload_locked_documents_rels_tournaments_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "tournaments",
+          "columnsFrom": [
+            "tournaments_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_payload_mcp_api_keys_fk": {
+          "name": "payload_locked_documents_rels_payload_mcp_api_keys_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "payload_mcp_api_keys",
+          "columnsFrom": [
+            "payload_mcp_api_keys_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_preferences": {
+      "name": "payload_preferences",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "value": {
+          "name": "value",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "payload_preferences_key_idx": {
+          "name": "payload_preferences_key_idx",
+          "columns": [
+            {
+              "expression": "key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_preferences_updated_at_idx": {
+          "name": "payload_preferences_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_preferences_created_at_idx": {
+          "name": "payload_preferences_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_preferences_rels": {
+      "name": "payload_preferences_rels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "users_id": {
+          "name": "users_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payload_mcp_api_keys_id": {
+          "name": "payload_mcp_api_keys_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "payload_preferences_rels_order_idx": {
+          "name": "payload_preferences_rels_order_idx",
+          "columns": [
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_preferences_rels_parent_idx": {
+          "name": "payload_preferences_rels_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_preferences_rels_path_idx": {
+          "name": "payload_preferences_rels_path_idx",
+          "columns": [
+            {
+              "expression": "path",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_preferences_rels_users_id_idx": {
+          "name": "payload_preferences_rels_users_id_idx",
+          "columns": [
+            {
+              "expression": "users_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_preferences_rels_payload_mcp_api_keys_id_idx": {
+          "name": "payload_preferences_rels_payload_mcp_api_keys_id_idx",
+          "columns": [
+            {
+              "expression": "payload_mcp_api_keys_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "payload_preferences_rels_parent_fk": {
+          "name": "payload_preferences_rels_parent_fk",
+          "tableFrom": "payload_preferences_rels",
+          "tableTo": "payload_preferences",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_preferences_rels_users_fk": {
+          "name": "payload_preferences_rels_users_fk",
+          "tableFrom": "payload_preferences_rels",
+          "tableTo": "users",
+          "columnsFrom": [
+            "users_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_preferences_rels_payload_mcp_api_keys_fk": {
+          "name": "payload_preferences_rels_payload_mcp_api_keys_fk",
+          "tableFrom": "payload_preferences_rels",
+          "tableTo": "payload_mcp_api_keys",
+          "columnsFrom": [
+            "payload_mcp_api_keys_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_migrations": {
+      "name": "payload_migrations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "batch": {
+          "name": "batch",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "payload_migrations_updated_at_idx": {
+          "name": "payload_migrations_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_migrations_created_at_idx": {
+          "name": "payload_migrations_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.enum_users_roles": {
+      "name": "enum_users_roles",
+      "schema": "public",
+      "values": [
+        "admin",
+        "player",
+        "coach"
+      ]
+    },
+    "public.enum_players_potential_areas_of_study": {
+      "name": "enum_players_potential_areas_of_study",
+      "schema": "public",
+      "values": [
+        "undecided",
+        "stem",
+        "business-professional",
+        "arts-humanities",
+        "social-science-education",
+        "health-medicine",
+        "public-service-law",
+        "other"
+      ]
+    },
+    "public.enum_players_desired_levels_of_play": {
+      "name": "enum_players_desired_levels_of_play",
+      "schema": "public",
+      "values": [
+        "any",
+        "ncaa-d1",
+        "ncaa-d2",
+        "ncaa-d3",
+        "naia",
+        "uscaa",
+        "nccaa",
+        "juco"
+      ]
+    },
+    "public.enum_players_desired_geographic_areas": {
+      "name": "enum_players_desired_geographic_areas",
+      "schema": "public",
+      "values": [
+        "anywhere",
+        "northeast",
+        "mid-atlantic",
+        "deep-south",
+        "midwest",
+        "south",
+        "rocky-mountain",
+        "west-coast",
+        "pacific-northwest",
+        "other"
+      ]
+    },
+    "public.enum_players_primary_position": {
+      "name": "enum_players_primary_position",
+      "schema": "public",
+      "values": [
+        "point-guard",
+        "combo-guard",
+        "wing",
+        "stretch-4",
+        "power-4",
+        "post"
+      ]
+    },
+    "public.enum_players_secondary_position": {
+      "name": "enum_players_secondary_position",
+      "schema": "public",
+      "values": [
+        "point-guard",
+        "combo-guard",
+        "wing",
+        "stretch-4",
+        "power-4",
+        "post"
+      ]
+    },
+    "public.enum_players_aau_circuit": {
+      "name": "enum_players_aau_circuit",
+      "schema": "public",
+      "values": [
+        "nike-eybl",
+        "uaa",
+        "power24",
+        "adidas-3ssb",
+        "select-40",
+        "new-balance-lady-p32",
+        "puma-nxtpro-16",
+        "elite-40",
+        "hoop-group",
+        "nike-ecyl",
+        "ua-rise",
+        "crossroads",
+        "adidas-gold",
+        "prep-girls-hoops",
+        "new-balance-lady-e32",
+        "puma-nxt-league",
+        "insider-exposure",
+        "hype-her-hoops",
+        "other",
+        "independent"
+      ]
+    },
+    "public.enum_players_desired_distance_from_home": {
+      "name": "enum_players_desired_distance_from_home",
+      "schema": "public",
+      "values": [
+        "anywhere",
+        "less-than-2",
+        "less-than-4",
+        "less-than-8"
+      ]
+    },
+    "public.enum_coaches_job_title": {
+      "name": "enum_coaches_job_title",
+      "schema": "public",
+      "values": [
+        "head-coach",
+        "associate-head-coach",
+        "assistant-coach",
+        "director-of-recruiting",
+        "recruiting-coordinator",
+        "director-of-operations",
+        "director-of-player-development",
+        "assistant-director-of-player-personnel",
+        "graduate-assistant",
+        "other"
+      ]
+    },
+    "public.enum_colleges_type": {
+      "name": "enum_colleges_type",
+      "schema": "public",
+      "values": [
+        "public",
+        "private"
+      ]
+    },
+    "public.enum_colleges_division": {
+      "name": "enum_colleges_division",
+      "schema": "public",
+      "values": [
+        "d1",
+        "d2",
+        "d3",
+        "naia",
+        "juco",
+        "other"
+      ]
+    },
+    "public.enum_coach_player_notes_contact_records_contact_type": {
+      "name": "enum_coach_player_notes_contact_records_contact_type",
+      "schema": "public",
+      "values": [
+        "email",
+        "phone",
+        "text",
+        "in-person",
+        "video",
+        "game-visit",
+        "campus-visit",
+        "other"
+      ]
+    },
+    "public.enum_coach_player_notes_interest_level": {
+      "name": "enum_coach_player_notes_interest_level",
+      "schema": "public",
+      "values": [
+        "high",
+        "medium",
+        "low",
+        "watching",
+        "not-interested"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "id": "f0471b41-e963-4723-bec1-32ca620718f8",
+  "prevId": "00000000-0000-0000-0000-000000000000"
+}

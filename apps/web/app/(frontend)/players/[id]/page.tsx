@@ -1,5 +1,3 @@
-import { getPayload } from 'payload'
-import config from '@/payload.config'
 import { notFound } from 'next/navigation'
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
@@ -9,7 +7,10 @@ import { currentUser } from '@clerk/nextjs/server'
 import { CoachNotesSection } from '@/components/CoachNotesSection'
 import { SavePlayerButton } from '@/components/SavePlayerButton'
 import type { Metadata } from 'next'
-import { getPositionLabel } from '@/types/positions'
+import { getPositionLabel } from '@/lib/zod/Positions'
+import { formatHeight } from '@/lib/formatters'
+import { findById, findOne, exists } from '@/lib/payload-helpers'
+import { Tournament } from '@/payload-types'
 
 // Generate metadata for SEO
 export async function generateMetadata({
@@ -18,15 +19,9 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
 
   try {
-    const player = await payload.findByID({
-      collection: 'players',
-      id,
-      depth: 2,
-    })
+    const player = await findById('players', id)
 
     if (!player) {
       return {
@@ -58,7 +53,7 @@ export async function generateMetadata({
         description,
       },
     }
-  } catch (error) {
+  } catch {
     return {
       title: 'Player Profile',
     }
@@ -71,20 +66,18 @@ export default async function PlayerProfilePage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
   const clerkUser = await currentUser()
 
-  // Fetch the player with profile image
-  const player = await payload.findByID({
-    collection: 'players',
-    id,
-    depth: 2, // To populate profileImage relation
-  })
+  // Fetch the player
+  const player = await findById('players', id)
 
   if (!player) {
     notFound()
   }
+
+  // Get tournament schedule from player object (populated by Payload)
+  // Ensure it's treated as an array of Tournaments, filtering out any unresolved IDs if mixed
+  const tournamentSchedule = (player.tournamentSchedule as unknown as Tournament[])?.filter(t => typeof t === 'object') || []
 
   // Check if user is authenticated
   const isAuthenticated = !!clerkUser
@@ -95,43 +88,22 @@ export default async function PlayerProfilePage({
   let isSaved = false
 
   if (clerkUser) {
-    const users = await payload.find({
-      collection: 'users',
-      where: {
-        clerkId: {
-          equals: clerkUser.id,
-        },
-      },
-    })
+    const user = await findOne('users', { clerkId: { equals: clerkUser.id } })
 
-    if (users.docs.length > 0) {
-      const user = users.docs[0]!
+    if (user) {
       isCoach = user.roles?.includes('coach') || false
 
       if (isCoach) {
         // Find the coach profile
-        const coaches = await payload.find({
-          collection: 'coaches',
-          where: {
-            user: {
-              equals: user.id,
-            },
-          },
-        })
-        coachProfile = coaches.docs[0] || null
+        // Note: user field in coaches collection is a relationship to users collection
+        coachProfile = await findOne('coaches', { user: { equals: user.id } })
 
         // Check if this player is saved
         if (coachProfile) {
-          const savedPlayers = await payload.find({
-            collection: 'saved-players',
-            where: {
-              and: [
-                { coach: { equals: coachProfile.id } },
-                { player: { equals: parseInt(id) } },
-              ],
-            },
+          isSaved = await exists('coach-saved-players', {
+            coach: { equals: coachProfile.id },
+            player: { equals: parseInt(id) }
           })
-          isSaved = savedPlayers.docs.length > 0
         }
       }
     }
@@ -147,11 +119,11 @@ export default async function PlayerProfilePage({
           <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
             <div className='text-center space-y-6'>
               {/* Profile Image */}
-              {player.profileImage && typeof player.profileImage === 'object' && player.profileImage.url && (
+              {player.profileImageUrl && (
                 <div className='flex justify-center'>
                   <div className='w-32 h-32 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative'>
                     <Image
-                      src={player.profileImage.url}
+                      src={player.profileImageUrl}
                       alt={`${player.firstName} ${player.lastName}`}
                       fill
                       className='object-cover'
@@ -184,6 +156,18 @@ export default async function PlayerProfilePage({
                   <div className='flex items-center justify-center gap-2'>
                     <span className='text-slate-600 dark:text-slate-400'>School:</span>
                     <span className='font-medium'>{player.highSchool}</span>
+                  </div>
+                )}
+                {player.heightInInches && (
+                  <div className='flex items-center justify-center gap-2'>
+                    <span className='text-slate-600 dark:text-slate-400'>Height:</span>
+                    <span className='font-medium'>{formatHeight(player.heightInInches)}</span>
+                  </div>
+                )}
+                {player.weight && (
+                  <div className='flex items-center justify-center gap-2'>
+                    <span className='text-slate-600 dark:text-slate-400'>Weight:</span>
+                    <span className='font-medium'>{player.weight} lbs</span>
                   </div>
                 )}
               </div>
@@ -229,10 +213,10 @@ export default async function PlayerProfilePage({
           <div className='flex items-start justify-between gap-6'>
             <div className='flex items-start gap-6 flex-1'>
               {/* Profile Image */}
-              {player.profileImage && typeof player.profileImage === 'object' && player.profileImage.url && (
+              {player.profileImageUrl && (
                 <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
                   <Image
-                    src={player.profileImage.url}
+                    src={player.profileImageUrl}
                     alt={`${player.firstName} ${player.lastName}`}
                     fill
                     className='object-cover'
@@ -285,10 +269,16 @@ export default async function PlayerProfilePage({
                   </span>
                 </div>
               )}
-              {player.height && (
+              {player.heightInInches && (
                 <div>
                   <span className='text-slate-600 dark:text-slate-400'>Height:</span>{' '}
-                  <span className='font-medium'>{player.height}</span>
+                  <span className='font-medium'>{formatHeight(player.heightInInches)}</span>
+                </div>
+              )}
+              {player.weight && (
+                <div>
+                  <span className='text-slate-600 dark:text-slate-400'>Weight:</span>{' '}
+                  <span className='font-medium'>{player.weight} lbs</span>
                 </div>
               )}
             </div>
@@ -340,14 +330,13 @@ export default async function PlayerProfilePage({
         )}
 
         {/* Tournament Schedule */}
-        {player.tournamentSchedule && Array.isArray(player.tournamentSchedule) && player.tournamentSchedule.length > 0 && (
+        {tournamentSchedule && tournamentSchedule.length > 0 && (
           <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6 mb-8'>
             <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
               Tournament Schedule
             </h2>
             <div className='space-y-3'>
-              {player.tournamentSchedule.map((tournament: any) => {
-                const t = typeof tournament === 'object' ? tournament : null
+              {tournamentSchedule.map((t) => {
                 if (!t) return null
 
                 const formatDateRange = (start: string, end: string) => {
@@ -381,7 +370,7 @@ export default async function PlayerProfilePage({
                     <div>
                       <h3 className='font-semibold text-slate-900 dark:text-white'>{t.name}</h3>
                       <p className='text-sm text-slate-600 dark:text-slate-400'>
-                        {formatDateRange(t.startDate, t.endDate)} • {t.location}
+                        {formatDateRange(t.startDate.toString(), t.endDate.toString())} • {t.city}, {t.state}
                       </p>
                     </div>
                     {t.website && (

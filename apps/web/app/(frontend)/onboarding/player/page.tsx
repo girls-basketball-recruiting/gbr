@@ -1,20 +1,29 @@
-import { PlayerOnboardingForm } from '@/components/PlayerOnboardingForm'
+import { PlayerOnboardingWizard } from '@/components/PlayerOnboardingWizard'
 import { FormPageLayout } from '@/components/ui/FormPageLayout'
 import { currentUser } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
 
 export default async function PlayerOnboardingPage() {
   const user = await currentUser()
 
+  if (!user) {
+    redirect('/register-player')
+  }
+
+  // CRITICAL: Prevent coaches from accessing player onboarding
+  // This prevents role corruption bugs
+  const userRole = user.publicMetadata?.role as string | undefined
+  if (userRole && userRole !== 'player') {
+    redirect(`/onboarding/${userRole}`)
+  }
+
   return (
     <FormPageLayout
       title='Complete Your Player Profile'
-      description='Fill out your profile to start connecting with college coaches'
-      maxWidth='sm'
+      description='Follow the steps below to build your profile and connect with college coaches'
+      maxWidth='lg'
     >
-      <PlayerOnboardingForm
-        initialFirstName={user?.firstName || ''}
-        initialLastName={user?.lastName || ''}
-      />
+      <PlayerOnboardingWizard />
     </FormPageLayout>
   )
 }

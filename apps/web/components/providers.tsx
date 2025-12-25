@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { CollegesProvider } from '@/contexts/colleges-provider'
+import { Toaster } from '@workspace/ui/components/sonner'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +14,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      <CollegesProvider>{children}</CollegesProvider>
+      <CollegesProvider>
+        {children}
+        <Toaster />
+      </CollegesProvider>
     </NextThemesProvider>
   )
 }

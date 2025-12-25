@@ -1,5 +1,3 @@
-import { getPayload } from 'payload'
-import config from '@/payload.config'
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import { notFound } from 'next/navigation'
@@ -12,63 +10,32 @@ import {
   School,
   BadgeCheck,
 } from 'lucide-react'
+import { getCoachPositionLabel } from '@/lib/zod/CoachPositions'
+import { findById, findAll } from '@/lib/payload-helpers'
+import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
 
 interface ProgramPageProps {
   params: Promise<{ id: string }>
 }
 
-const divisionLabels: Record<string, string> = {
-  d1: 'NCAA Division I',
-  d2: 'NCAA Division II',
-  d3: 'NCAA Division III',
-  naia: 'NAIA',
-  juco: 'Junior College',
-  other: 'Other',
-}
-
 export default async function ProgramPage({ params }: ProgramPageProps) {
   const { id } = await params
 
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
+  const college = await findById('colleges', id)
 
-  // Fetch the college
-  let college
-  try {
-    college = await payload.findByID({
-      collection: 'colleges',
-      id: parseInt(id),
-    })
-  } catch (error) {
+  if (!college) {
     notFound()
   }
 
-  // Find coaches for this college
-  const coaches = await payload.find({
-    collection: 'coaches',
-    where: {
-      collegeId: {
-        equals: parseInt(id),
-      },
-    },
-    depth: 1, // Include profile images
+  const coaches = await findAll('coaches', {
+    collegeId: { equals: parseInt(id) }
   })
 
-  const hasCoaches = coaches.docs.length > 0
+  const hasCoaches = coaches.length > 0
 
   return (
     <div className='p-8'>
       <div className='max-w-6xl mx-auto'>
-        {/* Breadcrumb */}
-        <div className='mb-6'>
-          <Link
-            href='/programs'
-            className='text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm'
-          >
-            ← Back to Programs
-          </Link>
-        </div>
-
         {/* Program Header */}
         <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
           <div className='flex items-start justify-between mb-6'>
@@ -77,14 +44,14 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
                 {college.school}
               </h1>
               <p className='text-xl text-slate-600 dark:text-slate-400'>
-                Women's Basketball Program
+                Women&apos;s Basketball Program
               </p>
             </div>
             {hasCoaches && (
               <div className='flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/50 rounded-lg'>
                 <BadgeCheck className='w-5 h-5 text-blue-600 dark:text-blue-400' />
                 <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
-                  {coaches.docs.length} {coaches.docs.length === 1 ? 'Coach' : 'Coaches'} on Platform
+                  {coaches.length} {coaches.length === 1 ? 'Coach' : 'Coaches'} on Platform
                 </span>
               </div>
             )}
@@ -150,43 +117,36 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
               Coaching Staff on Platform
             </h2>
             <div className='grid md:grid-cols-2 gap-6'>
-              {coaches.docs.map((coach: any) => (
+              {coaches.map((coach: any) => (
                 <Card
                   key={coach.id}
                   className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'
                 >
                   <div className='flex items-start gap-4'>
-                    {coach.profileImage &&
-                    typeof coach.profileImage === 'object' &&
-                    coach.profileImage.url ? (
+                    {coach.profileImageUrl ? (
                       <div className='w-16 h-16 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
                         <Image
-                          src={coach.profileImage.url}
-                          alt={coach.name}
+                          src={coach.profileImageUrl}
+                          alt={coach.firstName + ' ' + coach.lastName}
                           fill
                           className='object-cover'
                         />
                       </div>
                     ) : (
-                      <div className='w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0'>
+                      <div className='w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0'>
                         <span className='text-2xl font-bold text-slate-900 dark:text-white'>
-                          {coach.name?.[0]}
+                          {coach.firstName[0] + coach.lastName[0]}
                         </span>
                       </div>
                     )}
 
                     <div className='flex-1'>
                       <h3 className='text-lg font-semibold text-slate-900 dark:text-white mb-1'>
-                        {coach.name}
+                        {coach.firstName} {coach.lastName}
                       </h3>
-                      {coach.position && (
-                        <p className='text-slate-600 dark:text-slate-400 text-sm mb-2'>
-                          {coach.position}
-                        </p>
-                      )}
-                      {coach.programName && (
+                      {coach.jobTitle && (
                         <p className='text-slate-600 dark:text-slate-400 text-sm mb-3'>
-                          {coach.programName}
+                          {getCoachPositionLabel(coach.jobTitle)}
                         </p>
                       )}
                       <Button

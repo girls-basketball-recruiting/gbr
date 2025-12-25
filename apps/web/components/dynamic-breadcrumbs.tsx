@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { Fragment, useEffect, useState } from 'react'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,6 +18,53 @@ interface BreadcrumbSegment {
 
 export function DynamicBreadcrumbs() {
   const pathname = usePathname()
+  const [entityName, setEntityName] = useState<string | null>(null)
+
+  // Extract entity type and ID from pathname
+  const pathParts = pathname.split('/').filter(Boolean)
+  const entityType = pathParts[0]
+  const entityId = pathParts[1] && !isNaN(Number(pathParts[1])) ? pathParts[1] : null
+
+  // Fetch entity name when on a detail page
+  useEffect(() => {
+    if (!entityId) {
+      setEntityName(null)
+      return
+    }
+
+    const fetchEntityName = async () => {
+      try {
+        let name = null
+
+        if (entityType === 'players') {
+          const res = await fetch(`/api/profile/player/${entityId}`)
+          const data = await res.json()
+          if (data.player) {
+            name = `${data.player.firstName || ''} ${data.player.lastName || ''}`.trim()
+          }
+        } else if (entityType === 'programs') {
+          const res = await fetch(`/api/programs/${entityId}`)
+          const data = await res.json()
+          name = data.program?.school
+        } else if (entityType === 'coach-prospects') {
+          const res = await fetch(`/api/prospects/${entityId}`)
+          const data = await res.json()
+          name = data.prospect?.name
+        } else if (entityType === 'tournaments') {
+          const res = await fetch(`/api/tournaments/${entityId}`)
+          const data = await res.json()
+          name = data.tournament?.name
+        }
+
+        setEntityName(name)
+      } catch (error) {
+        console.error('Failed to fetch entity name for breadcrumbs:', error)
+        setEntityName(null)
+      }
+    }
+
+    fetchEntityName()
+  }, [entityId, entityType])
 
   // If on the dashboard, show just "Dashboard"
   if (pathname === '/') {
@@ -36,17 +84,21 @@ export function DynamicBreadcrumbs() {
     { label: 'Dashboard', href: '/' },
   ]
 
-  const pathParts = pathname.split('/').filter(Boolean)
-
   // Map path segments to readable labels
   const getSegmentLabel = (segment: string, index: number): string => {
     // Check if it's a numeric ID (player/prospect/tournament detail page)
     if (!isNaN(Number(segment))) {
-      // Get the previous segment to determine what this ID represents
+      // Use fetched entity name if available, otherwise show generic label
+      if (entityName) {
+        return entityName
+      }
+
+      // Fallback to generic labels while loading
       const previousSegment = pathParts[index - 1]
       if (previousSegment === 'players') return 'Player Profile'
-      if (previousSegment === 'prospects') return 'Prospect Details'
+      if (previousSegment === 'coach-prospects') return 'Prospect Details'
       if (previousSegment === 'tournaments') return 'Tournament Details'
+      if (previousSegment === 'programs') return 'College Program Details'
       return 'Details'
     }
 
@@ -55,6 +107,7 @@ export function DynamicBreadcrumbs() {
       players: 'Browse Players',
       coaches: 'Browse Coaches',
       prospects: 'My Prospects',
+      programs: 'College Programs',
       tournaments: 'Tournaments',
       profile: 'My Profile',
       edit: 'Edit Profile',
@@ -85,9 +138,9 @@ export function DynamicBreadcrumbs() {
           const isLast = index === segments.length - 1
 
           return (
-            <div key={index} className='flex items-center'>
-              {index > 0 && <BreadcrumbSeparator />}
-              <BreadcrumbItem className={index === 0 ? 'hidden md:block' : ''}>
+            <Fragment key={index}>
+              {index > 0 && <BreadcrumbSeparator key={`sep-${index}`} />}
+              <BreadcrumbItem key={index} className={index === 0 ? 'hidden md:block' : ''}>
                 {isLast || !segment.href ? (
                   <BreadcrumbPage>{segment.label}</BreadcrumbPage>
                 ) : (
@@ -96,7 +149,7 @@ export function DynamicBreadcrumbs() {
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
-            </div>
+            </Fragment>
           )
         })}
       </BreadcrumbList>

@@ -23,12 +23,12 @@ We now use a standardized approach with **`publicMetadata.role`** as a **string*
 ```
 1. User signs up at /register-player or /register-coach
    ↓
-2. SignUp component sets: unsafeMetadata.userType = 'player' | 'coach'
+2. SignUp component sets: unsafeMetadata.role = 'player' | 'coach'
    (Client-side, temporary storage during signup)
    ↓
 3. Clerk webhook fires (user.created event)
    ↓
-4. Webhook reads unsafeMetadata.userType
+4. Webhook reads unsafeMetadata.role
    ↓
 5. Webhook calls Clerk API to set: publicMetadata.role = 'player' | 'coach'
    (Backend-only, permanent, secure)
@@ -57,16 +57,12 @@ We now use a standardized approach with **`publicMetadata.role`** as a **string*
 
 1. **Webhook** (`app/(frontend)/api/webhooks/clerk/route.ts`):
    - Imports `clerkClient` to update metadata
-   - Reads from `unsafeMetadata.userType` during signup
+   - Reads from `unsafeMetadata.role` during signup
    - Updates Clerk user with `publicMetadata.role`
    - Creates PayloadCMS user with `roles: [role]`
 
-2. **DashboardPage** (`components/DashboardPage.tsx`):
-   - Reads `clerkUser.publicMetadata?.role`
-   - Routes to PlayerDashboard or CoachDashboard based on role
-
 3. **Sign-up pages** (unchanged):
-   - Still set `unsafeMetadata.userType` during signup
+   - Still set `unsafeMetadata.role` during signup
    - Webhook handles moving it to `publicMetadata.role`
 
 ## Testing
@@ -76,7 +72,7 @@ After this fix, when you inspect a Clerk user at runtime:
 ```typescript
 const user = await currentUser()
 console.log(user.publicMetadata) // { role: 'player' } or { role: 'coach' }
-console.log(user.unsafeMetadata) // { userType: 'player' } or { userType: 'coach' }
+console.log(user.unsafeMetadata) // { role: 'player' } or { role: 'coach' }
 ```
 
 The `publicMetadata.role` is what you should use in your application code.

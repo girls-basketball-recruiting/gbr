@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(claude update)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Skill(superpowers:systematic-debugging)",
+      "mcp__neon__list_projects"
     ],
     "deny": [],
     "ask": []

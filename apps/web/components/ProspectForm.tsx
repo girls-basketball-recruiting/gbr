@@ -22,7 +22,8 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 import { useRouter } from 'next/navigation'
-import { getGraduationYearOptions } from '@/types/graduationYears'
+import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
+import { HeightSelect } from '@/components/HeightSelect'
 
 interface ProspectFormProps {
   coachId?: string | number
@@ -34,10 +35,12 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
   const [tournaments, setTournaments] = useState<any[]>([])
   const [selectedTournaments, setSelectedTournaments] = useState<string[]>([])
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     uniformNumber: '',
     graduationYear: (new Date().getFullYear() + 1).toString(),
-    height: '',
+    heightInInches: 0,
+    weight: '',
     highSchool: '',
     aauProgram: '',
     twitterHandle: '',
@@ -108,13 +111,24 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
           <FieldLegend className="mb-6">Prospect Information</FieldLegend>
           <FieldGroup>
             <Field className='gap-1'>
-              <FieldLabel htmlFor='name'>Full name</FieldLabel>
+              <FieldLabel htmlFor='name'>First name</FieldLabel>
               <Input
-                id='name'
+                id='firstName'
                 required
                 autoFocus
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                placeholder='Required'
+              />
+            </Field>
+            <Field className='gap-1'>
+              <FieldLabel htmlFor='name'>Last name</FieldLabel>
+              <Input
+                id='lastName'
+                required
+                autoFocus
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 placeholder='Required'
               />
             </Field>
@@ -149,16 +163,25 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 </Select>
               </Field>
             </div>
-            <Field className='gap-1'>
-              <FieldLabel htmlFor='height'>Height</FieldLabel>
-              <Input
-                id='height'
-                value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                placeholder="5'10&quot;"
-              />
-              <FieldDescription>Enter height in feet and inches.</FieldDescription>
-            </Field>
+            <div className='grid grid-cols-2 gap-4'>
+              <Field className='gap-1'>
+                <FieldLabel htmlFor='height'>Height</FieldLabel>
+                <HeightSelect
+                  value={formData.heightInInches || undefined}
+                  onValueChange={(value) => setFormData({ ...formData, heightInInches: value })}
+                />
+              </Field>
+              <Field className='gap-1'>
+                <FieldLabel htmlFor='weight'>Weight (lbs)</FieldLabel>
+                <Input
+                  id='weight'
+                  type='number'
+                  value={formData.weight}
+                  onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                  placeholder="lbs"
+                />
+              </Field>
+            </div>
             <div className='grid md:grid-cols-2 gap-4'>
               <Field className='gap-1'>
                 <FieldLabel htmlFor='highSchool'>High School</FieldLabel>

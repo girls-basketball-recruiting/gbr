@@ -3,17 +3,18 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
+import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 import { Users } from './collections/Users'
-import { Media } from './collections/Media'
+// import { Media } from './collections/Media'
 import { Players } from './collections/Players'
 import { Coaches } from './collections/Coaches'
 import { CoachPlayerNotes } from './collections/CoachPlayerNotes'
-import { SavedPlayers } from './collections/SavedPlayers'
+import { CoachSavedPlayers } from './collections/CoachSavedPlayers'
 import { Tournaments } from './collections/Tournaments'
-import { Prospects } from './collections/Prospects'
+import { CoachProspects } from './collections/CoachProspects'
 import { Colleges } from './collections/Colleges'
 
 const filename = fileURLToPath(import.meta.url)
@@ -28,14 +29,14 @@ export default buildConfig({
   },
   collections: [
     Users,
-    Media,
+    // Media,
     Players,
     Coaches,
     Colleges,
     CoachPlayerNotes,
-    SavedPlayers,
+    CoachProspects,
+    CoachSavedPlayers,
     Tournaments,
-    Prospects,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -50,6 +51,34 @@ export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
   sharp,
   plugins: [
+    mcpPlugin({
+      collections: {
+        coaches: {
+          enabled: true,
+        },
+        'coach-player-notes': {
+          enabled: true,
+        },
+        'coach-prospects': {
+          enabled: true,
+        },
+        'coach-saved-players': {
+          enabled: true,
+        },
+        colleges: {
+          enabled: true,
+        },
+        players: {
+          enabled: true,
+        },
+        tournaments: {
+          enabled: true,
+        },
+        users: {
+          enabled: true,
+        },
+      },
+    }),
     vercelBlobStorage({
       enabled: true,
       collections: {

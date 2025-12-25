@@ -1,55 +1,33 @@
-import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { apiSuccess, handleApiError } from '@/lib/api-helpers'
+import { getDb } from '@/lib/payload-helpers'
+import { eq, sql, asc } from 'drizzle-orm'
 
-export async function GET() {
-  try {
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
+/**
+ * Get all tournaments with attendee counts
+ */
+export const GET = handleApiError(async () => {
+  const { db, tables } = await getDb()
 
-    // Fetch all tournaments
-    const tournaments = await payload.find({
-      collection: 'tournaments',
-      limit: 1000,
-      sort: 'startDate',
+  // Fetch all tournaments with attendee counts using a join
+  const tournamentsWithCounts = await db
+    .select({
+      id: tables.tournaments.id,
+      name: tables.tournaments.name,
+      city: tables.tournaments.city,
+      state: tables.tournaments.state,
+      startDate: tables.tournaments.startDate,
+      endDate: tables.tournaments.endDate,
+      description: tables.tournaments.description,
+      website: tables.tournaments.website,
+      attendeeCount: sql<number>`count(${tables['players-tournaments'].id})`,
     })
-
-    // For each tournament, count how many players are attending
-    const tournamentsWithCounts = await Promise.all(
-      tournaments.docs.map(async (tournament) => {
-        // Find all players who have this tournament in their schedule
-        const playersAttending = await payload.find({
-          collection: 'players',
-          where: {
-            tournamentSchedule: {
-              contains: tournament.id,
-            },
-            deletedAt: {
-              exists: false,
-            },
-          },
-          limit: 0, // We only need the total count
-        })
-
-        return {
-          id: tournament.id,
-          name: tournament.name,
-          location: tournament.location,
-          startDate: tournament.startDate,
-          endDate: tournament.endDate,
-          description: tournament.description,
-          website: tournament.website,
-          attendeeCount: playersAttending.totalDocs,
-        }
-      }),
+    .from(tables.tournaments)
+    .leftJoin(
+      tables['players-tournaments'],
+      eq(tables.tournaments.id, tables['players-tournaments'].tournament)
     )
+    .groupBy(tables.tournaments.id)
+    .orderBy(asc(tables.tournaments.startDate))
 
-    return NextResponse.json({ tournaments: tournamentsWithCounts })
-  } catch (error) {
-    console.error('Error fetching tournaments:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch tournaments' },
-      { status: 500 },
-    )
-  }
-}
+  return apiSuccess({ tournaments: tournamentsWithCounts })
+})

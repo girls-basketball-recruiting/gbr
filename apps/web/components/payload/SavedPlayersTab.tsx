@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useDocumentInfo } from '@payloadcms/ui'
-import { getPositionLabel } from '@/types/positions'
+import { getPositionLabel } from '@/lib/zod/Positions'
 
 const SavedPlayersTab: React.FC = () => {
   const { id } = useDocumentInfo()

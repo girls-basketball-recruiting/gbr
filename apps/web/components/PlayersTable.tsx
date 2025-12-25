@@ -16,7 +16,8 @@ import {
 } from '@workspace/ui/components/table'
 import Link from 'next/link'
 import { SavePlayerButton } from './SavePlayerButton'
-import { getPositionLabel } from '@/types/positions'
+import { getPositionLabel } from '@/lib/zod/Positions'
+import { formatHeight } from '@/lib/formatters'
 
 interface PlayersTableProps {
   players: any[]
@@ -67,12 +68,22 @@ export function PlayersTable({
       },
     },
     {
-      accessorKey: 'height',
+      accessorKey: 'heightInInches',
       header: 'Height',
       cell: ({ row }) => {
-        const height = row.getValue('height') as string
-        return height ? (
-          <span className='text-slate-600 dark:text-slate-400'>{height}</span>
+        const heightInInches = row.getValue('heightInInches') as number
+        return heightInInches ? (
+          <span className='text-slate-600 dark:text-slate-400'>{formatHeight(heightInInches)}</span>
+        ) : null
+      },
+    },
+    {
+      accessorKey: 'weight',
+      header: 'Weight',
+      cell: ({ row }) => {
+        const weight = row.getValue('weight') as number
+        return weight ? (
+          <span className='text-slate-600 dark:text-slate-400'>{weight} lbs</span>
         ) : null
       },
     },

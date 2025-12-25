@@ -10,66 +10,60 @@ import {
 } from '@workspace/ui/components/select'
 
 interface HeightSelectProps {
-  value?: string // Format: "5-10" or "5'10"" or empty
-  onValueChange?: (value: string) => void
-  feetPlaceholder?: string
-  inchesPlaceholder?: string
+  value?: number // Height in total inches
+  onValueChange?: (value: number) => void
   className?: string
   selectClassName?: string
 }
 
 export function HeightSelect({
-  value = '',
+  value,
   onValueChange,
-  feetPlaceholder = 'Feet',
-  inchesPlaceholder = 'Inches',
   className = '',
   selectClassName = '',
 }: HeightSelectProps) {
   // Parse height into feet and inches
-  const parseHeight = (height: string) => {
-    if (!height) return { feet: '', inches: '' }
-    // Support both "5-10" and "5'10"" formats
-    const match = height.match(/(\d+)[-'](\d+)/) || height.match(/(\d+)'(\d+)"?/)
-    if (match) {
-      return { feet: match[1], inches: match[2] }
-    }
-    return { feet: '', inches: '' }
+  const getFeetAndInches = (totalInches?: number) => {
+    if (totalInches === undefined || totalInches === 0) return { feet: '', inches: '' }
+    const feet = Math.floor(totalInches / 12)
+    const inches = totalInches % 12
+    return { feet: feet.toString(), inches: inches.toString() }
   }
 
-  const { feet: initialFeet, inches: initialInches } = parseHeight(value)
-  const [heightFeet, setHeightFeet] = useState(initialFeet)
-  const [heightInches, setHeightInches] = useState(initialInches)
+  const initial = getFeetAndInches(value)
+  const [heightFeet, setHeightFeet] = useState(initial.feet)
+  const [heightInches, setHeightInches] = useState(initial.inches)
 
   // Update internal state when value prop changes
   useEffect(() => {
-    const { feet, inches } = parseHeight(value)
+    const { feet, inches } = getFeetAndInches(value)
     setHeightFeet(feet)
     setHeightInches(inches)
   }, [value])
 
-  // Notify parent when height changes
+  const notifyChange = (feet: string, inches: string) => {
+    if (onValueChange) {
+      const f = parseInt(feet || '0')
+      const i = parseInt(inches || '0')
+      onValueChange(f * 12 + i)
+    }
+  }
+
   const handleFeetChange = (feet: string) => {
     setHeightFeet(feet)
-    if (onValueChange) {
-      const combinedValue = feet ? `${feet}-${heightInches || '0'}` : ''
-      onValueChange(combinedValue)
-    }
+    notifyChange(feet, heightInches)
   }
 
   const handleInchesChange = (inches: string) => {
     setHeightInches(inches)
-    if (onValueChange) {
-      const combinedValue = heightFeet ? `${heightFeet}-${inches || '0'}` : ''
-      onValueChange(combinedValue)
-    }
+    notifyChange(heightFeet, inches)
   }
 
   return (
     <div className={`grid grid-cols-2 gap-2 ${className}`}>
       <Select value={heightFeet} onValueChange={handleFeetChange}>
         <SelectTrigger className={selectClassName}>
-          <SelectValue placeholder={feetPlaceholder} />
+          <SelectValue placeholder='Feet' />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value='3'>3 ft</SelectItem>
@@ -81,7 +75,7 @@ export function HeightSelect({
       </Select>
       <Select value={heightInches} onValueChange={handleInchesChange}>
         <SelectTrigger className={selectClassName}>
-          <SelectValue placeholder={inchesPlaceholder} />
+          <SelectValue placeholder='Inches' />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value='0'>0 in</SelectItem>

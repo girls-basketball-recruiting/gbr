@@ -8,19 +8,26 @@ The application implements two types of deletions to handle data integrity and u
 
 ## Hard Delete (Clerk User Deletion)
 
-**Webhook**: `/api/webhooks/clerk/user-deleted`
+**Webhook**: `/api/webhooks/clerk`
+
+This webhook handles all Clerk user lifecycle events:
+- `user.created`: Creates PayloadCMS user with role
+- `user.updated`: Updates PayloadCMS user data and role
+- `user.deleted`: Cascading deletion of all user data
 
 When a user is deleted from the Clerk dashboard, the webhook:
 1. Finds the PayloadCMS user by `clerkId`
 2. Deletes all associated player/coach profiles
+   - For coaches: Deletes all prospects created by the coach
+   - Deletes profile images from the media collection
 3. Deletes all `SavedPlayers` records where user is the coach
 4. Deletes all `CoachPlayerNotes` where user is the coach
 5. Finally deletes the PayloadCMS user record
 
 **Setup Required**:
 1. Go to Clerk Dashboard → Webhooks
-2. Create webhook for `user.deleted` event
-3. Point to: `https://yourdomain.com/api/webhooks/clerk/user-deleted`
+2. Create webhook for events: `user.created`, `user.updated`, `user.deleted`
+3. Point to: `https://yourdomain.com/api/webhooks/clerk`
 4. Use the `CLERK_WEBHOOK_SECRET` from your `.env`
 
 ## Soft Delete (Profile Deletion)

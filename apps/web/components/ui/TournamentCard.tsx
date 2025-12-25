@@ -6,20 +6,10 @@ import { Calendar, MapPin, Users, ExternalLink, Bookmark, Lock } from 'lucide-re
 import { useState } from 'react'
 import { Toggle } from '@workspace/ui/components/toggle'
 import Link from 'next/link'
-
-interface Tournament {
-  id: number
-  name: string
-  location: string
-  startDate: string
-  endDate: string
-  description?: string | null
-  website?: string | null
-  attendeeCount: number
-}
+import type { Tournament } from '@/payload-types'
 
 interface TournamentCardProps {
-  tournament: Tournament
+  tournament: Tournament & { attendeeCount?: number }
   isAttending?: boolean
   isPlayer?: boolean
   isAuthenticated?: boolean
@@ -119,7 +109,7 @@ export function TournamentCard({
           </div>
           <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
             <MapPin className='w-4 h-4 text-slate-500 dark:text-slate-400' />
-            <span>{tournament.location}</span>
+            <span>{tournament.city}</span>
           </div>
         </div>
 
@@ -136,14 +126,14 @@ export function TournamentCard({
             <div className='flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400'>
               <Users className='w-4 h-4' />
               <span>
-                {tournament.attendeeCount}{' '}
+                {tournament.attendeeCount ?? 0}{' '}
                 {tournament.attendeeCount === 1 ? 'player' : 'players'} attending
               </span>
             </div>
           ) : (
             <div className='flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400'>
               <Lock className='w-4 h-4' />
-              <span>Sign in to see who's attending</span>
+              <span>Sign in to see who&apos;s attending</span>
             </div>
           )}
 

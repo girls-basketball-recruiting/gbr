@@ -16,18 +16,10 @@ import {
 } from '@workspace/ui/components/table'
 import Link from 'next/link'
 import { BadgeCheck } from 'lucide-react'
+import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
 
 interface ProgramsTableProps {
   programs: any[]
-}
-
-const divisionLabels: Record<string, string> = {
-  d1: 'NCAA D1',
-  d2: 'NCAA D2',
-  d3: 'NCAA D3',
-  naia: 'NAIA',
-  juco: 'JUCO',
-  other: 'Other',
 }
 
 export function ProgramsTable({ programs }: ProgramsTableProps) {

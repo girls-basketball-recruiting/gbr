@@ -1,11 +1,13 @@
 import { CoachForm } from './CoachForm'
 
 interface CoachOnboardingFormProps {
-  initialName?: string
+  initialFirstName?: string
+  initialLastName?: string
 }
 
 export function CoachOnboardingForm({
-  initialName,
+  initialFirstName,
+  initialLastName,
 }: CoachOnboardingFormProps) {
-  return <CoachForm mode='create' initialName={initialName} />
+  return <CoachForm mode='create' initialFirstName={initialFirstName} initialLastName={initialLastName} />
 }

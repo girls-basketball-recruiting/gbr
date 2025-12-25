@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { redirect } from 'next/navigation'
 
 export default function GlobalError({
   error,
@@ -9,10 +10,15 @@ export default function GlobalError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+
   useEffect(() => {
     // Log the error to console for debugging
     console.error('Global application error:', error)
   }, [error])
+
+  const handleSignOut = async () => {
+    await redirect('/sign-out')
+  }
 
   return (
     <html lang='en'>
@@ -47,12 +53,12 @@ export default function GlobalError({
               </a>
             </div>
             <div className='mt-6'>
-              <a
-                href='/sign-out'
+              <button
+                onClick={handleSignOut}
                 className='text-sm text-slate-400 hover:text-white underline transition-colors'
               >
                 Sign out
-              </a>
+              </button>
             </div>
           </div>
         </div>
