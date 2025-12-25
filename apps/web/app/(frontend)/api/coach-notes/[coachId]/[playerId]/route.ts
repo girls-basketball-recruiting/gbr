@@ -1,167 +1,111 @@
-import { currentUser } from '@clerk/nextjs/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
-import { NextResponse } from 'next/server'
+import {
+  withCoach,
+  parseJsonBody,
+  apiSuccess,
+  apiForbidden,
+  handleApiError,
+} from '@/lib/api-helpers'
+import { findOne, create, updateById } from '@/lib/payload-helpers'
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ coachId: string; playerId: string }> },
-) {
-  try {
-    const { coachId, playerId } = await params
-    const clerkUser = await currentUser()
-    if (!clerkUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+/**
+ * Get coach notes for a specific player
+ */
+export const GET = handleApiError(async (
+  _req: Request,
+  { params }: { params: Promise<{ coachId: string; playerId: string }> }
+) => {
+  const { coachId, playerId } = await params
+  const [auth, authError] = await withCoach()
+  if (authError) return authError
 
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
-
-    // Verify user is a coach
-    const users = await payload.find({
-      collection: 'users',
-      where: {
-        clerkId: {
-          equals: clerkUser.id,
-        },
-      },
-    })
-
-    if (users.docs.length === 0 || !users.docs[0]?.roles?.includes('coach')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-
-    // Find existing notes
-    const notes = await payload.find({
-      collection: 'coach-player-notes',
-      where: {
-        and: [
-          {
-            coach: {
-              equals: parseInt(coachId),
-            },
-          },
-          {
-            player: {
-              equals: parseInt(playerId),
-            },
-          },
-        ],
-      },
-    })
-
-    if (notes.docs.length === 0) {
-      return NextResponse.json(
-        {
-          notes: '',
-          contactRecords: [],
-        },
-        { status: 200 },
-      )
-    }
-
-    return NextResponse.json(notes.docs[0], { status: 200 })
-  } catch (error) {
-    console.error('Error fetching coach notes:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    )
+  // Verify the coach is accessing their own notes
+  if (auth.coachProfile.id !== parseInt(coachId)) {
+    return apiForbidden('Cannot access another coach\'s notes')
   }
-}
 
-export async function PUT(
-  req: Request,
-  { params }: { params: Promise<{ coachId: string; playerId: string }> },
-) {
-  try {
-    const { coachId, playerId } = await params
-    const clerkUser = await currentUser()
-    if (!clerkUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  // Find existing notes
+  const note = await findOne('coach-player-notes', {
+    and: [
+      { coach: { equals: parseInt(coachId) } },
+      { player: { equals: parseInt(playerId) } },
+    ],
+  })
 
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
-
-    // Verify user is a coach
-    const users = await payload.find({
-      collection: 'users',
-      where: {
-        clerkId: {
-          equals: clerkUser.id,
-        },
-      },
+  // Return empty notes if none exist
+  if (!note) {
+    return apiSuccess({
+      notes: '',
+      contactRecords: [],
     })
-
-    if (users.docs.length === 0 || !users.docs[0]?.roles?.includes('coach')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-
-    const body = await req.json()
-
-    // Sanitize contact records - convert empty strings to undefined for date fields
-    const sanitizedContactRecords = (body.contactRecords || []).map(
-      (record: any) => ({
-        ...record,
-        date: record.date === '' ? undefined : record.date,
-        followUpDate:
-          record.followUpDate === '' ? undefined : record.followUpDate,
-      }),
-    )
-
-    // Find existing notes
-    const existingNotes = await payload.find({
-      collection: 'coach-player-notes',
-      where: {
-        and: [
-          {
-            coach: {
-              equals: parseInt(coachId),
-            },
-          },
-          {
-            player: {
-              equals: parseInt(playerId),
-            },
-          },
-        ],
-      },
-    })
-
-    let result
-
-    if (existingNotes.docs.length === 0) {
-      // Create new notes
-      result = await payload.create({
-        collection: 'coach-player-notes',
-        data: {
-          coach: parseInt(coachId),
-          player: parseInt(playerId),
-          notes: body.notes || '',
-          contactRecords: sanitizedContactRecords,
-          interestLevel: body.interestLevel || undefined,
-        },
-      })
-    } else if (existingNotes.docs[0]) {
-      // Update existing notes
-      result = await payload.update({
-        collection: 'coach-player-notes',
-        id: existingNotes.docs[0].id,
-        data: {
-          notes: body.notes,
-          contactRecords: sanitizedContactRecords,
-          interestLevel: body.interestLevel || undefined,
-        },
-      })
-    }
-
-    return NextResponse.json(result, { status: 200 })
-  } catch (error) {
-    console.error('Error saving coach notes:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    )
   }
-}
+
+  return apiSuccess(note)
+})
+
+/**
+ * Create or update coach notes for a specific player
+ */
+export const PUT = handleApiError(async (
+  req: Request,
+  { params }: { params: Promise<{ coachId: string; playerId: string }> }
+) => {
+  const { coachId, playerId } = await params
+  const [auth, authError] = await withCoach()
+  if (authError) return authError
+
+  // Verify the coach is updating their own notes
+  if (auth.coachProfile.id !== parseInt(coachId)) {
+    return apiForbidden('Cannot update another coach\'s notes')
+  }
+
+  const [body, bodyError] = await parseJsonBody<{
+    notes: string
+    contactRecords?: Array<{
+      date?: string
+      followUpDate?: string
+      // [key: string]: any
+    }>
+    interestLevel?: string
+  }>(req)
+  if (bodyError) return bodyError
+
+  // Sanitize contact records - convert empty strings to undefined for date fields
+  const sanitizedContactRecords = (body.contactRecords || []).map(
+    (record) => ({
+      ...record,
+      date: record.date === '' ? undefined : record.date,
+      followUpDate:
+        record.followUpDate === '' ? undefined : record.followUpDate,
+    }),
+  )
+
+  // Find existing notes
+  const existingNote = await findOne('coach-player-notes', {
+    and: [
+      { coach: { equals: parseInt(coachId) } },
+      { player: { equals: parseInt(playerId) } },
+    ],
+  })
+
+  let result
+
+  if (!existingNote) {
+    // Create new notes
+    result = await create('coach-player-notes', {
+      coach: parseInt(coachId),
+      player: parseInt(playerId),
+      notes: body.notes || '',
+      contactRecords: sanitizedContactRecords,
+      interestLevel: body.interestLevel,
+    })
+  } else {
+    // Update existing notes
+    result = await updateById('coach-player-notes', existingNote.id, {
+      notes: body.notes,
+      contactRecords: sanitizedContactRecords,
+      interestLevel: body.interestLevel,
+    })
+  }
+
+  return apiSuccess(result)
+})

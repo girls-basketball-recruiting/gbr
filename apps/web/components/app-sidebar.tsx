@@ -3,9 +3,7 @@
 import {
   Home,
   Users,
-  UserPlus,
   Calendar,
-  Settings,
   School,
   LogIn,
   UserPlus as UserPlusIcon,
@@ -29,9 +27,7 @@ import {
 } from '@workspace/ui/components/sidebar'
 import { NavUser } from './NavUser'
 
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
-
-export function AppSidebar({ ...props }: AppSidebarProps) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { user } = useUser()
 
@@ -51,12 +47,12 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       icon: Users,
     },
     {
-      title: 'Programs',
+      title: 'College Programs',
       url: '/programs',
       icon: School,
     },
     {
-      title: 'Tournaments',
+      title: 'AAU Tournaments',
       url: '/tournaments',
       icon: Calendar,
     },
@@ -69,17 +65,12 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       icon: Home,
     },
     {
-      title: 'Coaches',
-      url: '/coaches',
-      icon: Users,
-    },
-    {
-      title: 'Programs',
+      title: 'College Programs',
       url: '/programs',
       icon: School,
     },
     {
-      title: 'Tournaments',
+      title: 'AAU Tournaments',
       url: '/tournaments',
       icon: Calendar,
     },
@@ -92,7 +83,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       icon: Users,
     },
     {
-      title: 'Programs',
+      title: 'College Programs',
       url: '/programs',
       icon: School,
     },
@@ -165,28 +156,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {!!user && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Settings</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === '/profile/edit'}
-                    tooltip='Edit Profile'
-                  >
-                    <Link href='/profile/edit'>
-                      <Settings />
-                      <span>Edit Profile</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

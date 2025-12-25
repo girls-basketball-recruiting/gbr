@@ -16,15 +16,7 @@ A complete user authentication and synchronization system that integrates Clerk 
 - Validates webhook signatures for security
 - Filters and validates roles before saving
 
-### 2. User Sync Utilities
-
-**`lib/syncClerkUser.ts`**
-
-- `syncClerkUser()` - Ensures user exists in PayloadCMS, creates if not
-- `getPayloadUserFromClerk()` - Fetches PayloadCMS user for current Clerk user
-- Used for on-demand sync when users first log in
-
-### 3. Route Protection Middleware
+### 2. Route Protection Middleware
 
 **`proxy.ts`**
 
@@ -34,9 +26,8 @@ A complete user authentication and synchronization system that integrates Clerk 
 - Admin routes: `/admin/*` requires admin role
 - Redirects non-admins away from admin panel
 
-### 4. Documentation
+### 3. Documentation
 
-- **`CLERK_PAYLOAD_SYNC.md`** - Complete sync architecture documentation
 - **`SETUP.md`** - Step-by-step setup guide
 - **`.env.example`** - Environment variables template
 
@@ -117,11 +108,10 @@ A complete user authentication and synchronization system that integrates Clerk 
 4. **User created** in PayloadCMS with:
    - Email from Clerk
    - Clerk ID for linking
-   - Roles from Clerk public metadata (default: `['player']`)
+   - Role from Clerk public metadata
    - First/Last name from Clerk profile
 5. **User logs in** to app
-6. **Frontend** calls `syncClerkUser()` to ensure user exists
-7. **User data** displayed from PayloadCMS
+6. **User data** displayed from PayloadCMS
 
 ## Role System
 
@@ -248,7 +238,6 @@ Some `@ts-expect-error` comments have been added temporarily until types are reg
 2. **User not syncing**
    - Check terminal logs for errors
    - Verify database connection
-   - Manually sync using `syncClerkUser()`
 
 3. **Admin access denied**
    - Verify roles in Clerk public metadata

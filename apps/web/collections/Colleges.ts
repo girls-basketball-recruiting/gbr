@@ -14,9 +14,17 @@ export const Colleges: CollectionConfig = {
   },
   access: {
     read: () => true, // Public read access for typeahead
-    create: ({ req }) => req.user?.roles?.includes('admin') || false,
-    update: ({ req }) => req.user?.roles?.includes('admin') || false,
-    delete: ({ req }) => req.user?.roles?.includes('admin') || false,
+    create: ({ req }) => {
+      const user = req.user
+      if (!user || user.collection !== 'users') return false
+      return user.roles?.includes('admin') || false
+    },
+    update: ({ req }) => {
+      const user = req.user
+      if (!user || user.collection !== 'users') return false
+      return user.roles?.includes('admin') || false
+    },
+    delete: () => false, // Prevent deletion of static college data
   },
   fields: [
     {

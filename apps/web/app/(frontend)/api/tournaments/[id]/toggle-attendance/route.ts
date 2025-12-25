@@ -1,99 +1,46 @@
-import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
-import { currentUser } from '@clerk/nextjs/server'
+import { withPlayer, apiSuccess, handleApiError } from '@/lib/api-helpers'
+import { updateById } from '@/lib/payload-helpers'
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const { id: tournamentId } = await params
-    const clerkUser = await currentUser()
+/**
+ * Toggle player attendance for a tournament
+ */
+export const POST = handleApiError(async (
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) => {
+  const { id: tournamentId } = await params
+  const [auth, authError] = await withPlayer()
+  if (authError) return authError
 
-    if (!clerkUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const tournamentIdNum = parseInt(tournamentId)
+  
+  // Get current schedule IDs
+  // Payload returns relations as objects or IDs depending on depth. 
+  // auth.playerProfile comes from findById with default depth, so it likely has objects if populated.
+  // However, requirePlayer uses findOne which might have depth. 
+  // Safest is to map to IDs.
+  
+  const currentSchedule = auth.playerProfile.tournamentSchedule || []
+  const currentScheduleIds = currentSchedule.map(t => typeof t === 'object' ? t.id : t) as number[]
 
-    // Only players can mark attendance
-    if (clerkUser.publicMetadata?.role !== 'player') {
-      return NextResponse.json(
-        { error: 'Only players can mark tournament attendance' },
-        { status: 403 },
-      )
-    }
-
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
-
-    // Find the PayloadCMS user
-    const users = await payload.find({
-      collection: 'users',
-      where: {
-        clerkId: {
-          equals: clerkUser.id,
-        },
-      },
-    })
-
-    if (users.docs.length === 0) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
-
-    const payloadUser = users.docs[0]!
-
-    // Find the player profile
-    const players = await payload.find({
-      collection: 'players',
-      where: {
-        user: {
-          equals: payloadUser.id,
-        },
-      },
-    })
-
-    if (players.docs.length === 0) {
-      return NextResponse.json(
-        { error: 'Player profile not found' },
-        { status: 404 },
-      )
-    }
-
-    const player = players.docs[0]!
-
-    // Get current tournament schedule
-    const currentSchedule = Array.isArray(player.tournamentSchedule)
-      ? player.tournamentSchedule.map((t: any) =>
-          typeof t === 'object' ? t.id : t,
-        )
-      : []
-
-    // Toggle tournament in schedule
-    const tournamentIdNum = parseInt(tournamentId)
-    const isCurrentlyAttending = currentSchedule.includes(tournamentIdNum)
-
-    const updatedSchedule = isCurrentlyAttending
-      ? currentSchedule.filter((id: number) => id !== tournamentIdNum)
-      : [...currentSchedule, tournamentIdNum]
-
-    // Update player
-    await payload.update({
-      collection: 'players',
-      id: player.id,
-      data: {
-        tournamentSchedule: updatedSchedule,
-      },
-    })
-
-    return NextResponse.json({
-      success: true,
-      isAttending: !isCurrentlyAttending,
-    })
-  } catch (error) {
-    console.error('Error toggling tournament attendance:', error)
-    return NextResponse.json(
-      { error: 'Failed to update attendance' },
-      { status: 500 },
-    )
+  const isCurrentlyAttending = currentScheduleIds.includes(tournamentIdNum)
+  
+  let newScheduleIds: number[]
+  if (isCurrentlyAttending) {
+    // Remove
+    newScheduleIds = currentScheduleIds.filter(id => id !== tournamentIdNum)
+  } else {
+    // Add
+    newScheduleIds = [...currentScheduleIds, tournamentIdNum]
   }
-}
+
+  // Update player profile
+  await updateById('players', auth.playerProfile.id, {
+    tournamentSchedule: newScheduleIds
+  })
+
+  return apiSuccess({
+    success: true,
+    isAttending: !isCurrentlyAttending,
+  })
+})

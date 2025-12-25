@@ -2,7 +2,32 @@
   "permissions": {
     "allow": [
       "Bash(claude update)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Skill(superpowers:systematic-debugging)",
+      "mcp__neon__list_projects",
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:subagent-driven-development)",
+      "Bash(pnpm run payload:*)",
+      "Bash(pnpm payload generate:types:*)",
+      "Bash(pnpm run payload:generate-types:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(npx tsc:*)",
+      "Bash(test:*)",
+      "Bash(pnpm --filter @workspace/web exec tsc:*)",
+      "Bash(pnpm --filter web exec tsc:*)",
+      "Bash(pnpm --filter @workspace/web tsc:*)",
+      "Bash(pnpm --filter web tsc:*)",
+      "Bash(pnpm run type-check:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(pnpm --filter web run build:*)",
+      "Bash(git rm:*)",
+      "Skill(frontend-design:frontend-design)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,6 +1,6 @@
-import { getPayloadUser } from '@/lib/getPayloadUser'
+import { getAuthContext } from '@/lib/auth-context'
 
 export async function GET() {
-  const user = await getPayloadUser()
-  return Response.json(user)
+  const { dbUser } = await getAuthContext()
+  return Response.json(dbUser)
 }

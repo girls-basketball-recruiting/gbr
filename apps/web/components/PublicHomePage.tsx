@@ -4,8 +4,7 @@ import { Button } from '@workspace/ui/components/button'
 import { Card } from '@workspace/ui/components/card'
 import Link from 'next/link'
 import { FeatureList } from './ui/FeatureList'
-import { useState, useEffect } from 'react'
-import { ThemeToggle } from './ThemeToggle'
+import { PublicHomeNav } from './PublicHomeNav'
 import { PlayersSection, ProgramsSection, TournamentsSection, PricingSection } from './PublicHomePageSections'
 
 const playerFeatures = [
@@ -21,109 +20,9 @@ const coachFeatures = [
 ]
 
 export default function PublicHomePage() {
-  const [activeSection, setActiveSection] = useState('home')
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'players', 'programs', 'tournaments', 'pricing']
-      const scrollPosition = window.scrollY + 100
-
-      for (const section of sections) {
-        const element = document.getElementById(section)
-        if (element) {
-          const { offsetTop, offsetHeight } = element
-          if (
-            scrollPosition >= offsetTop &&
-            scrollPosition < offsetTop + offsetHeight
-          ) {
-            setActiveSection(section)
-            break
-          }
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   return (
     <div className='min-h-screen bg-white dark:bg-slate-900'>
-      {/* Sticky Header */}
-      <header className='sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800'>
-        <div className='container mx-auto px-4'>
-          <div className='flex items-center justify-between h-16'>
-            <div className='font-bold text-xl text-slate-900 dark:text-white'>GBR</div>
-            <nav className='hidden md:flex items-center gap-8'>
-              <button
-                onClick={() => scrollToSection('home')}
-                className={`text-sm font-medium transition-colors ${
-                  activeSection === 'home'
-                    ? 'text-orange-600 dark:text-orange-500'
-                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                }`}
-              >
-                Home
-              </button>
-              <button
-                onClick={() => scrollToSection('players')}
-                className={`text-sm font-medium transition-colors ${
-                  activeSection === 'players'
-                    ? 'text-orange-600 dark:text-orange-500'
-                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                }`}
-              >
-                Players
-              </button>
-              <button
-                onClick={() => scrollToSection('programs')}
-                className={`text-sm font-medium transition-colors ${
-                  activeSection === 'programs'
-                    ? 'text-orange-600 dark:text-orange-500'
-                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                }`}
-              >
-                Programs
-              </button>
-              <button
-                onClick={() => scrollToSection('tournaments')}
-                className={`text-sm font-medium transition-colors ${
-                  activeSection === 'tournaments'
-                    ? 'text-orange-600 dark:text-orange-500'
-                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                }`}
-              >
-                Tournaments
-              </button>
-              <button
-                onClick={() => scrollToSection('pricing')}
-                className={`text-sm font-medium transition-colors ${
-                  activeSection === 'pricing'
-                    ? 'text-orange-600 dark:text-orange-500'
-                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                }`}
-              >
-                Pricing
-              </button>
-            </nav>
-            <div className='flex items-center gap-2'>
-              <ThemeToggle />
-              <Link href='/sign-in'>
-                <Button variant='secondary' size='sm'>
-                  Sign In
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicHomeNav />
 
       {/* Hero Section */}
       <section id='home' className='py-20 bg-gradient-to-br from-orange-50 to-white dark:from-slate-900 dark:to-slate-800'>

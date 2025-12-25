@@ -4,7 +4,8 @@ import { Badge } from '@workspace/ui/components/badge'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactNode } from 'react'
-import { getPositionLabel } from '@/types/positions'
+import { getPositionLabel } from '@/lib/zod/Positions'
+import { formatHeight } from '@/lib/formatters'
 import type { Player } from '@/payload-types'
 
 interface PlayerCardProps {
@@ -13,10 +14,9 @@ interface PlayerCardProps {
 }
 
 export function PlayerCard({ player, action }: PlayerCardProps) {
-  const profileImageUrl =
-    player.profileImage && typeof player.profileImage === 'object'
-      ? player.profileImage.url
-      : null
+  if (!player) return null
+
+  const profileImageUrl = player.profileImageUrl
 
   const isArchived = !!player.deletedAt
 
@@ -31,7 +31,7 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
       }`}
     >
       {/* Square Image */}
-      <div className='relative aspect-square bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800'>
+      <div className='relative aspect-square bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800'>
         {profileImageUrl ? (
           <Image
             src={profileImageUrl}
@@ -53,7 +53,7 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
         {/* Graduation Year Badge */}
         <div className='absolute top-3 right-3'>
           <Badge className='bg-blue-600 hover:bg-blue-600 text-white border-0 shadow-xl text-base px-3 py-1 font-bold'>
-            '{String(player.graduationYear).slice(-2)}
+            &apos;{String(player.graduationYear).slice(-2)}
           </Badge>
         </div>
 
@@ -64,7 +64,7 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
         )}
 
         {/* Bottom Gradient Overlay for Name */}
-        <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4'>
+        <div className='absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-4'>
           <h3 className='text-xl font-bold text-white uppercase tracking-wide drop-shadow-lg'>
             {player.firstName} {player.lastName}
           </h3>
@@ -80,7 +80,7 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
       <div className='p-4 space-y-3'>
         {/* Stats Row */}
         {hasStats && (
-          <div className='grid grid-cols-3 gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 rounded-lg p-3 border border-blue-200 dark:border-blue-800'>
+          <div className='grid grid-cols-3 gap-2 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 rounded-lg p-3 border border-blue-200 dark:border-blue-800'>
             {player.ppg !== null && player.ppg !== undefined && (
               <div className='text-center'>
                 <div className='text-xl font-bold text-slate-900 dark:text-white'>
@@ -116,12 +116,20 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
 
         {/* Key Info - Grid Layout */}
         <div className='grid grid-cols-2 gap-x-3 gap-y-2 text-xs'>
-          {player.height && (
+          {player.heightInInches && (
             <div>
               <div className='text-slate-500 dark:text-slate-400 uppercase text-[10px] font-semibold tracking-wide mb-0.5'>
                 Height
               </div>
-              <div className='text-slate-900 dark:text-white font-bold'>{player.height}</div>
+              <div className='text-slate-900 dark:text-white font-bold'>{formatHeight(player.heightInInches)}</div>
+            </div>
+          )}
+          {player.weight && (
+            <div>
+              <div className='text-slate-500 dark:text-slate-400 uppercase text-[10px] font-semibold tracking-wide mb-0.5'>
+                Weight
+              </div>
+              <div className='text-slate-900 dark:text-white font-bold'>{player.weight} lbs</div>
             </div>
           )}
           {(player.weightedGpa || player.unweightedGpa) && (

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useDocumentInfo } from '@payloadcms/ui'
+import { formatHeight } from '@/lib/formatters'
 
 const ProspectsTab: React.FC = () => {
   const { id } = useDocumentInfo()
@@ -67,7 +68,8 @@ const ProspectsTab: React.FC = () => {
 
             <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>
               Class of {prospect.graduationYear}
-              {prospect.height && ` • ${prospect.height}`}
+              {prospect.heightInInches && ` • ${formatHeight(prospect.heightInInches)}`}
+              {prospect.weight && ` • ${prospect.weight} lbs`}
             </div>
 
             {prospect.highSchool && (

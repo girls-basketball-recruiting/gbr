@@ -1,28 +1,20 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@workspace/ui/components/button'
 import { Card } from '@workspace/ui/components/card'
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldSet,
-  FieldLegend,
-  FieldGroup,
-} from '@workspace/ui/components/field'
-import { Input } from '@workspace/ui/components/input'
-import { Textarea } from '@workspace/ui/components/textarea'
+import { FieldSet, FieldLegend, FieldGroup, Field, FieldLabel, FieldDescription } from '@workspace/ui/components/field'
 import { Checkbox } from '@workspace/ui/components/checkbox'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select'
-import { useRouter } from 'next/navigation'
-import { getGraduationYearOptions } from '@/types/graduationYears'
+import { ProspectSchema } from '@/lib/zod/Prospects'
+import { useSchemaForm } from '@/hooks/useSchemaForm'
+import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
+import { FormTextField } from '@/components/form/FormTextField'
+import { FormTextareaField } from '@/components/form/FormTextareaField'
+import { FormSelectField } from '@/components/form/FormSelectField'
+import { HeightInput } from '@/components/specialized/HeightInput'
+import { WeightInput } from '@/components/specialized/WeightInput'
+import { PhoneInput } from '@/components/specialized/PhoneInput'
 
 interface ProspectFormProps {
   coachId?: string | number
@@ -30,20 +22,8 @@ interface ProspectFormProps {
 
 export function ProspectForm({ coachId }: ProspectFormProps) {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
   const [tournaments, setTournaments] = useState<any[]>([])
   const [selectedTournaments, setSelectedTournaments] = useState<string[]>([])
-  const [formData, setFormData] = useState({
-    name: '',
-    uniformNumber: '',
-    graduationYear: (new Date().getFullYear() + 1).toString(),
-    height: '',
-    highSchool: '',
-    aauProgram: '',
-    twitterHandle: '',
-    phoneNumber: '',
-    notes: '',
-  })
 
   // Fetch tournaments on mount
   useEffect(() => {
@@ -61,155 +41,149 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
     fetchTournaments()
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    try {
+  const form = useSchemaForm({
+    defaultValues: {
+      coach: coachId?.toString() || '',
+      firstName: '',
+      lastName: '',
+      uniformNumber: '',
+      graduationYear: (new Date().getFullYear() + 1).toString(),
+      heightInInches: undefined,
+      weight: undefined,
+      highSchool: '',
+      aauProgram: '',
+      twitterHandle: '',
+      phoneNumber: '',
+      notes: '',
+      tournamentSchedule: [],
+      linkedPlayer: '',
+    },
+    schema: ProspectSchema,
+    onSubmit: async (data) => {
       const response = await fetch('/api/prospects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
-          coach: coachId,
+          ...data,
           tournamentSchedule: selectedTournaments,
         }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create prospect')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create prospect')
       }
 
       // Redirect back to dashboard
       router.push('/')
       router.refresh()
-    } catch (error) {
-      console.error('Error creating prospect:', error)
-      alert('Failed to create prospect. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    },
+  })
 
   const handleTournamentToggle = (tournamentId: string) => {
-    setSelectedTournaments((prev) =>
+    setSelectedTournaments(prev =>
       prev.includes(tournamentId)
-        ? prev.filter((id) => id !== tournamentId)
+        ? prev.filter(id => id !== tournamentId)
         : [...prev, tournamentId]
     )
   }
 
   return (
-    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 max-w-md mx-auto'>
-      <form onSubmit={handleSubmit}>
+    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8'>
+      <form onSubmit={form.handleSubmit}>
         <FieldSet>
-          <FieldLegend className="mb-6">Prospect Information</FieldLegend>
+          <FieldLegend className='mb-6'>Prospect Information</FieldLegend>
           <FieldGroup>
-            <Field className='gap-1'>
-              <FieldLabel htmlFor='name'>Full name</FieldLabel>
-              <Input
-                id='name'
+            <div className='grid md:grid-cols-2 gap-5'>
+              <FormTextField
+                control={form.control}
+                name='firstName'
+                label='First Name'
                 required
-                autoFocus
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder='Required'
               />
-            </Field>
-            <div className='grid md:grid-cols-2 gap-4'>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='uniformNumber'>Uniform Number</FieldLabel>
-                <Input
-                  id='uniformNumber'
-                  value={formData.uniformNumber}
-                  onChange={(e) => setFormData({ ...formData, uniformNumber: e.target.value })}
-                  placeholder='23'
-                />
-              </Field>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='graduationYear'>Graduation Year</FieldLabel>
-                <Select
-                  value={formData.graduationYear}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, graduationYear: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select year' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getGraduationYearOptions().map((year) => (
-                      <SelectItem key={year.value} value={year.value}>
-                        {year.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-            </div>
-            <Field className='gap-1'>
-              <FieldLabel htmlFor='height'>Height</FieldLabel>
-              <Input
-                id='height'
-                value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                placeholder="5'10&quot;"
+              <FormTextField
+                control={form.control}
+                name='lastName'
+                label='Last Name'
+                required
+                placeholder='Required'
               />
-              <FieldDescription>Enter height in feet and inches.</FieldDescription>
-            </Field>
-            <div className='grid md:grid-cols-2 gap-4'>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='highSchool'>High School</FieldLabel>
-                <Input
-                  id='highSchool'
-                  value={formData.highSchool}
-                  onChange={(e) => setFormData({ ...formData, highSchool: e.target.value })}
-                  placeholder='High School Name'
-                />
-              </Field>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='aauProgram'>AAU Program</FieldLabel>
-                <Input
-                  id='aauProgram'
-                  value={formData.aauProgram}
-                  onChange={(e) => setFormData({ ...formData, aauProgram: e.target.value })}
-                  placeholder='AAU Program Name'
-                />
-              </Field>
             </div>
-            <div className='grid md:grid-cols-2 gap-4'>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='twitterHandle'>Twitter/X Handle</FieldLabel>
-                <Input
-                  id='twitterHandle'
-                  value={formData.twitterHandle}
-                  onChange={(e) => setFormData({ ...formData, twitterHandle: e.target.value })}
-                  placeholder='@username'
-                />
-              </Field>
-              <Field className='gap-1'>
-                <FieldLabel htmlFor='phoneNumber'>Phone Number</FieldLabel>
-                <Input
-                  id='phoneNumber'
-                  type='tel'
-                  value={formData.phoneNumber}
-                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                  placeholder='(555) 555-5555'
-                />
-              </Field>
+
+            <div className='grid md:grid-cols-2 gap-5'>
+              <FormTextField
+                control={form.control}
+                name='uniformNumber'
+                label='Uniform Number'
+                placeholder='23'
+              />
+              <FormSelectField
+                control={form.control}
+                name='graduationYear'
+                label='Graduation Year'
+                required
+                placeholder='Select year'
+                options={getGraduationYearOptions().map(year => ({
+                  value: year.value,
+                  label: year.label,
+                }))}
+              />
             </div>
+
+            <div className='grid md:grid-cols-2 gap-5'>
+              <HeightInput control={form.control} name='heightInInches' />
+              <WeightInput control={form.control} name='weight' />
+            </div>
+
+            <div className='grid md:grid-cols-2 gap-5'>
+              <FormTextField
+                control={form.control}
+                name='highSchool'
+                label='High School'
+                placeholder='High School Name'
+              />
+              <FormTextField
+                control={form.control}
+                name='aauProgram'
+                label='AAU Program'
+                placeholder='AAU Program Name'
+              />
+            </div>
+
+            <div className='grid md:grid-cols-2 gap-5'>
+              <FormTextField
+                control={form.control}
+                name='twitterHandle'
+                label='Twitter/X Handle'
+                placeholder='@username'
+              />
+              <PhoneInput
+                control={form.control}
+                name='phoneNumber'
+                placeholder='(555) 555-5555'
+              />
+            </div>
+
             {tournaments.length > 0 && (
               <Field className='gap-1'>
                 <FieldLabel>Tournament Schedule</FieldLabel>
-                <FieldDescription>Select all tournaments this prospect will attend.</FieldDescription>
+                <FieldDescription>
+                  Select all tournaments this prospect will attend.
+                </FieldDescription>
                 <div className='space-y-2 max-h-48 overflow-y-auto rounded-md p-3 border'>
-                  {tournaments.map((tournament) => (
-                    <label key={tournament.id} className='flex items-center space-x-2 cursor-pointer'>
+                  {tournaments.map(tournament => (
+                    <label
+                      key={tournament.id}
+                      className='flex items-center space-x-2 cursor-pointer'
+                    >
                       <Checkbox
                         checked={selectedTournaments.includes(tournament.id)}
-                        onCheckedChange={() => handleTournamentToggle(tournament.id)}
+                        onCheckedChange={() =>
+                          handleTournamentToggle(tournament.id)
+                        }
                         id={`tournament-${tournament.id}`}
                       />
                       <span className='text-sm'>
@@ -220,33 +194,32 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 </div>
               </Field>
             )}
-            <Field className='gap-1'>
-              <FieldLabel htmlFor='notes'>Private Notes</FieldLabel>
-              <Textarea
-                id='notes'
-                rows={4}
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder='Add any private notes about this prospect...'
-              />
-              <FieldDescription>Only visible to you.</FieldDescription>
-            </Field>
+
+            <FormTextareaField
+              control={form.control}
+              name='notes'
+              label='Private Notes'
+              description='Only visible to you'
+              placeholder='Add any private notes about this prospect...'
+              rows={4}
+            />
+
             <div className='flex gap-3 pt-4'>
               <Button
                 type='button'
                 variant='outline'
                 onClick={() => router.back()}
                 className='flex-1'
-                disabled={isLoading}
+                disabled={form.isSubmitting}
               >
                 Cancel
               </Button>
               <Button
                 type='submit'
                 className='flex-1 bg-purple-600 hover:bg-purple-700'
-                disabled={isLoading}
+                disabled={form.isSubmitting}
               >
-                {isLoading ? 'Creating...' : 'Create Prospect'}
+                {form.isSubmitting ? 'Creating...' : 'Create Prospect'}
               </Button>
             </div>
           </FieldGroup>

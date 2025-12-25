@@ -2,6 +2,7 @@ import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
 import { BadgeCheck, MapPin, Building2, GraduationCap } from 'lucide-react'
+import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
 
 interface Program {
   id: number
@@ -16,15 +17,6 @@ interface Program {
 
 interface ProgramCardProps {
   program: Program
-}
-
-const divisionLabels: Record<string, string> = {
-  d1: 'NCAA D1',
-  d2: 'NCAA D2',
-  d3: 'NCAA D3',
-  naia: 'NAIA',
-  juco: 'JUCO',
-  other: 'Other',
 }
 
 export function ProgramCard({ program }: ProgramCardProps) {

@@ -2,13 +2,15 @@ import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
 import { ReactNode } from 'react'
+import { formatHeight } from '@/lib/formatters'
 
 interface Prospect {
   id: number | string
   name: string
   graduationYear: number
   uniformNumber?: string
-  height?: string
+  heightInInches?: number
+  weight?: number
   highSchool?: string
   aauProgram?: string
   twitterHandle?: string
@@ -54,10 +56,16 @@ export function ProspectCard({
         </div>
 
         <div className='space-y-2 text-sm'>
-          {prospect.height && (
+          {prospect.heightInInches && (
             <div className='flex items-center gap-2'>
               <span className='text-slate-600 dark:text-slate-400'>Height:</span>
-              <span className='text-slate-900 dark:text-white'>{prospect.height}</span>
+              <span className='text-slate-900 dark:text-white'>{formatHeight(prospect.heightInInches)}</span>
+            </div>
+          )}
+          {prospect.weight && (
+            <div className='flex items-center gap-2'>
+              <span className='text-slate-600 dark:text-slate-400'>Weight:</span>
+              <span className='text-slate-900 dark:text-white'>{prospect.weight} lbs</span>
             </div>
           )}
           {prospect.highSchool && (

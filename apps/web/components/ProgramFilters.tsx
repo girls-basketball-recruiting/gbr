@@ -14,7 +14,8 @@ import { Input } from '@workspace/ui/components/input'
 import { Switch } from '@workspace/ui/components/switch'
 import { Label } from '@workspace/ui/components/label'
 import { X } from 'lucide-react'
-import { US_STATES_AND_TERRITORIES } from '@/types/states'
+import { US_STATES_AND_TERRITORIES } from '@/lib/zod/States'
+import { MultiSelect } from '@/components/ui/multi-select'
 
 const divisions = [
   { value: 'd1', label: 'NCAA D1' },
@@ -33,14 +34,48 @@ export function ProgramFilters() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
+  const [conferences, setConferences] = useState<{ value: string; label: string }[]>([])
+
+  // Parse array params from URL
+  const parseDivisions = (): string[] => {
+    const divParam = searchParams.get('divisions')
+    return divParam ? divParam.split(',') : []
+  }
+
+  const parseStates = (): string[] => {
+    const stateParam = searchParams.get('states')
+    return stateParam ? stateParam.split(',') : []
+  }
+
+  const parseConferences = (): string[] => {
+    const confParam = searchParams.get('conferences')
+    return confParam ? confParam.split(',') : []
+  }
 
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
-    division: searchParams.get('division') || '',
-    state: searchParams.get('state') || '',
+    divisions: parseDivisions(),
+    states: parseStates(),
+    conferences: parseConferences(),
     type: searchParams.get('type') || '',
     hasCoach: searchParams.get('hasCoach') === 'true',
   })
+
+  // Fetch unique conferences
+  useEffect(() => {
+    const fetchConferences = async () => {
+      try {
+        const response = await fetch('/api/programs/conferences')
+        if (response.ok) {
+          const data = await response.json()
+          setConferences(data.conferences || [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch conferences:', error)
+      }
+    }
+    fetchConferences()
+  }, [])
 
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
     null,
@@ -50,14 +85,21 @@ export function ProgramFilters() {
     const params = new URLSearchParams()
 
     if (newFilters.search) params.set('search', newFilters.search)
-    if (newFilters.division) params.set('division', newFilters.division)
-    if (newFilters.state) params.set('state', newFilters.state)
+    if (newFilters.divisions.length > 0) params.set('divisions', newFilters.divisions.join(','))
+    if (newFilters.states.length > 0) params.set('states', newFilters.states.join(','))
+    if (newFilters.conferences.length > 0) params.set('conferences', newFilters.conferences.join(','))
     if (newFilters.type) params.set('type', newFilters.type)
     if (newFilters.hasCoach) params.set('hasCoach', 'true')
 
     startTransition(() => {
       router.push(`/programs?${params.toString()}`)
     })
+  }
+
+  const handleMultiSelectChange = (key: string, values: string[]) => {
+    const newFilters = { ...filters, [key]: values }
+    setFilters(newFilters)
+    updateURL(newFilters)
   }
 
   const handleSelectChange = (key: string, value: string) => {
@@ -92,8 +134,9 @@ export function ProgramFilters() {
   const clearFilters = () => {
     const cleared = {
       search: '',
-      division: '',
-      state: '',
+      divisions: [],
+      states: [],
+      conferences: [],
       type: '',
       hasCoach: false,
     }
@@ -113,87 +156,89 @@ export function ProgramFilters() {
   }, [debounceTimer])
 
   const activeFilterCount = [
-    filters.search,
-    filters.division,
-    filters.state,
-    filters.type,
-    filters.hasCoach,
-  ].filter(Boolean).length
+    filters.search ? 1 : 0,
+    filters.divisions.length,
+    filters.states.length,
+    filters.conferences.length,
+    filters.type ? 1 : 0,
+    filters.hasCoach ? 1 : 0,
+  ].reduce((sum, val) => sum + val, 0)
 
   return (
-    <div className='bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-4 mb-6'>
-      <div className='flex flex-col gap-4'>
-        {/* First Row - Main Filters */}
-        <div className='grid grid-cols-2 lg:grid-cols-4 gap-3'>
+    <div className='bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-5 mb-6'>
+      <div className='flex flex-col gap-5'>
+        {/* Main Filters */}
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
           {/* Search */}
-          <div className='space-y-1.5'>
-            <Label htmlFor='search' className='text-slate-600 dark:text-slate-300 text-sm'>
-              Search by School Name
+          <div className='space-y-2 sm:col-span-2 lg:col-span-1'>
+            <Label htmlFor='search' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+              School Name
             </Label>
             <Input
               id='search'
               type='text'
-              placeholder='Enter school name'
+              placeholder='Search schools...'
               value={filters.search}
               onChange={(e) => handleTextChange('search', e.target.value)}
-              className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'
+              className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'
             />
           </div>
 
           {/* Division Filter */}
-          <div className='space-y-1.5'>
-            <Label htmlFor='division' className='text-slate-600 dark:text-slate-300 text-sm'>
+          <div className='space-y-2'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               Division
             </Label>
-            <Select
-              value={filters.division}
-              onValueChange={(value) => handleSelectChange('division', value)}
-            >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'>
-                <SelectValue placeholder='All Divisions' />
-              </SelectTrigger>
-              <SelectContent>
-                {divisions.map((div) => (
-                  <SelectItem key={div.value} value={div.value}>
-                    {div.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={divisions}
+              selected={filters.divisions}
+              onChange={(values) => handleMultiSelectChange('divisions', values)}
+              placeholder='All Divisions'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search divisions...'
+            />
           </div>
 
           {/* State Filter */}
-          <div className='space-y-1.5'>
-            <Label htmlFor='state' className='text-slate-600 dark:text-slate-300 text-sm'>
+          <div className='space-y-2'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               State
             </Label>
-            <Select
-              value={filters.state}
-              onValueChange={(value) => handleSelectChange('state', value)}
-            >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'>
-                <SelectValue placeholder='All States' />
-              </SelectTrigger>
-              <SelectContent>
-                {US_STATES_AND_TERRITORIES.map((stateOption) => (
-                  <SelectItem key={stateOption.value} value={stateOption.value}>
-                    {stateOption.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={[...US_STATES_AND_TERRITORIES]}
+              selected={filters.states}
+              onChange={(values) => handleMultiSelectChange('states', values)}
+              placeholder='All States'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search states...'
+            />
+          </div>
+
+          {/* Conference Filter */}
+          <div className='space-y-2'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+              Conference
+            </Label>
+            <MultiSelect
+              options={conferences}
+              selected={filters.conferences}
+              onChange={(values) => handleMultiSelectChange('conferences', values)}
+              placeholder='All Conferences'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search conferences...'
+            />
           </div>
 
           {/* Type Filter */}
-          <div className='space-y-1.5'>
-            <Label htmlFor='type' className='text-slate-600 dark:text-slate-300 text-sm'>
+          <div className='space-y-2'>
+            <Label htmlFor='type' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               Institution Type
             </Label>
             <Select
               value={filters.type}
               onValueChange={(value) => handleSelectChange('type', value)}
             >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-9'>
+              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
                 <SelectValue placeholder='All Types' />
               </SelectTrigger>
               <SelectContent>
@@ -207,9 +252,9 @@ export function ProgramFilters() {
           </div>
         </div>
 
-        {/* Second Row - Has Coach Toggle & Clear */}
-        <div className='flex items-center justify-between gap-4'>
-          <div className='flex items-center space-x-2'>
+        {/* Options & Clear */}
+        <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
+          <div className='flex items-center space-x-3'>
             <Switch
               id='hasCoach'
               checked={filters.hasCoach}
@@ -217,7 +262,7 @@ export function ProgramFilters() {
             />
             <Label
               htmlFor='hasCoach'
-              className='text-slate-600 dark:text-slate-300 cursor-pointer text-sm'
+              className='text-slate-600 dark:text-slate-300 cursor-pointer text-sm font-medium'
             >
               Only show programs with registered coaches
             </Label>
@@ -226,12 +271,12 @@ export function ProgramFilters() {
           {activeFilterCount > 0 && (
             <Button
               onClick={clearFilters}
-              variant='ghost'
-              size='sm'
+              variant='outline'
+              size='default'
               disabled={isPending}
-              className='text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              className='h-10'
             >
-              <X className='w-4 h-4 mr-1' />
+              <X className='w-4 h-4 mr-2' />
               Clear {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'}
             </Button>
           )}

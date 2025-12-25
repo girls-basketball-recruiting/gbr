@@ -1,54 +1,76 @@
 'use client'
 
 import * as React from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { hash } from 'ohash'
 import type { College } from '@/payload-types'
 
 interface CollegesContextValue {
   colleges: College[]
   isLoading: boolean
-  error: string | null
-  fetchColleges: () => Promise<void>
+  error: Error | null
+  searchColleges: (query: string) => College[]
 }
 
 const CollegesContext = React.createContext<CollegesContextValue | undefined>(
   undefined,
 )
 
+async function fetchColleges(): Promise<College[]> {
+  const response = await fetch('/api/colleges/search?limit=10000')
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch colleges')
+  }
+
+  const data = await response.json()
+  return data.colleges || []
+}
+
 export function CollegesProvider({ children }: { children: React.ReactNode }) {
-  const [colleges, setColleges] = React.useState<College[]>([])
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const hasFetched = React.useRef(false)
+  // Fetch colleges with React Query
+  const { data: colleges = [], isLoading, error } = useQuery({
+    queryKey: ['colleges'],
+    queryFn: fetchColleges,
+    staleTime: 1000 * 60 * 60, // 1 hour
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours (formerly cacheTime)
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  })
 
-  const fetchColleges = React.useCallback(async () => {
-    // Only fetch once per session
-    if (hasFetched.current) return
+  // Memoize the colleges hash for deep equality comparison
+  const collegesHash = React.useMemo(() => hash(colleges), [colleges])
 
-    try {
-      setIsLoading(true)
-      hasFetched.current = true
+  // Memoized search function with ohash for deep equality
+  // Using collegesHash for deep equality - only recreate when content changes
+  const searchColleges = React.useCallback(
+    (query: string): College[] => {
+      if (!query || !colleges.length) return colleges
 
-      // Fetch all colleges from Payload CMS
-      const response = await fetch('/api/colleges/search?limit=10000')
+      const lower = query.toLowerCase()
+      return colleges.filter(
+        c =>
+          c.school.toLowerCase().includes(lower) ||
+          c.city?.toLowerCase().includes(lower) ||
+          c.state?.toLowerCase().includes(lower)
+      )
+    },
+    // Using collegesHash for deep equality check
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [collegesHash, colleges]
+  )
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch colleges')
-      }
-
-      const data = await response.json()
-      setColleges(data.colleges || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch colleges')
-      console.error('Error fetching colleges:', err)
-      hasFetched.current = false // Allow retry on error
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
+  // Using collegesHash for deep equality - only recreate when content changes
   const value = React.useMemo(
-    () => ({ colleges, isLoading, error, fetchColleges }),
-    [colleges, isLoading, error, fetchColleges],
+    () => ({
+      colleges,
+      isLoading,
+      error: error as Error | null,
+      searchColleges,
+    }),
+    // Using collegesHash for deep equality check
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [collegesHash, colleges, isLoading, error, searchColleges]
   )
 
   return (

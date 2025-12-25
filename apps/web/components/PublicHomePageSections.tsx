@@ -160,83 +160,73 @@ export function PricingSection() {
           </p>
         </div>
 
-        <div className='grid md:grid-cols-3 gap-8 max-w-5xl mx-auto'>
-          {/* Free Plan */}
-          <Card className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-8'>
-            <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>Free</h3>
-            <p className='text-slate-600 dark:text-slate-400 mb-6'>For players getting started</p>
-            <div className='mb-6'>
-              <span className='text-4xl font-bold text-slate-900 dark:text-white'>$0</span>
-              <span className='text-slate-600 dark:text-slate-400'>/year</span>
-            </div>
-            <ul className='space-y-3 mb-8'>
-              {['Create player profile', 'Basic profile visibility', 'Tournament registration'].map((feature) => (
-                <li key={feature} className='flex items-start gap-2'>
-                  <Check className='w-5 h-5 text-green-600 dark:text-green-500 flex-shrink-0 mt-0.5' />
-                  <span className='text-slate-700 dark:text-slate-300 text-sm'>{feature}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href='/register-player'>
-              <Button variant='outline' className='w-full'>Get Started</Button>
-            </Link>
-          </Card>
-
-          {/* Player Premium */}
-          <Card className='bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30 border-orange-200 dark:border-orange-800 p-8 relative'>
+        <div className='grid md:grid-cols-2 gap-8 max-w-4xl mx-auto'>
+          {/* Player Pro */}
+          <Card className='bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30 border-orange-200 dark:border-orange-800 p-8 relative flex flex-col'>
             <div className='absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-600 text-white px-4 py-1 rounded-full text-sm font-medium'>
-              Most Popular
+              For Players
             </div>
-            <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>Player Pro</h3>
-            <p className='text-slate-700 dark:text-slate-300 mb-6'>For serious recruits</p>
-            <div className='mb-6'>
-              <span className='text-4xl font-bold text-slate-900 dark:text-white'>$39</span>
-              <span className='text-slate-700 dark:text-slate-300'>/year</span>
+            <div className='flex flex-col justify-between flex-1'>
+              <div>
+                <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>Player Pro</h3>
+                <p className='text-slate-700 dark:text-slate-300 mb-6'>Connect with college coaches</p>
+                <div className='mb-6'>
+                  <span className='text-4xl font-bold text-slate-900 dark:text-white'>$39</span>
+                  <span className='text-slate-700 dark:text-slate-300'>/year</span>
+                </div>
+                <ul className='space-y-3 mb-8'>
+                  {[
+                    'Create and manage your player profile',
+                    'Upload stats, highlights, and achievements',
+                    'Get discovered by college coaches',
+                    'Direct messaging with recruiters',
+                    'Tournament and showcase visibility',
+                  ].map((feature) => (
+                    <li key={feature} className='flex items-start gap-2'>
+                      <Check className='w-5 h-5 text-orange-600 dark:text-orange-500 flex-shrink-0 mt-0.5' />
+                      <span className='text-slate-700 dark:text-slate-300 text-sm'>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Link href='/register-player'>
+                <Button className='w-full bg-orange-600 hover:bg-orange-700'>Register as Player</Button>
+              </Link>
             </div>
-            <ul className='space-y-3 mb-8'>
-              {[
-                'Everything in Free',
-                'Enhanced profile visibility',
-                'Video highlight uploads',
-                'Direct messaging with coaches',
-                'Priority listing in searches',
-              ].map((feature) => (
-                <li key={feature} className='flex items-start gap-2'>
-                  <Check className='w-5 h-5 text-orange-600 dark:text-orange-500 flex-shrink-0 mt-0.5' />
-                  <span className='text-slate-700 dark:text-slate-300 text-sm'>{feature}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href='/register-player'>
-              <Button className='w-full bg-orange-600 hover:bg-orange-700'>Upgrade Now</Button>
-            </Link>
           </Card>
 
-          {/* Coach Premium */}
-          <Card className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-8'>
-            <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>Coach Pro</h3>
-            <p className='text-slate-600 dark:text-slate-400 mb-6'>For college recruiters</p>
-            <div className='mb-6'>
-              <span className='text-4xl font-bold text-slate-900 dark:text-white'>$99</span>
-              <span className='text-slate-600 dark:text-slate-400'>/year</span>
+          {/* Coach Pro */}
+          <Card className='bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 border-blue-200 dark:border-blue-800 p-8 relative flex flex-col'>
+            <div className='absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium'>
+              For Coaches
             </div>
-            <ul className='space-y-3 mb-8'>
-              {[
-                'Unlimited player searches',
-                'Save unlimited players',
-                'Advanced filtering',
-                'Direct messaging',
-                'Recruiting board tools',
-              ].map((feature) => (
-                <li key={feature} className='flex items-start gap-2'>
-                  <Check className='w-5 h-5 text-blue-600 dark:text-blue-500 flex-shrink-0 mt-0.5' />
-                  <span className='text-slate-700 dark:text-slate-300 text-sm'>{feature}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href='/register-coach'>
-              <Button variant='outline' className='w-full'>Get Started</Button>
-            </Link>
+            <div className='flex flex-col justify-between flex-1'>
+              <div>
+                <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>Coach Pro</h3>
+                <p className='text-slate-700 dark:text-slate-300 mb-6'>Find talented recruits</p>
+                <div className='mb-6'>
+                  <span className='text-4xl font-bold text-slate-900 dark:text-white'>$99</span>
+                  <span className='text-slate-700 dark:text-slate-300'>/year</span>
+                </div>
+                <ul className='space-y-3 mb-8'>
+                  {[
+                    'Search and filter thousands of players',
+                    'Save players to your recruiting list',
+                    'Add private notes and track prospects',
+                    'Direct messaging with athletes',
+                    'Access to player contact information',
+                  ].map((feature) => (
+                    <li key={feature} className='flex items-start gap-2'>
+                      <Check className='w-5 h-5 text-blue-600 dark:text-blue-500 flex-shrink-0 mt-0.5' />
+                      <span className='text-slate-700 dark:text-slate-300 text-sm'>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Link href='/register-coach'>
+                <Button className='w-full bg-blue-600 hover:bg-blue-700'>Register as Coach</Button>
+              </Link>
+            </div>
           </Card>
         </div>
       </div>

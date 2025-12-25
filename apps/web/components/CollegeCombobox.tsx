@@ -18,6 +18,7 @@ import {
 } from '@workspace/ui/components/popover'
 import { useColleges } from '@/contexts/colleges-provider'
 import { cn } from '@workspace/ui/lib/utils'
+import { hash } from 'ohash'
 import type { College } from '@/payload-types'
 
 interface CollegeComboboxProps {
@@ -26,8 +27,9 @@ interface CollegeComboboxProps {
   onSelect?: (college: College | null) => void
   placeholder?: string
   disabled?: boolean
-  required?: boolean
 }
+
+const RESULT_LIMIT = 50 // Limit visible results for performance
 
 export function CollegeCombobox({
   value = '',
@@ -35,28 +37,46 @@ export function CollegeCombobox({
   onSelect,
   placeholder = 'Select college...',
   disabled = false,
-  required = false,
 }: CollegeComboboxProps) {
   const [open, setOpen] = React.useState(false)
-  const { colleges, isLoading, fetchColleges } = useColleges()
+  const [searchQuery, setSearchQuery] = React.useState('')
+  const { colleges, isLoading, searchColleges } = useColleges()
+
+  // Debounced search query (300ms)
+  const [debouncedQuery, setDebouncedQuery] = React.useState('')
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  // Hash values for memoization
+  const debouncedQueryHash = React.useMemo(() => hash(debouncedQuery), [debouncedQuery])
+  const collegesHash = React.useMemo(() => hash(colleges), [colleges])
+
+  // Memoized filtered colleges with result limit
+  const filteredColleges = React.useMemo(() => {
+    const results = searchColleges(debouncedQuery)
+    return results.slice(0, RESULT_LIMIT)
+    // Using hash for deep equality
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQueryHash, collegesHash, searchColleges])
 
   const selectedCollege = React.useMemo(
-    () => colleges.find(
-      (college) => college.school.toLowerCase() === value.toLowerCase(),
-    ),
-    [colleges, value]
+    () =>
+      colleges.find(
+        college => college.school.toLowerCase() === value.toLowerCase()
+      ),
+    // Using hash for deep equality
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [collegesHash, colleges, value]
   )
 
-  // Lazy load colleges when popover is first opened
-  const handleOpenChange = React.useCallback((newOpen: boolean) => {
-    setOpen(newOpen)
-    if (newOpen && colleges.length === 0 && !isLoading) {
-      fetchColleges()
-    }
-  }, [colleges.length, isLoading, fetchColleges])
-
   return (
-    <Popover open={open} onOpenChange={handleOpenChange}>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant='outline'
@@ -80,18 +100,25 @@ export function CollegeCombobox({
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-[400px] p-0' align='start'>
-        <Command>
-          <CommandInput placeholder='Search colleges...' />
+      <PopoverContent className='w-100 p-0' align='start'>
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder='Search colleges...'
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+          />
           <CommandList>
-            <CommandEmpty>No college found.</CommandEmpty>
+            <CommandEmpty>
+              {searchQuery ? 'No college found.' : 'Start typing to search...'}
+            </CommandEmpty>
             <CommandGroup>
-              {colleges.map((college) => (
+              {filteredColleges.map(college => (
                 <CommandItem
                   key={college.id}
                   value={college.school}
-                  onSelect={(currentValue) => {
-                    const isDeselecting = currentValue.toLowerCase() === value.toLowerCase()
+                  onSelect={currentValue => {
+                    const isDeselecting =
+                      currentValue.toLowerCase() === value.toLowerCase()
 
                     // Call legacy onValueChange if provided
                     if (onValueChange) {
@@ -104,6 +131,7 @@ export function CollegeCombobox({
                     }
 
                     setOpen(false)
+                    setSearchQuery('') // Reset search on selection
                   }}
                 >
                   <Check
@@ -111,7 +139,7 @@ export function CollegeCombobox({
                       'mr-2 h-4 w-4',
                       value.toLowerCase() === college.school.toLowerCase()
                         ? 'opacity-100'
-                        : 'opacity-0',
+                        : 'opacity-0'
                     )}
                   />
                   <div className='flex flex-col'>

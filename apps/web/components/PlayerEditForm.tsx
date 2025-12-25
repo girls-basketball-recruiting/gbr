@@ -1,6 +1,6 @@
-import { PlayerForm } from './PlayerForm'
+import { PlayerFormTabs } from './PlayerFormTabs'
 import type { Player } from '@/payload-types'
 
 export function PlayerEditForm({ profile }: { profile: Player }) {
-  return <PlayerForm profile={profile} mode='edit' />
+  return <PlayerFormTabs profile={profile} />
 }

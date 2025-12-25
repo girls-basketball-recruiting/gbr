@@ -18,11 +18,19 @@ export const Tournaments: CollectionConfig = {
       },
     },
     {
-      name: 'location',
+      name: 'city',
       type: 'text',
       required: true,
       admin: {
-        description: 'City and State (e.g., "Las Vegas, NV")',
+        description: 'Tournament City (e.g., "Las Vegas")',
+      },
+    },
+    {
+      name: 'state',
+      type: 'text',
+      required: true,
+      admin: {
+        description: 'Tournament State (e.g., "NV")',
       },
     },
     {

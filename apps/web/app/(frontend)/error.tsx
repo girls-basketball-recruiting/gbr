@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useClerk } from '@clerk/nextjs'
 
 export default function Error({
   error,
@@ -9,10 +10,16 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const { signOut } = useClerk()
+
   useEffect(() => {
     // Log the error to console for debugging
     console.error('Application error:', error)
   }, [error])
+
+  const handleSignOut = async () => {
+    await signOut({ redirectUrl: '/' })
+  }
 
   return (
     <div className='flex min-h-screen items-center justify-center bg-slate-900 px-4'>
@@ -43,12 +50,12 @@ export default function Error({
           </a>
         </div>
         <div className='mt-6'>
-          <a
-            href='/sign-out'
+          <button
+            onClick={handleSignOut}
             className='text-sm text-slate-400 hover:text-white underline transition-colors'
           >
             Sign out
-          </a>
+          </button>
         </div>
       </div>
     </div>

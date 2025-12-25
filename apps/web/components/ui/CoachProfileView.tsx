@@ -1,5 +1,6 @@
 import { Card } from '@workspace/ui/components/card'
 import Image from 'next/image'
+import { getCoachPositionLabel } from '@/lib/zod/CoachPositions'
 
 interface CoachProfileViewProps {
   coach: any
@@ -18,7 +19,7 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
                 <div className='w-24 h-24 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative flex-shrink-0'>
                   <Image
                     src={coach.profileImage.url}
-                    alt={coach.name}
+                    alt={coach.firstName}
                     fill
                     className='object-cover'
                   />
@@ -28,10 +29,10 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
             {/* Coach Info */}
             <div className='flex-1'>
               <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
-                {coach.name}
+                {coach.firstName} {coach.lastName}
               </h1>
               {coach.position && (
-                <p className='text-xl text-slate-600 dark:text-slate-400 mb-1'>{coach.position}</p>
+                <p className='text-xl text-slate-600 dark:text-slate-400 mb-1'>{getCoachPositionLabel(coach.position)}</p>
               )}
               <p className='text-lg text-blue-600 dark:text-blue-400'>{coach.collegeName}</p>
             </div>
@@ -49,12 +50,6 @@ export function CoachProfileView({ coach }: CoachProfileViewProps) {
                 <div>
                   <span className='text-slate-600 dark:text-slate-400'>College:</span>{' '}
                   <span className='font-medium'>{coach.collegeName}</span>
-                </div>
-              )}
-              {coach.programName && (
-                <div>
-                  <span className='text-slate-600 dark:text-slate-400'>Program:</span>{' '}
-                  <span className='font-medium'>{coach.programName}</span>
                 </div>
               )}
             </div>

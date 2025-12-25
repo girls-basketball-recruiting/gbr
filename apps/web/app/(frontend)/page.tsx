@@ -1,6 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server'
 import PublicHomePage from '@/components/PublicHomePage'
-import DashboardPage from '@/components/DashboardPage'
+import { Dashboard } from '../../components/dashboard/Dashboard'
 
 export default async function Page() {
   const user = await currentUser()
@@ -9,5 +9,7 @@ export default async function Page() {
     return <PublicHomePage />
   }
 
-  return <DashboardPage />
+  return (
+    <Dashboard />
+  )
 }
