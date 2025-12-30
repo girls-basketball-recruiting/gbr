@@ -5,6 +5,7 @@ import { clerkClient } from '@clerk/nextjs/server'
 import { findOne, create, updateById, deleteById, findAll } from '@/lib/payload-helpers'
 import { deleteProfileImage } from '@/lib/blob-storage'
 import { markInvitationUsed } from '@/actions/invitation-actions'
+import { stripe } from '@/lib/stripe'
 
 /**
  * Generate a secure random password for Clerk-synced users.
@@ -298,6 +299,29 @@ export async function POST(req: Request) {
         return new Response('', { status: 200 })
       }
 
+      // STRIPE CLEANUP: Cancel subscription and delete customer
+      if (user.stripeCustomerId) {
+        console.log(`💳 Cleaning up Stripe data for customer: ${user.stripeCustomerId}`)
+
+        try {
+          // Cancel active subscription immediately if exists
+          if (user.stripeSubscriptionId) {
+            await stripe.subscriptions.cancel(user.stripeSubscriptionId, {
+              invoice_now: false, // Don't send final invoice
+              prorate: false, // Don't prorate
+            })
+            console.log(`✅ Cancelled Stripe subscription: ${user.stripeSubscriptionId}`)
+          }
+
+          // Delete the Stripe customer
+          await stripe.customers.del(user.stripeCustomerId)
+          console.log(`✅ Deleted Stripe customer: ${user.stripeCustomerId}`)
+        } catch (stripeError) {
+          console.error('❌ Error cleaning up Stripe:', stripeError)
+          // Continue with user deletion even if Stripe cleanup fails
+        }
+      }
+
       // CASCADE DELETE: Find and delete player profile if exists
       const playerProfiles = await findAll('players', {
         user: { equals: user.id },
@@ -305,6 +329,16 @@ export async function POST(req: Request) {
 
       if (playerProfiles.length > 0) {
         for (const player of playerProfiles) {
+          // Delete all saved programs by this player
+          const savedPrograms = await findAll('player-saved-programs', {
+            player: { equals: player.id },
+          })
+
+          for (const savedProgram of savedPrograms) {
+            await deleteById('player-saved-programs', savedProgram.id)
+          }
+          console.log(`✅ Deleted saved programs for player: ${player.id}`)
+
           // Delete profile image from Vercel Blob if it exists
           if (player.profileImageUrl) {
             await deleteProfileImage(player.profileImageUrl)

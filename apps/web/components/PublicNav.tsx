@@ -27,7 +27,7 @@ export function PublicNav({ activePage }: PublicNavProps) {
         <div className='flex items-center justify-between h-16'>
           <Link
             href='/'
-            className='font-bold text-xl text-slate-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-500 transition-colors'
+            className='font-bold text-xl text-slate-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-500 transition-colors cursor-pointer'
             onClick={() => setMobileMenuOpen(false)}
           >
             GBR
@@ -40,7 +40,7 @@ export function PublicNav({ activePage }: PublicNavProps) {
                 key={link.page}
                 href={link.href}
                 className={cn(
-                  'text-sm font-medium transition-colors',
+                  'text-sm font-medium transition-colors cursor-pointer',
                   activePage === link.page
                     ? 'text-orange-600 dark:text-orange-500'
                     : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
@@ -55,7 +55,7 @@ export function PublicNav({ activePage }: PublicNavProps) {
           <div className='hidden md:flex items-center gap-2'>
             <ThemeToggle />
             <Link href='/sign-in'>
-              <Button variant='secondary' size='sm'>
+              <Button variant='secondary' size='sm' className='cursor-pointer'>
                 Sign In
               </Button>
             </Link>
@@ -88,7 +88,7 @@ export function PublicNav({ activePage }: PublicNavProps) {
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    'text-base font-medium transition-colors px-4 py-2 rounded-lg',
+                    'text-base font-medium transition-colors px-4 py-2 rounded-lg cursor-pointer',
                     activePage === link.page
                       ? 'text-orange-600 dark:text-orange-500 bg-orange-50 dark:bg-orange-900/20'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50'
@@ -99,7 +99,7 @@ export function PublicNav({ activePage }: PublicNavProps) {
               ))}
               <div className='pt-4 px-4 border-t border-slate-200 dark:border-slate-800'>
                 <Link href='/sign-in' onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant='secondary' size='sm' className='w-full'>
+                  <Button variant='secondary' size='sm' className='w-full cursor-pointer'>
                     Sign In
                   </Button>
                 </Link>

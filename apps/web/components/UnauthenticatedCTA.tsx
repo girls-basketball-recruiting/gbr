@@ -36,21 +36,21 @@ export function UnauthenticatedCTA({
         </div>
         <div className='flex flex-col sm:flex-row gap-3 pt-2'>
           {playerCTA && (
-            <Button className='bg-orange-600 hover:bg-orange-700' size='lg' asChild>
+            <Button className='bg-orange-600 hover:bg-orange-700 cursor-pointer' size='lg' asChild>
               <Link href='/register-player'>Sign Up as Player</Link>
             </Button>
           )}
           {coachCTA && (
-            <Button className='bg-blue-600 hover:bg-blue-700' size='lg' asChild>
+            <Button className='bg-blue-600 hover:bg-blue-700 cursor-pointer' size='lg' asChild>
               <Link href='/register-coach'>Sign Up as Coach</Link>
             </Button>
           )}
           {!playerCTA && !coachCTA && (
             <>
-              <Button size='lg' className='bg-orange-600 hover:bg-orange-700' asChild>
+              <Button size='lg' className='bg-orange-600 hover:bg-orange-700 cursor-pointer' asChild>
                 <Link href='/register-player'>I&apos;m a Player</Link>
               </Button>
-              <Button size='lg' className='bg-blue-600 hover:bg-blue-700' asChild>
+              <Button size='lg' className='bg-blue-600 hover:bg-blue-700 cursor-pointer' asChild>
                 <Link href='/register-coach'>I&apos;m a Coach</Link>
               </Button>
             </>

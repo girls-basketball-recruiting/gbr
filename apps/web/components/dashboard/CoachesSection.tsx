@@ -53,7 +53,7 @@ export async function CoachesSection() {
                 )}
 
                 <div className='pt-4 flex gap-2'>
-                  <Button className='flex-1 bg-blue-600 hover:bg-blue-700' asChild>
+                  <Button className='flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer' asChild>
                     <Link href={`/coaches/${coach.id}`}>View Profile</Link>
                   </Button>
                 </div>

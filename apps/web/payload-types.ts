@@ -75,6 +75,7 @@ export interface Config {
     'coach-player-notes': CoachPlayerNote;
     'coach-prospects': CoachProspect;
     'coach-saved-players': CoachSavedPlayer;
+    'player-saved-programs': PlayerSavedProgram;
     tournaments: Tournament;
     invitations: Invitation;
     'payload-mcp-api-keys': PayloadMcpApiKey;
@@ -92,6 +93,7 @@ export interface Config {
     'coach-player-notes': CoachPlayerNotesSelect<false> | CoachPlayerNotesSelect<true>;
     'coach-prospects': CoachProspectsSelect<false> | CoachProspectsSelect<true>;
     'coach-saved-players': CoachSavedPlayersSelect<false> | CoachSavedPlayersSelect<true>;
+    'player-saved-programs': PlayerSavedProgramsSelect<false> | PlayerSavedProgramsSelect<true>;
     tournaments: TournamentsSelect<false> | TournamentsSelect<true>;
     invitations: InvitationsSelect<false> | InvitationsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
@@ -710,6 +712,33 @@ export interface CoachSavedPlayer {
   createdAt: string;
 }
 /**
+ * Programs saved by players for their college search
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "player-saved-programs".
+ */
+export interface PlayerSavedProgram {
+  id: number;
+  /**
+   * The player who saved this program
+   */
+  player: number | Player;
+  /**
+   * The college program that was saved
+   */
+  college: number | College;
+  /**
+   * Private notes about this program (only visible to the player)
+   */
+  notes?: string | null;
+  /**
+   * When this program was saved
+   */
+  savedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Manage invitation tokens for first-year-free promotions
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -979,6 +1008,10 @@ export interface PayloadLockedDocument {
         value: number | CoachSavedPlayer;
       } | null)
     | ({
+        relationTo: 'player-saved-programs';
+        value: number | PlayerSavedProgram;
+      } | null)
+    | ({
         relationTo: 'tournaments';
         value: number | Tournament;
       } | null)
@@ -1234,6 +1267,18 @@ export interface CoachProspectsSelect<T extends boolean = true> {
 export interface CoachSavedPlayersSelect<T extends boolean = true> {
   coach?: T;
   player?: T;
+  savedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "player-saved-programs_select".
+ */
+export interface PlayerSavedProgramsSelect<T extends boolean = true> {
+  player?: T;
+  college?: T;
+  notes?: T;
   savedAt?: T;
   updatedAt?: T;
   createdAt?: T;

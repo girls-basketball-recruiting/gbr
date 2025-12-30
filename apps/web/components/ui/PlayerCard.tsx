@@ -176,7 +176,7 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
               Unavailable
             </Button>
           ) : (
-            <Button className='flex-1 bg-blue-600 hover:bg-blue-700 text-sm h-10 font-semibold' asChild>
+            <Button className='flex-1 bg-blue-600 hover:bg-blue-700 text-sm h-10 font-semibold cursor-pointer' asChild>
               <Link href={`/players/${player.id}`}>View Profile</Link>
             </Button>
           )}

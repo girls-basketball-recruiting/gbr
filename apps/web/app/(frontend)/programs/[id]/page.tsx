@@ -170,7 +170,7 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
                       )}
                       <Button
                         size='sm'
-                        className='bg-blue-600 hover:bg-blue-700'
+                        className='bg-blue-600 hover:bg-blue-700 cursor-pointer'
                         asChild
                       >
                         <Link href={`/coaches/${coach.id}`}>View Profile</Link>
@@ -199,7 +199,7 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
                   Are you a coach for {college.school}?{' '}
                   <Link
                     href='/register-coach'
-                    className='text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300'
+                    className='text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer'
                   >
                     Register here
                   </Link>

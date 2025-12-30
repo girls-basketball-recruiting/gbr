@@ -19,7 +19,7 @@ export async function ProspectsSection({ coachId }: { coachId: number }) {
           description="Add prospects manually to track players who haven't registered on the platform yet."
           action={
             <Link href='/prospects/create'>
-              <Button className='mt-4 bg-purple-600 hover:bg-purple-700'>
+              <Button className='mt-4 bg-purple-600 hover:bg-purple-700 cursor-pointer'>
                 + Add Your First Prospect
               </Button>
             </Link>

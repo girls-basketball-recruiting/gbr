@@ -84,7 +84,7 @@ export function PublicHomeNav() {
           <div className='hidden md:flex items-center gap-2'>
             <ThemeToggle />
             <Link href='/sign-in'>
-              <Button variant='secondary' size='sm'>
+              <Button variant='secondary' size='sm' className='cursor-pointer'>
                 Sign In
               </Button>
             </Link>
@@ -127,7 +127,7 @@ export function PublicHomeNav() {
               ))}
               <div className='pt-4 px-4 border-t border-slate-200 dark:border-slate-800'>
                 <Link href='/sign-in' onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant='secondary' size='sm' className='w-full'>
+                  <Button variant='secondary' size='sm' className='w-full cursor-pointer'>
                     Sign In
                   </Button>
                 </Link>

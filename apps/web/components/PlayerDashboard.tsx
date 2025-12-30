@@ -4,7 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getPositionLabel } from '@/lib/zod/Positions'
 import { CoachesSection } from './dashboard/CoachesSection'
+import { SavedProgramsSection } from './dashboard/SavedProgramsSection'
 import { CoachCardsSkeleton } from './ui/skeletons/CoachCardSkeleton'
+import { ProgramCardsSkeleton } from './ui/skeletons/ProgramCardSkeleton'
 import { Suspense } from 'react'
 import { getAuthContext } from '@/lib/auth-context'
 
@@ -53,10 +55,10 @@ export default async function PlayerDashboard() {
                 </p>
               </div>
               <div className='flex gap-2'>
-                <Button asChild variant='outline'>
+                <Button asChild variant='outline' className='cursor-pointer'>
                   <Link href='/profile'>View Profile</Link>
                 </Button>
-                <Button asChild variant='outline'>
+                <Button asChild variant='outline' className='cursor-pointer'>
                   <Link href='/profile/edit'>Edit Profile</Link>
                 </Button>
               </div>
@@ -64,9 +66,22 @@ export default async function PlayerDashboard() {
           </div>
         )}
 
+        {/* Saved Programs Section */}
+        {playerProfile && (
+          <div className='mb-8'>
+            <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
+              Saved Programs
+            </h3>
+
+            <Suspense fallback={<ProgramCardsSkeleton count={6} />}>
+              <SavedProgramsSection playerId={playerProfile.id} />
+            </Suspense>
+          </div>
+        )}
+
         <div className='mb-8'>
           <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
-            College Programs
+            All College Programs
           </h3>
 
           <Suspense fallback={<CoachCardsSkeleton count={12} />}>

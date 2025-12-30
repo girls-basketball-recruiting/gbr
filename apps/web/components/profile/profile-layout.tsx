@@ -17,7 +17,7 @@ export function ProfileLayout({ isSubscribed, role, currentPeriodEnd, children }
         <div className='mb-4 flex justify-between items-center'>
           <h1 className='text-3xl font-bold text-slate-900 dark:text-white'>My Profile</h1>
           <Link href='/profile/edit'>
-            <Button variant='outline'>
+            <Button variant='outline' className='cursor-pointer'>
               Edit Profile
             </Button>
           </Link>

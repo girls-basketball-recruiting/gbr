@@ -42,7 +42,7 @@ export default function PlayerSignUpPage() {
           <p className='text-slate-600 dark:text-slate-400 mb-6'>{error}</p>
           <Link
             href='/register-player'
-            className='text-blue-600 dark:text-blue-400 hover:underline'
+            className='text-blue-600 dark:text-blue-400 hover:underline cursor-pointer'
           >
             Register without invitation
           </Link>

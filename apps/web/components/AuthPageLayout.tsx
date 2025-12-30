@@ -17,7 +17,7 @@ export function AuthPageLayout({ children }: AuthPageLayoutProps) {
             {/* Logo - Links to Homepage */}
             <Link
               href='/'
-              className='flex items-center gap-3 group transition-all hover:opacity-80'
+              className='flex items-center gap-3 group transition-all hover:opacity-80 cursor-pointer'
             >
               <div className='flex aspect-square size-10 items-center justify-center rounded-lg bg-linear-to-br from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-all'>
                 <span className='font-bold text-lg'>GB</span>

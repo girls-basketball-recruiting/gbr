@@ -13,6 +13,7 @@ import { Players } from './collections/Players'
 import { Coaches } from './collections/Coaches'
 import { CoachPlayerNotes } from './collections/CoachPlayerNotes'
 import { CoachSavedPlayers } from './collections/CoachSavedPlayers'
+import { PlayerSavedPrograms } from './collections/PlayerSavedPrograms'
 import { Tournaments } from './collections/Tournaments'
 import { CoachProspects } from './collections/CoachProspects'
 import { Colleges } from './collections/Colleges'
@@ -37,6 +38,7 @@ export default buildConfig({
     CoachPlayerNotes,
     CoachProspects,
     CoachSavedPlayers,
+    PlayerSavedPrograms,
     Tournaments,
     Invitations,
   ],

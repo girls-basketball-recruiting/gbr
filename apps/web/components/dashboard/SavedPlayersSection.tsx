@@ -13,21 +13,24 @@ export async function SavedPlayersSection({ coachId }: { coachId: number }) {
     depth: 1 // Populate the player relation
   })
 
+  // Filter out any players that were deleted (player is null)
+  const validPlayers = savedPlayers.filter(sp => sp.player !== null)
+
   return (
     <>
-      {savedPlayers.length === 0 ? (
+      {validPlayers.length === 0 ? (
         <EmptyState
           title='No Saved Players Yet'
           description="You haven't saved any players yet. Browse all players to find recruits and save them to your board!"
           action={
             <Link href='/players'>
-              <Button className='mt-4 bg-blue-600 hover:bg-blue-700'>Browse All Players</Button>
+              <Button className='mt-4 bg-blue-600 hover:bg-blue-700 cursor-pointer'>Browse All Players</Button>
             </Link>
           }
         />
       ) : (
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {savedPlayers.map((savedPlayer) => {
+          {validPlayers.map((savedPlayer) => {
             const player = typeof savedPlayer.player === 'object' ? savedPlayer.player : null
             if (!player) return null
             return <PlayerCard key={savedPlayer.id} player={player as Player} />

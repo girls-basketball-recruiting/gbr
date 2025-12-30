@@ -17,12 +17,12 @@ export default function CheckoutResultPage() {
           Thank you for upgrading to Pro. Your subscription is now active and your features have been unlocked.
         </p>
         <div className="space-y-4">
-          <Link href="/profile" className="block w-full">
+          <Link href="/profile" className="block w-full cursor-pointer">
             <Button className="w-full">
               Go to Profile
             </Button>
           </Link>
-          <Link href="/" className="block w-full">
+          <Link href="/" className="block w-full cursor-pointer">
             <Button variant="outline" className="w-full">
               Return Home
             </Button>

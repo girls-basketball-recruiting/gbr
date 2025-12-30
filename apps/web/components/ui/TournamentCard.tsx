@@ -178,7 +178,7 @@ export function TournamentCard({
               </Toggle>
             )
           ) : (
-            <Button className='w-full bg-blue-600 hover:bg-blue-700' asChild>
+            <Button className='w-full bg-blue-600 hover:bg-blue-700 cursor-pointer' asChild>
               <Link href='/register-player'>Sign Up to RSVP</Link>
             </Button>
           )}

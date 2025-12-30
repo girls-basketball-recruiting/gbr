@@ -75,7 +75,7 @@ export function ProgramCard({ program }: ProgramCardProps) {
         {/* Action Button */}
         <div className='pt-2'>
           <Button
-            className={`w-full ${
+            className={`w-full cursor-pointer ${
               program.hasCoach
                 ? 'bg-blue-600 hover:bg-blue-700'
                 : 'bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600'

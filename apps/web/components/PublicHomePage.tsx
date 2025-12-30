@@ -68,7 +68,7 @@ export default function PublicHomePage() {
                 <Link href='/register-player'>
                   <Button
                     size='lg'
-                    className='w-full bg-orange-600 hover:bg-orange-700 text-white'
+                    className='w-full bg-orange-600 hover:bg-orange-700 text-white cursor-pointer'
                   >
                     Register as Player
                   </Button>
@@ -106,7 +106,7 @@ export default function PublicHomePage() {
                 <Link href='/register-coach'>
                   <Button
                     size='lg'
-                    className='w-full bg-blue-600 hover:bg-blue-700 text-white'
+                    className='w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
                   >
                     Register as Coach
                   </Button>
@@ -119,7 +119,7 @@ export default function PublicHomePage() {
           <div className='text-center mt-8'>
             <p className='text-slate-500 dark:text-slate-400 mb-3 text-sm'>Already have an account?</p>
             <Link href='/sign-in'>
-              <Button variant='secondary'>
+              <Button variant='secondary' className='cursor-pointer'>
                 Sign In
               </Button>
             </Link>
@@ -146,7 +146,7 @@ export default function PublicHomePage() {
             <Link href='/register-player'>
               <Button
                 size='lg'
-                className='bg-white text-orange-600 hover:bg-orange-50'
+                className='bg-white text-orange-600 hover:bg-orange-50 cursor-pointer'
               >
                 Register as Player
               </Button>
@@ -155,6 +155,7 @@ export default function PublicHomePage() {
               <Button
                 size='lg'
                 variant='outline'
+                className='cursor-pointer'
               >
                 Register as Coach
               </Button>
@@ -162,7 +163,7 @@ export default function PublicHomePage() {
           </div>
           <p className='text-orange-100 mt-6 text-sm'>
             Already have an account?{' '}
-            <Link href='/sign-in' className='underline font-medium'>
+            <Link href='/sign-in' className='underline font-medium cursor-pointer'>
               Sign In
             </Link>
           </p>

@@ -33,7 +33,7 @@ export function PlayersSection() {
               ))}
             </ul>
             <Link href='/players'>
-              <Button size='lg' className='bg-orange-600 hover:bg-orange-700'>
+              <Button size='lg' className='bg-orange-600 hover:bg-orange-700 cursor-pointer'>
                 Browse Players
                 <ArrowRight className='ml-2 w-4 h-4' />
               </Button>
@@ -85,7 +85,7 @@ export function ProgramsSection() {
               ))}
             </ul>
             <Link href='/programs'>
-              <Button size='lg' className='bg-blue-600 hover:bg-blue-700'>
+              <Button size='lg' className='bg-blue-600 hover:bg-blue-700 cursor-pointer'>
                 Explore Programs
                 <ArrowRight className='ml-2 w-4 h-4' />
               </Button>
@@ -126,7 +126,7 @@ export function TournamentsSection() {
               ))}
             </ul>
             <Link href='/tournaments'>
-              <Button size='lg' className='bg-purple-600 hover:bg-purple-700'>
+              <Button size='lg' className='bg-purple-600 hover:bg-purple-700 cursor-pointer'>
                 View Tournaments
                 <ArrowRight className='ml-2 w-4 h-4' />
               </Button>
@@ -190,7 +190,7 @@ export function PricingSection() {
                 </ul>
               </div>
               <Link href='/register-player'>
-                <Button className='w-full bg-orange-600 hover:bg-orange-700'>Register as Player</Button>
+                <Button className='w-full bg-orange-600 hover:bg-orange-700 cursor-pointer'>Register as Player</Button>
               </Link>
             </div>
           </Card>
@@ -224,7 +224,7 @@ export function PricingSection() {
                 </ul>
               </div>
               <Link href='/register-coach'>
-                <Button className='w-full bg-blue-600 hover:bg-blue-700'>Register as Coach</Button>
+                <Button className='w-full bg-blue-600 hover:bg-blue-700 cursor-pointer'>Register as Coach</Button>
               </Link>
             </div>
           </Card>

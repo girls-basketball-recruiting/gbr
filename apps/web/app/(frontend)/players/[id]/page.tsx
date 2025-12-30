@@ -179,18 +179,18 @@ export default async function PlayerProfilePage({
                   contact information
                 </p>
                 <div className='flex flex-col gap-3'>
-                  <Link href='/sign-in' className='w-full'>
+                  <Link href='/sign-in' className='w-full cursor-pointer'>
                     <Button className='w-full bg-blue-600 hover:bg-blue-700'>
                       Sign In
                     </Button>
                   </Link>
                   <div className='flex gap-3'>
-                    <Link href='/register-player' className='flex-1'>
+                    <Link href='/register-player' className='flex-1 cursor-pointer'>
                       <Button variant='outline' className='w-full border-orange-500 text-orange-500 hover:bg-orange-500/10'>
                         Register as Player
                       </Button>
                     </Link>
-                    <Link href='/register-coach' className='flex-1'>
+                    <Link href='/register-coach' className='flex-1 cursor-pointer'>
                       <Button variant='outline' className='w-full border-blue-500 text-blue-500 hover:bg-blue-500/10'>
                         Register as Coach
                       </Button>

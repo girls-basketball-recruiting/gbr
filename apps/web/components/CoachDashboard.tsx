@@ -49,10 +49,10 @@ export default async function CoachDashboard() {
               </p>
             </div>
             <div className='flex gap-2'>
-              <Button asChild variant='outline'>
+              <Button asChild variant='outline' className='cursor-pointer'>
                 <Link href='/profile'>View Profile</Link>
               </Button>
-              <Button asChild variant='outline'>
+              <Button asChild variant='outline' className='cursor-pointer'>
                 <Link href='/profile/edit'>Edit Profile</Link>
               </Button>
             </div>
@@ -85,7 +85,7 @@ export default async function CoachDashboard() {
               </span>
             </h3>
             <Link href='/prospects/create'>
-              <Button className='bg-purple-600 hover:bg-purple-700'>+ Add Prospect</Button>
+              <Button className='bg-purple-600 hover:bg-purple-700 cursor-pointer'>+ Add Prospect</Button>
             </Link>
           </div>
 
