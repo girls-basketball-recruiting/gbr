@@ -11,9 +11,10 @@ import type { Player } from '@/payload-types'
 interface PlayerCardProps {
   player: Player
   action?: ReactNode
+  isOwnCard?: boolean
 }
 
-export function PlayerCard({ player, action }: PlayerCardProps) {
+export function PlayerCard({ player, action, isOwnCard = false }: PlayerCardProps) {
   if (!player) return null
 
   const profileImageUrl = player.profileImageUrl
@@ -24,44 +25,61 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
 
   return (
     <Card
-      className={`overflow-hidden pt-0 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 transition-all ${
-        isArchived
+      className={`overflow-hidden pt-0 bg-white dark:bg-slate-800/50 transition-all relative ${
+        isOwnCard
+          ? 'border-2 border-transparent bg-gradient-to-br from-amber-400 via-orange-500 to-pink-500 dark:from-amber-500 dark:via-orange-600 dark:to-pink-600 shadow-2xl shadow-amber-500/25 dark:shadow-amber-500/20 animate-[gradient-shift_3s_ease-in-out_infinite] hover:shadow-3xl hover:shadow-amber-500/40'
+          : isArchived
           ? 'opacity-60 border-orange-600/50 dark:border-orange-600/50'
-          : 'hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-xl'
+          : 'border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-xl'
       }`}
+      style={isOwnCard ? {
+        backgroundSize: '200% 200%',
+        backgroundImage: 'linear-gradient(135deg, #fbbf24 0%, #f97316 25%, #ec4899 50%, #f97316 75%, #fbbf24 100%)',
+        padding: '2px'
+      } : undefined}
     >
-      {/* Square Image */}
-      <div className='relative aspect-square bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800'>
-        {profileImageUrl ? (
-          <Image
-            src={profileImageUrl}
-            alt={`${player.firstName} ${player.lastName}`}
-            fill
-            className='object-cover'
-            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-            priority={false}
-          />
-        ) : (
-          <div className='absolute inset-0 flex items-center justify-center'>
-            <span className='text-7xl font-bold text-slate-400 dark:text-slate-600'>
-              {player.firstName?.[0]}
-              {player.lastName?.[0]}
-            </span>
-          </div>
-        )}
+      {/* Inner content wrapper for gradient border effect */}
+      <div className={isOwnCard ? 'bg-white dark:bg-slate-800/50 rounded-lg overflow-hidden' : ''}>
+        {/* Square Image */}
+        <div className='relative aspect-square bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800'>
+          {profileImageUrl ? (
+            <Image
+              src={profileImageUrl}
+              alt={`${player.firstName} ${player.lastName}`}
+              fill
+              className='object-cover'
+              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+              priority={false}
+            />
+          ) : (
+            <div className='absolute inset-0 flex items-center justify-center'>
+              <span className='text-7xl font-bold text-slate-400 dark:text-slate-600'>
+                {player.firstName?.[0]}
+                {player.lastName?.[0]}
+              </span>
+            </div>
+          )}
 
-        {/* Graduation Year Badge */}
-        <div className='absolute top-3 right-3'>
-          <Badge className='bg-blue-600 hover:bg-blue-600 text-white border-0 shadow-xl text-base px-3 py-1 font-bold'>
-            &apos;{String(player.graduationYear).slice(-2)}
-          </Badge>
-        </div>
+          {/* Own Profile Badge - Top Left */}
+          {isOwnCard && (
+            <div className='absolute top-0 left-0 bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 text-white px-4 py-2 text-xs font-black tracking-wider shadow-lg flex items-center gap-1.5'>
+              <span className='text-sm'>★</span>
+              <span>YOUR PROFILE</span>
+            </div>
+          )}
 
-        {isArchived && (
-          <div className='absolute top-0 left-0 right-0 bg-orange-600 text-white px-3 py-2 text-xs font-bold text-center'>
-            ⚠️ ARCHIVED
+          {/* Graduation Year Badge */}
+          <div className='absolute top-3 right-3'>
+            <Badge className='bg-blue-600 hover:bg-blue-600 text-white border-0 shadow-xl text-base px-3 py-1 font-bold'>
+              &apos;{String(player.graduationYear).slice(-2)}
+            </Badge>
           </div>
-        )}
+
+          {isArchived && (
+            <div className='absolute top-0 left-0 right-0 bg-orange-600 text-white px-3 py-2 text-xs font-bold text-center'>
+              ⚠️ ARCHIVED
+            </div>
+          )}
 
         {/* Bottom Gradient Overlay for Name */}
         <div className='absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-4'>
@@ -182,6 +200,7 @@ export function PlayerCard({ player, action }: PlayerCardProps) {
           )}
           {action}
         </div>
+      </div>
       </div>
     </Card>
   )

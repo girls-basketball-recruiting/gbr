@@ -43,7 +43,7 @@ export async function ProfileEditContent() {
     return (
       <FormPageLayout
         title='Edit Your Player Profile'
-        description='Update your information to stay current with coaches'
+        description='Update your information to stay current with programs'
         maxWidth='lg'
       >
         <PlayerEditForm profile={playerProfile} />

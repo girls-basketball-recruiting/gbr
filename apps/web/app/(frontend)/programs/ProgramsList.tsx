@@ -1,6 +1,7 @@
-import { getDb } from '@/lib/payload-helpers'
+import { getDb, findOne, findAll } from '@/lib/payload-helpers'
 import { ProgramsPageContent } from '@/components/ProgramsPageContent'
 import { and, like, desc, asc, sql, isNotNull, inArray } from 'drizzle-orm'
+import { currentUser } from '@clerk/nextjs/server'
 
 interface ProgramsListProps {
   searchParams: {
@@ -12,6 +13,7 @@ interface ProgramsListProps {
     search?: string
     page?: string
     sortBy?: string
+    pageSize?: string
   }
 }
 
@@ -70,7 +72,8 @@ export async function ProgramsList({ searchParams }: ProgramsListProps) {
 
   // Pagination
   const page = parseInt(searchParams.page || '1')
-  const limit = 24
+  const pageSize = parseInt(searchParams.pageSize || '24')
+  const limit = pageSize
   const offset = (page - 1) * limit
 
   // Build query
@@ -121,12 +124,44 @@ export async function ProgramsList({ searchParams }: ProgramsListProps) {
     hasCoach: collegeIdsWithCoaches.has(college.id),
   }))
 
+  // Fetch saved programs for current player
+  let savedProgramIds = new Set<number>()
+  const clerkUser = await currentUser()
+  if (clerkUser && clerkUser.publicMetadata?.role === 'player') {
+    const payloadUser = await findOne('users', {
+      clerkId: { equals: clerkUser.id },
+    })
+
+    if (payloadUser) {
+      const playerRecords = await findAll('players', {
+        user: { equals: payloadUser.id },
+      })
+
+      const player = playerRecords[0]
+      if (player) {
+        const savedPrograms = await findAll('player-saved-programs', {
+          player: { equals: player.id },
+        })
+
+        // Extract college IDs, handling both number and object cases
+        const collegeIds = savedPrograms
+          .map((sp: any) =>
+            typeof sp.college === 'number' ? sp.college : sp.college?.id
+          )
+          .filter((id): id is number => id !== undefined)
+
+        savedProgramIds = new Set(collegeIds)
+      }
+    }
+  }
+
   return (
     <ProgramsPageContent
       programs={programsWithCoachStatus}
       totalDocs={totalDocs}
       totalPages={totalPages}
       currentPage={page}
+      savedProgramIds={savedProgramIds}
     />
   )
 }

@@ -37,7 +37,7 @@ export function DynamicBreadcrumbs() {
         let name = null
 
         if (entityType === 'players') {
-          const res = await fetch(`/api/profile/player/${entityId}`)
+          const res = await fetch(`/api/players/${entityId}`)
           const data = await res.json()
           if (data.player) {
             name = `${data.player.firstName || ''} ${data.player.lastName || ''}`.trim()

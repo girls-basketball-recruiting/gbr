@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Toggle } from '@workspace/ui/components/toggle'
 import { Bookmark } from 'lucide-react'
@@ -28,6 +28,11 @@ export function SaveProgramButton({
   const [isLoading, setIsLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
 
+  // Sync state when prop changes (e.g., after page refresh)
+  useEffect(() => {
+    setIsSaved(initialIsSaved)
+  }, [initialIsSaved])
+
   const handleToggleSave = async (pressed: boolean) => {
     // Optimistic update
     const previousState = isSaved
@@ -43,7 +48,7 @@ export function SaveProgramButton({
         await unsaveProgram(collegeId)
       }
 
-      // Refresh the page data
+      // Refresh the page data to ensure consistency
       startTransition(() => {
         router.refresh()
       })
@@ -52,10 +57,10 @@ export function SaveProgramButton({
       // Revert the state on error
       setIsSaved(previousState)
 
-      // Show error message to user
-      const action = pressed ? 'save' : 'unsave'
-      const errorMessage = error instanceof Error ? error.message : `Failed to ${action} ${collegeName}`
-      alert(errorMessage)
+      // Refresh to get accurate state from server
+      startTransition(() => {
+        router.refresh()
+      })
     } finally {
       setIsLoading(false)
     }

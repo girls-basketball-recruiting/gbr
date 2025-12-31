@@ -19,32 +19,43 @@ interface PlayersListProps {
 }
 
 export async function PlayersList({ searchParams }: PlayersListProps) {
-  // Check if user is a coach
+  // Check user role
   const clerkUser = await currentUser()
   const isCoach = clerkUser?.publicMetadata?.role === 'coach'
+  const isPlayer = clerkUser?.publicMetadata?.role === 'player'
   let savedPlayerIds: number[] = []
+  let currentPlayerId: number | undefined
 
-  if (isCoach && clerkUser) {
-    // Find the user and coach profile
-    const user = await findOne('users', {
-      clerkId: { equals: clerkUser.id }
+  // Get current user from database
+  const user = clerkUser ? await findOne('users', {
+    clerkId: { equals: clerkUser.id }
+  }) : null
+
+  if (isCoach && user) {
+    const coaches = await findAll('coaches', {
+      user: { equals: user.id }
     })
 
-    if (user) {
-      const coaches = await findAll('coaches', {
-        user: { equals: user.id }
+    if (coaches.length > 0) {
+      const coachProfile = coaches[0]!
+
+      // Get saved player IDs
+      const savedPlayers = await findAll('coach-saved-players', {
+        coach: { equals: coachProfile.id }
       })
 
-      if (coaches.length > 0) {
-        const coachProfile = coaches[0]!
+      savedPlayerIds = savedPlayers.map((sp) => typeof sp.player === 'number' ? sp.player : sp.player?.id).filter((id): id is number => id !== undefined)
+    }
+  }
 
-        // Get saved player IDs
-        const savedPlayers = await findAll('coach-saved-players', {
-          coach: { equals: coachProfile.id }
-        })
+  if (isPlayer && user) {
+    // Get current player's ID
+    const players = await findAll('players', {
+      user: { equals: user.id }
+    })
 
-        savedPlayerIds = savedPlayers.map((sp) => typeof sp.player === 'number' ? sp.player : sp.player?.id).filter((id): id is number => id !== undefined)
-      }
+    if (players.length > 0) {
+      currentPlayerId = players[0]!.id
     }
   }
 
@@ -136,6 +147,7 @@ export async function PlayersList({ searchParams }: PlayersListProps) {
       currentPage={page}
       savedPlayerIds={savedPlayerIds}
       isCoach={isCoach}
+      currentPlayerId={currentPlayerId}
     />
   )
 }

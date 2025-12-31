@@ -59,96 +59,93 @@ export default async function PaymentPage() {
   const price = isPlayer ? 39 : 99
 
   return (
-    <div className='min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4'>
-      <div className='max-w-lg w-full'>
+    <div className='min-h-screen bg-white'>
+      <div className='max-w-4xl mx-auto px-4 py-12'>
         <div className='text-center mb-12'>
-          <h1 className='text-4xl font-bold text-white mb-4'>
-            Choose Your Plan
+          <h1 className='text-4xl font-bold text-slate-900 mb-3'>
+            Complete Your Subscription
           </h1>
-          <p className='text-slate-400 text-lg'>
-            Get started with full access to connect with {isPlayer ? 'college coaches' : 'talented players'}
+          <p className='text-slate-600 text-lg'>
+            {isPlayer ? 'Player Pro' : 'Coach Pro'} - Annual Plan
           </p>
+          {promoCode === 'FIRST_YEAR_FREE' ? (
+            <div className='mt-4'>
+              <div className='flex items-center justify-center gap-4 mb-2'>
+                <span className='text-2xl font-bold text-slate-400 line-through'>
+                  ${price}/year
+                </span>
+                <span className='text-4xl font-bold text-emerald-600'>
+                  Free for 1 year
+                </span>
+              </div>
+              <div className='inline-block px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg'>
+                <p className='text-emerald-700 font-semibold text-sm'>
+                  🎉 First Year Free Promotion Applied
+                </p>
+              </div>
+              <p className='text-slate-500 text-sm mt-2'>
+                Then ${price}/year after your first 12 months
+              </p>
+            </div>
+          ) : (
+            <div className='mt-4'>
+              <div className='text-4xl font-bold text-slate-900'>
+                ${price}<span className='text-xl text-slate-500 font-normal'>/year</span>
+              </div>
+              <p className='text-slate-500 text-sm mt-1'>Billed annually</p>
+            </div>
+          )}
         </div>
 
-        <Card className='bg-slate-800/50 border-slate-700 p-8'>
-          <div className='text-center mb-8'>
-            <h2 className='text-2xl font-bold text-white mb-2'>
-              {isPlayer ? 'Player Pro' : 'Coach Pro'} - Annual Plan
-            </h2>
-            {promoCode === 'FIRST_YEAR_FREE' ? (
-              <>
-                <div className='flex items-center justify-center gap-4 mb-2'>
-                  <span className='text-3xl font-bold text-slate-500 line-through'>
-                    ${price}
-                  </span>
-                  <span className='text-5xl font-bold text-green-400'>
-                    $0<span className='text-xl text-slate-400'>/year</span>
-                  </span>
-                </div>
-                <div className='inline-block px-4 py-2 bg-green-900/30 border border-green-700 rounded-lg mb-2'>
-                  <p className='text-green-300 font-semibold text-sm'>
-                    🎉 First Year Free!
+        <div className='grid lg:grid-cols-3 gap-8 mb-12'>
+          <div className='lg:col-span-2 order-2 lg:order-1'>
+            <CheckoutButton />
+          </div>
+
+          <div className='order-1 lg:order-2'>
+            <Card className='bg-slate-50 border-slate-200 p-6'>
+              <h3 className='font-semibold text-slate-900 mb-4'>What&apos;s included</h3>
+              <div className='space-y-3'>
+                <div className='flex items-start gap-2'>
+                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
+                  <p className='text-slate-700 text-sm'>
+                    {isPlayer
+                      ? 'Create and manage your player profile'
+                      : 'Search thousands of player profiles'}
                   </p>
                 </div>
-                <p className='text-slate-400 text-sm'>
-                  Then ${price}/year after your first 12 months
-                </p>
-              </>
-            ) : (
-              <>
-                <div className='text-5xl font-bold text-blue-400 mb-2'>
-                  ${price}<span className='text-xl text-slate-400'>/year</span>
+                <div className='flex items-start gap-2'>
+                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
+                  <p className='text-slate-700 text-sm'>
+                    {isPlayer
+                      ? 'Get discovered by college programs'
+                      : 'Save players to your recruiting list'}
+                  </p>
                 </div>
-                <p className='text-slate-400'>One-time annual payment</p>
-              </>
-            )}
+                <div className='flex items-start gap-2'>
+                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
+                  <p className='text-slate-700 text-sm'>
+                    {isPlayer
+                      ? 'Tournament visibility'
+                      : 'Full prospect management'}
+                  </p>
+                </div>
+                <div className='flex items-start gap-2'>
+                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
+                  <p className='text-slate-700 text-sm'>Priority support</p>
+                </div>
+              </div>
+
+              <div className='mt-6 pt-6 border-t border-slate-200'>
+                <p className='text-slate-500 text-xs text-center'>
+                  Secure payment powered by Stripe
+                  <br />
+                  Cancel anytime
+                </p>
+              </div>
+            </Card>
           </div>
-
-          <div className='space-y-4 mb-8'>
-            <div className='flex items-start gap-3'>
-              <Check className='w-5 h-5 text-green-400 mt-0.5 shrink-0' />
-              <p className='text-slate-300'>
-                {isPlayer
-                  ? 'Create and manage your player profile with stats, highlights, and achievements'
-                  : 'Search and filter thousands of player profiles'}
-              </p>
-            </div>
-            <div className='flex items-start gap-3'>
-              <Check className='w-5 h-5 text-green-400 mt-0.5 shrink-0' />
-              <p className='text-slate-300'>
-                {isPlayer
-                  ? 'Get discovered by college coaches actively recruiting'
-                  : 'Save players to your recruiting list and track prospects'}
-              </p>
-            </div>
-            <div className='flex items-start gap-3'>
-              <Check className='w-5 h-5 text-green-400 mt-0.5 shrink-0' />
-              <p className='text-slate-300'>
-                {isPlayer
-                  ? 'Direct messaging with college coaches'
-                  : 'Add private notes and organize your recruiting pipeline'}
-              </p>
-            </div>
-            <div className='flex items-start gap-3'>
-              <Check className='w-5 h-5 text-green-400 mt-0.5 shrink-0' />
-              <p className='text-slate-300'>
-                {isPlayer
-                  ? 'Tournament and showcase visibility'
-                  : 'Access to player contact information and stats'}
-              </p>
-            </div>
-            <div className='flex items-start gap-3'>
-              <Check className='w-5 h-5 text-green-400 mt-0.5 shrink-0' />
-              <p className='text-slate-300'>Priority support and regular platform updates</p>
-            </div>
-          </div>
-
-          <CheckoutButton />
-
-          <p className='text-center text-slate-500 text-sm mt-4'>
-            Secure payment powered by Stripe. Cancel anytime.
-          </p>
-        </Card>
+        </div>
       </div>
     </div>
   )

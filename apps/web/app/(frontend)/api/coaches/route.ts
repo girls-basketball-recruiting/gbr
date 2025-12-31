@@ -35,7 +35,7 @@ export const POST = handleApiError(async (req: Request) => {
   const collegeName = formData.get('collegeName') as string
   const city = formData.get('city') as string
   const state = formData.get('state') as string
-  const jobTitle = formData.get('jobTitle') as string | undefined
+  const jobTitle = formData.get('jobTitle') as string // Required
   const phone = formData.get('phone') as string | undefined
   const bio = formData.get('bio') as string | undefined
 

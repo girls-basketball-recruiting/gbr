@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const AREAS_OF_STUDY = [
   { label: 'Undecided', value: 'undecided' },
-  { label: 'STEM (Science, Tech, Engineering, Math)', value: 'stem' },
+  { label: 'STEM', value: 'stem' },
   { label: 'Business & Professional', value: 'business-professional' },
   { label: 'Arts & Humanities', value: 'arts-humanities' },
   { label: 'Social Science & Education', value: 'social-science-education' },

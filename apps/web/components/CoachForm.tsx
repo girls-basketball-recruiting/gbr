@@ -12,14 +12,16 @@ import {
   FieldError,
 } from '@workspace/ui/components/field'
 import { Card } from '@workspace/ui/components/card'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { AlertCircle } from 'lucide-react'
 import { CollegeCombobox } from '@/components/CollegeCombobox'
-import { ProfileImageUpload } from '@/components/ui/ProfileImageUpload'
+import { ProfileImageUpload } from '@/components/form/ProfileImageUpload'
 import { FormTextField } from '@/components/form/FormTextField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { PhoneInput } from '@/components/specialized/PhoneInput'
 import { useSchemaForm } from '@/hooks/useSchemaForm'
-import { CoachSchema, type CoachFormData } from '@/lib/zod/Coaches'
+import { CoachProfileSchema, type CoachProfileFormData, mapCoachToFormData } from '@/lib/zod/CoachProfile'
 import { ACTIVE_COACH_POSITIONS } from '@/lib/zod/CoachPositions'
 import type { Coach } from '@/payload-types'
 
@@ -36,22 +38,24 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
 
   // Default values for form
-  const defaultValues: CoachFormData = {
-    firstName: profile?.firstName || '',
-    lastName: profile?.lastName || '',
-    collegeId: profile?.collegeId || 0,
-    collegeName: profile?.collegeName || '',
-    city: profile?.city || '',
-    state: profile?.state || '',
-    jobTitle: profile?.jobTitle || '',
-    phone: profile?.phone || '',
-    bio: profile?.bio || '',
-  }
+  const defaultValues: CoachProfileFormData = profile
+    ? mapCoachToFormData(profile)
+    : {
+        firstName: '',
+        lastName: '',
+        collegeId: 0,
+        collegeName: '',
+        city: '',
+        state: '',
+        jobTitle: '',
+        phone: '',
+        bio: '',
+      }
 
   // Use the new schema form hook
   const form = useSchemaForm({
     defaultValues,
-    schema: CoachSchema,
+    schema: CoachProfileSchema,
     fileFields: {
       profileImageUrl: {
         file: profileImageFile,
@@ -98,7 +102,15 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
       <form onSubmit={form.handleSubmit}>
         <FieldSet>
           <FieldLegend className='mb-6'>Coach Profile</FieldLegend>
-          {form.error && <FieldError className='mb-6'>{form.error}</FieldError>}
+
+          {/* Error Alert */}
+          {form.error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{form.error}</AlertDescription>
+            </Alert>
+          )}
+
           <FieldGroup>
             <ProfileImageUpload
               label='Coach Photo'
@@ -115,6 +127,7 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
                 label='First Name'
                 required
                 placeholder='Required'
+                fieldWidth='md'
               />
 
               <FormTextField
@@ -123,6 +136,7 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
                 label='Last Name'
                 required
                 placeholder='Required'
+                fieldWidth='md'
               />
             </div>
 
@@ -160,6 +174,7 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
                 label='Position'
                 required
                 placeholder='Select position'
+                fieldWidth='lg'
                 options={ACTIVE_COACH_POSITIONS.map(pos => ({
                   value: pos.value,
                   label: pos.label,

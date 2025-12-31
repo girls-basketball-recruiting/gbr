@@ -16,6 +16,7 @@ interface ProgramsPageProps {
     search?: string
     page?: string
     sortBy?: string
+    pageSize?: string
     view?: 'grid' | 'table'
   }>
 }
@@ -37,7 +38,7 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
                 College Programs
               </h1>
               <p className='text-slate-600 dark:text-slate-400'>
-                Browse women&apos;s college basketball programs and connect with coaches
+                Browse and connect with women&apos;s college basketball programs
               </p>
             </div>
 

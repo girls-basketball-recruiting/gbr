@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react'
 import { ViewToggle } from './ViewToggle'
+import { PageSizeSelector } from './PageSizeSelector'
 
 interface ListPageToolbarProps {
   totalCount: number
@@ -25,6 +26,7 @@ export function ListPageToolbar({
         {totalCount !== 1 && 's'}
       </p>
       <div className='flex items-center gap-3'>
+        <PageSizeSelector />
         {sortSelector}
         <ViewToggle view={view} onViewChange={onViewChange} />
       </div>

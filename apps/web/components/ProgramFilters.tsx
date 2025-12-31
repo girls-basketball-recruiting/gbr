@@ -168,89 +168,93 @@ export function ProgramFilters() {
     <div className='bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-5 mb-6'>
       <div className='flex flex-col gap-5'>
         {/* Main Filters */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
-          {/* Search */}
-          <div className='space-y-2 sm:col-span-2 lg:col-span-1'>
-            <Label htmlFor='search' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
-              School Name
-            </Label>
-            <Input
-              id='search'
-              type='text'
-              placeholder='Search schools...'
-              value={filters.search}
-              onChange={(e) => handleTextChange('search', e.target.value)}
-              className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'
-            />
+        <div className='grid gap-5'>
+          <div className='grid md:grid-cols-2 gap-5'>
+            {/* Search */}
+            <div className='space-y-2'>
+              <Label htmlFor='search' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+                School Name
+              </Label>
+              <Input
+                id='search'
+                type='text'
+                placeholder='Search schools...'
+                value={filters.search}
+                onChange={(e) => handleTextChange('search', e.target.value)}
+                className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'
+              />
+            </div>
+
+            {/* State Filter */}
+            <div className='space-y-2'>
+              <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+                State
+              </Label>
+              <MultiSelect
+                options={[...US_STATES_AND_TERRITORIES]}
+                selected={filters.states}
+                onChange={(values) => handleMultiSelectChange('states', values)}
+                placeholder='All States'
+                className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+                searchPlaceholder='Search states...'
+              />
+            </div>
           </div>
 
-          {/* Division Filter */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
-              Division
-            </Label>
-            <MultiSelect
-              options={divisions}
-              selected={filters.divisions}
-              onChange={(values) => handleMultiSelectChange('divisions', values)}
-              placeholder='All Divisions'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
-              searchPlaceholder='Search divisions...'
-            />
-          </div>
+          <div className='grid md:grid-cols-3 gap-5'>
+            {/* Division Filter */}
+            <div className='space-y-2'>
+              <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+                Division
+              </Label>
+              <MultiSelect
+                options={divisions}
+                selected={filters.divisions}
+                onChange={(values) => handleMultiSelectChange('divisions', values)}
+                placeholder='All Divisions'
+                className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+                searchPlaceholder='Search divisions...'
+              />
+            </div>
 
-          {/* State Filter */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
-              State
-            </Label>
-            <MultiSelect
-              options={[...US_STATES_AND_TERRITORIES]}
-              selected={filters.states}
-              onChange={(values) => handleMultiSelectChange('states', values)}
-              placeholder='All States'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
-              searchPlaceholder='Search states...'
-            />
-          </div>
+            {/* Conference Filter */}
+            <div className='space-y-2'>
+              <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+                Conference
+              </Label>
+              <MultiSelect
+                options={conferences}
+                selected={filters.conferences}
+                onChange={(values) => handleMultiSelectChange('conferences', values)}
+                placeholder='All Conferences'
+                className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+                searchPlaceholder='Search conferences...'
+              />
+            </div>
 
-          {/* Conference Filter */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
-              Conference
-            </Label>
-            <MultiSelect
-              options={conferences}
-              selected={filters.conferences}
-              onChange={(values) => handleMultiSelectChange('conferences', values)}
-              placeholder='All Conferences'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
-              searchPlaceholder='Search conferences...'
-            />
+            {/* Type Filter */}
+            <div className='space-y-2'>
+              <Label htmlFor='type' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+                Institution Type
+              </Label>
+              <Select
+                value={filters.type}
+                onValueChange={(value) => handleSelectChange('type', value)}
+              >
+                <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
+                  <SelectValue placeholder='All Types' />
+                </SelectTrigger>
+                <SelectContent>
+                  {types.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-
-          {/* Type Filter */}
-          <div className='space-y-2'>
-            <Label htmlFor='type' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
-              Institution Type
-            </Label>
-            <Select
-              value={filters.type}
-              onValueChange={(value) => handleSelectChange('type', value)}
-            >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
-                <SelectValue placeholder='All Types' />
-              </SelectTrigger>
-              <SelectContent>
-                {types.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
-        </div>
 
         {/* Options & Clear */}
         <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>

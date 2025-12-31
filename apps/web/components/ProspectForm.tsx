@@ -6,6 +6,8 @@ import { Button } from '@workspace/ui/components/button'
 import { Card } from '@workspace/ui/components/card'
 import { FieldSet, FieldLegend, FieldGroup, Field, FieldLabel, FieldDescription } from '@workspace/ui/components/field'
 import { Checkbox } from '@workspace/ui/components/checkbox'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { AlertCircle } from 'lucide-react'
 import { ProspectSchema } from '@/lib/zod/Prospects'
 import { useSchemaForm } from '@/hooks/useSchemaForm'
 import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
@@ -13,7 +15,6 @@ import { FormTextField } from '@/components/form/FormTextField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { HeightInput } from '@/components/specialized/HeightInput'
-import { WeightInput } from '@/components/specialized/WeightInput'
 import { PhoneInput } from '@/components/specialized/PhoneInput'
 
 interface ProspectFormProps {
@@ -49,7 +50,6 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
       uniformNumber: '',
       graduationYear: (new Date().getFullYear() + 1).toString(),
       heightInInches: undefined,
-      weight: undefined,
       highSchool: '',
       aauProgram: '',
       twitterHandle: '',
@@ -95,6 +95,15 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
       <form onSubmit={form.handleSubmit}>
         <FieldSet>
           <FieldLegend className='mb-6'>Prospect Information</FieldLegend>
+
+          {/* Error Alert */}
+          {form.error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{form.error}</AlertDescription>
+            </Alert>
+          )}
+
           <FieldGroup>
             <div className='grid md:grid-cols-2 gap-5'>
               <FormTextField
@@ -103,6 +112,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 label='First Name'
                 required
                 placeholder='Required'
+                fieldWidth='md'
               />
               <FormTextField
                 control={form.control}
@@ -110,6 +120,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 label='Last Name'
                 required
                 placeholder='Required'
+                fieldWidth='md'
               />
             </div>
 
@@ -119,6 +130,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 name='uniformNumber'
                 label='Uniform Number'
                 placeholder='23'
+                fieldWidth='sm'
               />
               <FormSelectField
                 control={form.control}
@@ -126,6 +138,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 label='Graduation Year'
                 required
                 placeholder='Select year'
+                fieldWidth='md'
                 options={getGraduationYearOptions().map(year => ({
                   value: year.value,
                   label: year.label,
@@ -133,10 +146,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
               />
             </div>
 
-            <div className='grid md:grid-cols-2 gap-5'>
-              <HeightInput control={form.control} name='heightInInches' />
-              <WeightInput control={form.control} name='weight' />
-            </div>
+            <HeightInput control={form.control} name='heightInInches' />
 
             <div className='grid md:grid-cols-2 gap-5'>
               <FormTextField
@@ -144,12 +154,14 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 name='highSchool'
                 label='High School'
                 placeholder='High School Name'
+                fieldWidth='lg'
               />
               <FormTextField
                 control={form.control}
                 name='aauProgram'
                 label='AAU Program'
                 placeholder='AAU Program Name'
+                fieldWidth='lg'
               />
             </div>
 
@@ -159,6 +171,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
                 name='twitterHandle'
                 label='Twitter/X Handle'
                 placeholder='@username'
+                fieldWidth='md'
               />
               <PhoneInput
                 control={form.control}

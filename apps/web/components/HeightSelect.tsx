@@ -60,9 +60,9 @@ export function HeightSelect({
   }
 
   return (
-    <div className={`grid grid-cols-2 gap-2 ${className}`}>
+    <div className={`grid grid-cols-2 gap-5 ${className}`}>
       <Select value={heightFeet} onValueChange={handleFeetChange}>
-        <SelectTrigger className={selectClassName}>
+        <SelectTrigger className={`w-full ${selectClassName}`}>
           <SelectValue placeholder='Feet' />
         </SelectTrigger>
         <SelectContent>
@@ -74,7 +74,7 @@ export function HeightSelect({
         </SelectContent>
       </Select>
       <Select value={heightInches} onValueChange={handleInchesChange}>
-        <SelectTrigger className={selectClassName}>
+        <SelectTrigger className={`w-full ${selectClassName}`}>
           <SelectValue placeholder='Inches' />
         </SelectTrigger>
         <SelectContent>

@@ -23,7 +23,12 @@ export const BASKETBALL_POSITIONS = {
   'post': 'Post',
 } as const;
 
-export const BasketballPositionSchema = z.enum(Object.keys(BASKETBALL_POSITIONS) as [keyof typeof BASKETBALL_POSITIONS, ...Array<keyof typeof BASKETBALL_POSITIONS>]);
+export const BasketballPositionSchema = z.enum(
+  Object.keys(BASKETBALL_POSITIONS) as [keyof typeof BASKETBALL_POSITIONS, ...Array<keyof typeof BASKETBALL_POSITIONS>],
+  {
+    errorMap: () => ({ message: 'Please select a position' })
+  }
+);
 
 export type BasketballPosition = z.infer<typeof BasketballPositionSchema>;
 

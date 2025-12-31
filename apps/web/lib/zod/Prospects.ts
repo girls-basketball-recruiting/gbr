@@ -1,12 +1,13 @@
 import { z } from 'zod';
-import { GraduationYearSchema } from './GraduationYears';
 
 export const ProspectSchema = z.object({
   coach: z.string(), // Relationship ID
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   uniformNumber: z.string().optional().or(z.literal('')),
-  graduationYear: GraduationYearSchema,
+  // CRITICAL: Must be number to match collection type
+  // Form sends string, so we coerce to number
+  graduationYear: z.coerce.number().int().min(2020).max(2035),
   heightInInches: z.number().int().optional(),
   weight: z.number().int().optional(),
   highSchool: z.string().optional().or(z.literal('')),

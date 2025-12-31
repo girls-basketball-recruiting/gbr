@@ -13,6 +13,7 @@ interface ProgramsPageContentProps {
   totalDocs: number
   totalPages: number
   currentPage: number
+  savedProgramIds?: Set<number>
 }
 
 export function ProgramsPageContent({
@@ -20,8 +21,12 @@ export function ProgramsPageContent({
   totalDocs,
   totalPages,
   currentPage,
+  savedProgramIds = new Set(),
 }: ProgramsPageContentProps) {
   const { view, handleViewChange } = useViewPreference('programs', 'grid')
+
+  // Convert Set to object for client component
+  const savedIds = Array.from(savedProgramIds)
 
   return (
     <>
@@ -41,11 +46,15 @@ export function ProgramsPageContent({
           description='Try adjusting your filters to see more results.'
         />
       ) : view === 'table' ? (
-        <ProgramsTable programs={programs} />
+        <ProgramsTable programs={programs} savedProgramIds={savedProgramIds} />
       ) : (
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {programs.map((program) => (
-            <ProgramCard key={program.id} program={program} />
+            <ProgramCard
+              key={program.id}
+              program={program}
+              isSaved={savedIds.includes(program.id)}
+            />
           ))}
         </div>
       )}

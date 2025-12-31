@@ -57,6 +57,11 @@ export const US_STATES_AND_TERRITORIES = [
   { label: 'Guam', value: 'GU' },
 ] as const;
 
-export const StateCodeSchema = z.enum(US_STATES_AND_TERRITORIES.map(s => s.value) as [string, ...string[]]);
+export const StateCodeSchema = z.enum(
+  US_STATES_AND_TERRITORIES.map(s => s.value) as [string, ...string[]],
+  {
+    errorMap: () => ({ message: 'Please select a state' })
+  }
+);
 
 export type StateCode = z.infer<typeof StateCodeSchema>;

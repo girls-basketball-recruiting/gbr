@@ -1,17 +1,24 @@
 import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
-
 import Image from 'next/image'
-import { getPositionLabel } from '@/lib/zod/Positions'
-import { CoachesSection } from './dashboard/CoachesSection'
+import { TournamentScheduleSection } from './dashboard/TournamentScheduleSection'
 import { SavedProgramsSection } from './dashboard/SavedProgramsSection'
-import { CoachCardsSkeleton } from './ui/skeletons/CoachCardSkeleton'
 import { ProgramCardsSkeleton } from './ui/skeletons/ProgramCardSkeleton'
 import { Suspense } from 'react'
 import { getAuthContext } from '@/lib/auth-context'
+import { hasActiveSubscription } from '@/lib/stripe'
+import { CheckCircle2, AlertCircle } from 'lucide-react'
 
 export default async function PlayerDashboard() {
-  const { playerProfile } = await getAuthContext()
+  const { playerProfile, dbUser } = await getAuthContext()
+
+  // Check subscription status
+  let isSubscribed = false
+  let currentPeriodEnd: string | null = null
+  if (dbUser.stripeCustomerId) {
+    isSubscribed = await hasActiveSubscription(dbUser.stripeCustomerId)
+    currentPeriodEnd = dbUser.stripeCurrentPeriodEnd || null
+  }
 
   return (
     <div className='container mx-auto px-4 py-8'>
@@ -40,22 +47,37 @@ export default async function PlayerDashboard() {
                 <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-1'>
                   {playerProfile.firstName} {playerProfile.lastName}
                 </h2>
-                <p className='text-slate-600 dark:text-slate-400'>
-                  {playerProfile.primaryPosition &&
-                    getPositionLabel(playerProfile.primaryPosition)}
-                  {playerProfile.secondaryPosition &&
-                    ` / ${getPositionLabel(playerProfile.secondaryPosition)}`}
-                  {' • '}
-                  Class of {playerProfile.graduationYear}
-                </p>
-                <p className='text-slate-600 dark:text-slate-400 text-sm mt-1'>
-                  {playerProfile.highSchool}
-                  {playerProfile.city && ` • ${playerProfile.city}`}
-                  {playerProfile.state && `, ${playerProfile.state}`}
-                </p>
+                <div className='flex items-center gap-2 mt-2'>
+                  {isSubscribed ? (
+                    <>
+                      <CheckCircle2 className='w-4 h-4 text-green-600 dark:text-green-400' />
+                      <span className='text-sm font-medium text-green-600 dark:text-green-400'>
+                        Player Pro
+                      </span>
+                      {currentPeriodEnd && (
+                        <span className='text-sm text-slate-500 dark:text-slate-400'>
+                          • Renews {new Date(currentPeriodEnd).toLocaleDateString()}
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className='w-4 h-4 text-slate-400' />
+                      <span className='text-sm text-slate-600 dark:text-slate-400'>
+                        Free Plan
+                      </span>
+                      <Link
+                        href='/subscription'
+                        className='text-sm text-blue-600 dark:text-blue-400 hover:underline ml-1'
+                      >
+                        Upgrade to Pro
+                      </Link>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className='flex gap-2'>
-                <Button asChild variant='outline' className='cursor-pointer'>
+              <div className='flex-col gap-2'>
+                <Button variant='ghost' className='block mb-4'>
                   <Link href='/profile'>View Profile</Link>
                 </Button>
                 <Button asChild variant='outline' className='cursor-pointer'>
@@ -79,15 +101,18 @@ export default async function PlayerDashboard() {
           </div>
         )}
 
-        <div className='mb-8'>
-          <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
-            All College Programs
-          </h3>
+        {/* Tournament Schedule Section */}
+        {playerProfile && (
+          <div className='mb-8'>
+            <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-4'>
+              Tournament Schedule
+            </h3>
 
-          <Suspense fallback={<CoachCardsSkeleton count={12} />}>
-            <CoachesSection />
-          </Suspense>
-        </div>
+            <Suspense fallback={<div className='animate-pulse space-y-3'>{[...Array(3)].map((_, i) => (<div key={i} className='h-20 bg-slate-200 dark:bg-slate-800 rounded-xl' />))}</div>}>
+              <TournamentScheduleSection playerId={playerProfile.id} />
+            </Suspense>
+          </div>
+        )}
       </div>
     </div>
   )

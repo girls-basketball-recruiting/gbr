@@ -19,8 +19,8 @@ export default async function PlayerOnboardingPage() {
 
   return (
     <FormPageLayout
-      title='Complete Your Player Profile'
-      description='Follow the steps below to build your profile and connect with college coaches'
+      title={`You're in, ${user.firstName}!`}
+      description='Complete your player profile to connect with college programs'
       maxWidth='lg'
     >
       <PlayerFormTabs />

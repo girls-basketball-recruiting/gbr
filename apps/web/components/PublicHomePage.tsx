@@ -10,7 +10,7 @@ import { PlayersSection, ProgramsSection, TournamentsSection, PricingSection } f
 const playerFeatures = [
   'Build your athletic profile',
   'Upload highlight videos',
-  'Connect with coaches',
+  'Connect with college programs',
 ]
 
 const coachFeatures = [
@@ -60,7 +60,7 @@ export default function PublicHomePage() {
                 <h2 className='text-3xl font-bold text-slate-900 dark:text-white'>For Players</h2>
 
                 <p className='text-slate-600 dark:text-slate-400'>
-                  Create your profile and get discovered by college coaches
+                  Create your profile and get discovered by college programs
                 </p>
 
                 <FeatureList items={playerFeatures} iconColor='text-orange-600 dark:text-orange-500' />

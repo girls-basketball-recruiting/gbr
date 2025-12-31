@@ -23,12 +23,14 @@ interface PlayersTableProps {
   players: any[]
   savedPlayerIds?: number[]
   isCoach?: boolean
+  currentPlayerId?: number
 }
 
 export function PlayersTable({
   players,
   savedPlayerIds = [],
   isCoach = false,
+  currentPlayerId,
 }: PlayersTableProps) {
   const columns: ColumnDef<any>[] = [
     {
@@ -151,7 +153,7 @@ export function PlayersTable({
   })
 
   return (
-    <div className='rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50'>
+    <div className='w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 overflow-hidden'>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -171,19 +173,34 @@ export function PlayersTable({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-                className='hover:bg-slate-50 dark:hover:bg-slate-700/50'
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              const isOwnRow = currentPlayerId === row.original.id
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={
+                    isOwnRow
+                      ? 'bg-gradient-to-r from-amber-50 via-orange-50 to-pink-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-pink-950/30 border-l-4 border-l-amber-500 hover:from-amber-100 hover:via-orange-100 hover:to-pink-100 dark:hover:from-amber-950/50 dark:hover:via-orange-950/50 dark:hover:to-pink-950/50'
+                      : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  }
+                >
+                  {isOwnRow && (
+                    <TableCell className='py-0 px-2'>
+                      <span className='text-xs font-black text-amber-600 dark:text-amber-400 tracking-wider flex items-center gap-1'>
+                        <span>★</span>
+                        <span>YOU</span>
+                      </span>
+                    </TableCell>
+                  )}
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className='h-24 text-center'>

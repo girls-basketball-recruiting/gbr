@@ -67,8 +67,8 @@ export async function createCheckoutSession() {
       },
     ],
     discounts,
-    success_url: `${appUrl}/onboarding/${role}`,
-    cancel_url: `${appUrl}/payment`,
+    return_url: `${appUrl}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+    ui_mode: 'embedded',
     metadata: {
       clerkUserId: user.id,
     },
@@ -79,11 +79,11 @@ export async function createCheckoutSession() {
     },
   })
 
-  if (!session.url) {
+  if (!session.client_secret) {
     throw new Error('Failed to create checkout session')
   }
 
-  return session.url
+  return session.client_secret
 }
 
 export async function createPortalSession() {

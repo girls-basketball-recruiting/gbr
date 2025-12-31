@@ -248,10 +248,7 @@ export interface Player {
   awards?:
     | {
         title: string;
-        /**
-         * Year received (optional)
-         */
-        year?: string | null;
+        year: string;
         /**
          * Additional details (optional)
          */
@@ -355,7 +352,10 @@ export interface Player {
    * NCAA Eligibility Center ID
    */
   ncaaId?: string | null;
-  profileImageUrl: string;
+  /**
+   * URL to profile image (uploaded via blob storage)
+   */
+  profileImageUrl?: string | null;
   /**
    * Add up to 10 highlight video URLs (YouTube, Hudl, etc.)
    */
@@ -443,7 +443,7 @@ export interface Player {
    */
   deletedAt?: string | null;
   /**
-   * Tracks which onboarding steps have been completed (1-6)
+   * Tracks which onboarding steps have been completed (1-4)
    */
   completedSteps?:
     | {

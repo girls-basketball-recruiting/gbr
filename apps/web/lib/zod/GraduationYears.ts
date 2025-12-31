@@ -28,7 +28,7 @@ export function isValidGraduationYear(year: number): boolean {
 }
 
 export const GraduationYearSchema = z.number().int().refine(year => isValidGraduationYear(year), {
-  message: "Invalid graduation year",
+  message: "Please select a graduation year",
 });
 
 export type GraduationYear = z.infer<typeof GraduationYearSchema>;

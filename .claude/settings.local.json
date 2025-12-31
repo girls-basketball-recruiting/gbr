@@ -29,7 +29,10 @@
       "Skill(frontend-design:frontend-design)",
       "Bash(ls:*)",
       "Bash(npm run:*)",
-      "Bash(pnpm typecheck:*)"
+      "Bash(pnpm typecheck:*)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "Bash(pnpm --filter web run payload:generate-types:*)",
+      "Bash(pnpm exec tsc:*)"
     ],
     "deny": [],
     "ask": []

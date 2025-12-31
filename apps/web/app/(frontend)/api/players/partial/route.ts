@@ -50,7 +50,7 @@ export const POST = handleApiError(async (req: Request) => {
     step = parseInt(formData.get('step') as string) || 1
     stepData = formData
   } else {
-    // Steps 2-6 with JSON
+    // Steps 2-3 with JSON
     const [body, bodyError] = await parseJsonBody<{
       step: number
       data: any
@@ -70,7 +70,7 @@ export const POST = handleApiError(async (req: Request) => {
 
   switch (step) {
     case 1: {
-      // Basic Info - handle FormData
+      // Basic Info - handle FormData (includes contact fields)
       const formData = stepData as FormData
 
       // Handle profile image upload if provided
@@ -99,9 +99,37 @@ export const POST = handleApiError(async (req: Request) => {
         }
       }
 
+      updateData = {
+        user: dbUser.id,
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        email:
+          (formData.get('email') as string) ||
+          clerkUser.emailAddresses[0]?.emailAddress,
+        graduationYear: formData.get('graduationYear') as string,
+        highSchool: formData.get('highSchool') as string,
+        city: formData.get('city') as string, // Required
+        state: formData.get('state') as string, // Required
+        phoneNumber: formData.get('phoneNumber') as string || undefined,
+        xHandle: formData.get('xHandle') as string || undefined,
+        instaHandle: formData.get('instaHandle') as string || undefined,
+      }
+
+      if (profileImageUrl) {
+        updateData.profileImageUrl = profileImageUrl
+      }
+      break
+    }
+
+    case 2: {
+      // Athletic Profile (Position, Height, AAU + Stats & Media)
+      const highlightVideoUrls = stepData.highlightVideoUrls
+        ?.filter((url: string) => url.trim())
+        .map((url: string) => ({ url: url.trim() }))
+
       // Get position values
-      const primaryPosition = formData.get('primaryPosition') as string
-      const secondaryPosition = formData.get('secondaryPosition') as string
+      const primaryPosition = stepData.primaryPosition
+      const secondaryPosition = stepData.secondaryPosition
       const validPositions = [
         'point-guard',
         'combo-guard',
@@ -117,64 +145,32 @@ export const POST = handleApiError(async (req: Request) => {
       type Position = (typeof validPositions)[number]
 
       updateData = {
-        user: dbUser.id,
-        firstName: formData.get('firstName') as string,
-        lastName: formData.get('lastName') as string,
-        email:
-          (formData.get('email') as string) ||
-          clerkUser.emailAddresses[0]?.emailAddress,
-        graduationYear: formData.get('graduationYear') as string,
         primaryPosition: validPositions.includes(primaryPosition as Position)
           ? (primaryPosition as Position)
-          : 'point-guard',
-        secondaryPosition: validPositions.includes(
-          secondaryPosition as Position
-        )
+          : undefined,
+        secondaryPosition: validPositions.includes(secondaryPosition as Position)
           ? (secondaryPosition as Position)
           : undefined,
-        heightInInches: formData.get('heightInInches')
-          ? parseInt(formData.get('heightInInches') as string)
-          : 0,
-        weight: formData.get('weight')
-          ? parseInt(formData.get('weight') as string)
+        heightInInches: stepData.heightInInches
+          ? parseInt(stepData.heightInInches)
           : undefined,
-        highSchool: formData.get('highSchool') as string,
-        city: (formData.get('city') as string) || undefined,
-        state: (formData.get('state') as string) || undefined,
-      }
-
-      if (profileImageUrl) {
-        updateData.profileImageUrl = profileImageUrl
-      }
-      break
-    }
-
-    case 2: {
-      // AAU & Awards
-      updateData = {
         aauProgram: stepData.aauProgram || undefined,
         aauTeam: stepData.aauTeam || undefined,
         aauCircuit: stepData.aauCircuit || undefined,
         aauCoach: stepData.aauCoach || undefined,
         awards: stepData.awards || undefined,
+        ppg: stepData.ppg ? parseFloat(stepData.ppg) : undefined,
+        rpg: stepData.rpg ? parseFloat(stepData.rpg) : undefined,
+        apg: stepData.apg ? parseFloat(stepData.apg) : undefined,
+        bio: stepData.bio || undefined,
+        ncaaId: stepData.ncaaId || undefined,
+        highlightVideoUrls: highlightVideoUrls || undefined,
       }
       break
     }
 
     case 3: {
-      // Contact
-      updateData = {
-        phoneNumber: stepData.phoneNumber || undefined,
-        email: stepData.email || undefined,
-        xHandle: stepData.xHandle || undefined,
-        instaHandle: stepData.instaHandle || undefined,
-        ncaaId: stepData.ncaaId || undefined,
-      }
-      break
-    }
-
-    case 4: {
-      // Academic
+      // Academic Profile (Academic + Preferences)
       updateData = {
         unweightedGpa: stepData.unweightedGpa
           ? parseFloat(stepData.unweightedGpa)
@@ -183,13 +179,6 @@ export const POST = handleApiError(async (req: Request) => {
           ? parseFloat(stepData.weightedGpa)
           : undefined,
         potentialAreasOfStudy: stepData.potentialAreasOfStudy || undefined,
-      }
-      break
-    }
-
-    case 5: {
-      // Preferences
-      updateData = {
         desiredLevelsOfPlay: stepData.desiredLevelsOfPlay || undefined,
         desiredGeographicAreas: stepData.desiredGeographicAreas || undefined,
         desiredDistanceFromHome: stepData.desiredDistanceFromHome || undefined,
@@ -200,22 +189,6 @@ export const POST = handleApiError(async (req: Request) => {
         interestedInFaithBased: stepData.interestedInFaithBased || false,
         interestedInAllGirls: stepData.interestedInAllGirls || false,
         interestedInHBCU: stepData.interestedInHBCU || false,
-      }
-      break
-    }
-
-    case 6: {
-      // Stats & Media
-      const highlightVideoUrls = stepData.highlightVideoUrls
-        ?.filter((url: string) => url.trim())
-        .map((url: string) => ({ url: url.trim() }))
-
-      updateData = {
-        ppg: stepData.ppg ? parseFloat(stepData.ppg) : undefined,
-        rpg: stepData.rpg ? parseFloat(stepData.rpg) : undefined,
-        apg: stepData.apg ? parseFloat(stepData.apg) : undefined,
-        bio: stepData.bio || undefined,
-        highlightVideoUrls: highlightVideoUrls || undefined,
       }
       break
     }

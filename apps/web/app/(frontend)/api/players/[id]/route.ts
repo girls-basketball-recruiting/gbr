@@ -43,7 +43,9 @@ export const PUT = handleApiError(async (
     return apiNotFound('Player not found')
   }
 
-  if (player.user !== auth.dbUser.id) {
+  // Handle both populated (User object) and unpopulated (number) user field
+  const playerUserId = typeof player.user === 'number' ? player.user : player.user.id
+  if (playerUserId !== auth.dbUser.id) {
     return apiForbidden('Unauthorized to edit this profile')
   }
 
@@ -75,17 +77,18 @@ export const PUT = handleApiError(async (
   }
 
   // Parse highlight video URLs
-  const highlightVideoUrls = parseJsonField('highlightVideoUrls')
+  const highlightVideos = parseJsonField('highlightVideoUrls')
   let parsedHighlightVideoUrls: Array<{ url: string; id?: string }> | undefined
-  if (highlightVideoUrls && Array.isArray(highlightVideoUrls)) {
-    parsedHighlightVideoUrls = highlightVideoUrls
-      .filter((url: string) => url.trim())
-      .map((url: string) => ({ url: url.trim() }))
+  if (highlightVideos && Array.isArray(highlightVideos)) {
+    parsedHighlightVideoUrls = highlightVideos
+      .filter((vid: { url: string }) => vid.url.trim())
+      .map((vid: { url: string }) => ({ url: vid.url.trim() }))
   }
 
   // Parse other JSON fields
   const desiredLevelsOfPlay = parseJsonField('desiredLevelsOfPlay')
   const desiredGeographicAreas = parseJsonField('desiredGeographicAreas')
+  const potentialAreasOfStudy = parseJsonField('potentialAreasOfStudy')
   const awards = parseJsonField('awards')
 
   // Build update data
@@ -108,7 +111,7 @@ export const PUT = handleApiError(async (
     'tiktokHandle',
     'ncaaId',
     'bio',
-    'distanceFromHome',
+    'desiredDistanceFromHome',
     'aauProgramName',
     'aauTeamName',
     'aauCircuit',
@@ -136,10 +139,27 @@ export const PUT = handleApiError(async (
     if (value) updateData[field] = parseFloat(value as string)
   })
 
+  // Boolean fields (checkboxes)
+  const booleanFields = [
+    'interestedInMilitaryAcademies',
+    'interestedInUltraHighAcademics',
+    'interestedInFaithBased',
+    'interestedInAllGirls',
+    'interestedInHBCU',
+  ]
+  booleanFields.forEach((field) => {
+    const value = formData.get(field)
+    if (value !== null && value !== undefined) {
+      // Convert string 'true'/'false' to boolean
+      updateData[field] = value === 'true'
+    }
+  })
+
   // JSON fields
   if (awards) updateData.awards = awards
   if (desiredLevelsOfPlay) updateData.desiredLevelsOfPlay = desiredLevelsOfPlay
-  if (desiredGeographicAreas) updateData.geographicAreas = desiredGeographicAreas
+  if (desiredGeographicAreas) updateData.desiredGeographicAreas = desiredGeographicAreas
+  if (potentialAreasOfStudy) updateData.potentialAreasOfStudy = potentialAreasOfStudy
   if (parsedHighlightVideoUrls) updateData.highlightVideoUrls = parsedHighlightVideoUrls
   if (profileImageUrl) updateData.profileImageUrl = profileImageUrl
 

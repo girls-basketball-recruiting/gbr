@@ -6,6 +6,7 @@ import { Check, CreditCard, Calendar, AlertCircle } from 'lucide-react'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { PortalButton } from '@/components/portal-button'
+import Link from 'next/link'
 
 export default async function SubscriptionPage() {
   const clerkUser = await currentUser()
@@ -45,7 +46,7 @@ export default async function SubscriptionPage() {
     : null
 
   return (
-    <div className='p-8'>
+    <div className='max-w-lg p-8'>
       <div className='max-w-4xl mx-auto'>
         <div className='mb-8'>
           <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
@@ -60,7 +61,7 @@ export default async function SubscriptionPage() {
           <div className='space-y-6'>
             {/* Current Plan */}
             <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
-              <div className='flex items-start justify-between mb-6'>
+              <div className='flex items-start justify-between mb-2'>
                 <div>
                   <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
                     {isPlayer ? 'Player Pro' : 'Coach Pro'}
@@ -75,7 +76,7 @@ export default async function SubscriptionPage() {
                 </div>
               </div>
 
-              <div className='space-y-4'>
+              <div className='space-y-4 mb-2'>
                 <div className='flex items-start gap-3'>
                   <CreditCard className='w-5 h-5 text-slate-600 dark:text-slate-400 mt-0.5' />
                   <div>
@@ -103,19 +104,6 @@ export default async function SubscriptionPage() {
                 )}
               </div>
 
-              <div className='mt-6 pt-6 border-t border-slate-200 dark:border-slate-700'>
-                <PortalButton />
-                <p className='text-center text-slate-500 dark:text-slate-400 text-sm mt-3'>
-                  Update payment method, view invoices, or cancel subscription
-                </p>
-              </div>
-            </Card>
-
-            {/* Features */}
-            <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
-              <h3 className='text-lg font-semibold text-slate-900 dark:text-white mb-4'>
-                Your Plan Includes
-              </h3>
               <div className='space-y-3'>
                 <div className='flex items-start gap-3'>
                   <Check className='w-5 h-5 text-green-500 mt-0.5 shrink-0' />
@@ -129,7 +117,7 @@ export default async function SubscriptionPage() {
                   <Check className='w-5 h-5 text-green-500 mt-0.5 shrink-0' />
                   <p className='text-slate-700 dark:text-slate-300'>
                     {isPlayer
-                      ? 'Get discovered by college coaches'
+                      ? 'Get discovered by college programs'
                       : 'Save and track unlimited prospects'}
                   </p>
                 </div>
@@ -137,7 +125,7 @@ export default async function SubscriptionPage() {
                   <Check className='w-5 h-5 text-green-500 mt-0.5 shrink-0' />
                   <p className='text-slate-700 dark:text-slate-300'>
                     {isPlayer
-                      ? 'Direct messaging with coaches'
+                      ? 'Save college programs of interest'
                       : 'Private notes and recruiting pipeline'}
                   </p>
                 </div>
@@ -147,6 +135,13 @@ export default async function SubscriptionPage() {
                     Priority support and platform updates
                   </p>
                 </div>
+              </div>
+
+              <div className='mt-2 pt-6 border-t border-slate-200 dark:border-slate-700'>
+                <PortalButton />
+                <p className='text-center text-slate-500 dark:text-slate-400 text-sm mt-3'>
+                  Update payment method, view invoices, or cancel subscription
+                </p>
               </div>
             </Card>
           </div>
@@ -172,7 +167,7 @@ export default async function SubscriptionPage() {
               className='w-full bg-blue-600 hover:bg-blue-700 text-white'
               asChild
             >
-              <a href='/payment'>Subscribe Now</a>
+              <Link href='/payment'>Subscribe Now</Link>
             </Button>
           </Card>
         )}

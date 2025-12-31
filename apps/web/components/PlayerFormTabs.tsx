@@ -3,26 +3,19 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card } from '@workspace/ui/components/card'
-import { Button } from '@workspace/ui/components/button'
-import { FieldError } from '@workspace/ui/components/field'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@workspace/ui/components/tabs'
 import { Check, Lock } from 'lucide-react'
 import type { Player } from '@/payload-types'
 
 // Step components
 import { PlayerBasicInfoStep } from './wizard-steps/PlayerBasicInfoStep'
-import { PlayerAAUStep } from './wizard-steps/PlayerAAUStep'
-import { PlayerContactStep } from './wizard-steps/PlayerContactStep'
-import { PlayerAcademicStep } from './wizard-steps/PlayerAcademicStep'
-import { PlayerPreferencesStep } from './wizard-steps/PlayerPreferencesStep'
-import { PlayerStatsStep } from './wizard-steps/PlayerStatsStep'
+import { PlayerAthleticProfileStep } from './wizard-steps/PlayerAthleticProfileStep'
+import { PlayerAcademicProfileStep } from './wizard-steps/PlayerAcademicProfileStep'
 
 const TABS = [
   { id: 0, label: 'Basic Info', stepNumber: 1 },
-  { id: 1, label: 'AAU & Awards', stepNumber: 2 },
-  { id: 2, label: 'Contact', stepNumber: 3 },
-  { id: 3, label: 'Academic', stepNumber: 4 },
-  { id: 4, label: 'Preferences', stepNumber: 5 },
-  { id: 5, label: 'Stats & Media', stepNumber: 6 },
+  { id: 1, label: 'Athletic Profile', stepNumber: 2 },
+  { id: 2, label: 'Academic Profile', stepNumber: 3 },
 ] as const
 
 type TabId = (typeof TABS)[number]['id']
@@ -104,7 +97,8 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
     return allPreviousCompleted ? 'unlocked' : 'locked'
   }
 
-  function handleTabClick(tabId: TabId) {
+  function handleTabChange(value: string) {
+    const tabId = parseInt(value) as TabId
     const state = getTabState(tabId)
     if (state !== 'locked') {
       setActiveTab(tabId)
@@ -191,31 +185,6 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
     router.refresh()
   }
 
-  function renderStepContent() {
-    const stepProps = {
-      onSave: handleStepSave,
-      error,
-      isLastStep: activeTab === TABS.length - 1,
-    }
-
-    switch (activeTab) {
-      case 0:
-        return <PlayerBasicInfoStep {...stepProps} />
-      case 1:
-        return <PlayerAAUStep {...stepProps} />
-      case 2:
-        return <PlayerContactStep {...stepProps} />
-      case 3:
-        return <PlayerAcademicStep {...stepProps} />
-      case 4:
-        return <PlayerPreferencesStep {...stepProps} />
-      case 5:
-        return <PlayerStatsStep {...stepProps} />
-      default:
-        return null
-    }
-  }
-
   if (isLoading && !isEditMode) {
     return (
       <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8'>
@@ -226,36 +195,39 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
     )
   }
 
+  const stepProps = {
+    onSave: handleStepSave,
+    error,
+    isLastStep: activeTab === TABS.length - 1,
+    profile: playerData,
+  }
+
   return (
-    <div className='max-w-3xl mx-auto'>
-      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'>
-        {/* Tab Navigation */}
-        <div className='border-b border-slate-200 dark:border-slate-700'>
-          <nav className='flex flex-wrap -mb-px'>
+    <div className='max-w-lg mx-auto'>
+      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 py-0 overflow-hidden'>
+        <Tabs value={activeTab.toString()} onValueChange={handleTabChange}>
+          <TabsList className='w-full h-auto rounded-none border-b border-slate-200 dark:border-slate-700 bg-transparent p-0'>
             {TABS.map((tab) => {
               const state = getTabState(tab.id)
-              const isActive = state === 'active'
               const isCompleted = state === 'completed'
               const isLocked = state === 'locked'
 
               return (
-                <button
+                <TabsTrigger
                   key={tab.id}
-                  type='button'
-                  onClick={() => handleTabClick(tab.id)}
+                  value={tab.id.toString()}
                   disabled={isLocked}
                   className={`
-                    px-6 py-4 text-sm font-medium border-b-2 transition-colors
-                    flex items-center gap-2
-                    ${isActive
-                      ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                      : isCompleted
-                        ? 'border-transparent text-slate-900 dark:text-white hover:border-slate-300 dark:hover:border-slate-600'
-                        : isLocked
-                          ? 'border-transparent text-slate-400 dark:text-slate-600'
-                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-600'
+                    flex-1 px-6 py-4 text-sm font-medium transition-colors
+                    flex items-center gap-2 whitespace-nowrap
+                    rounded-none border-none
+                   data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/10 data-[state=active]:shadow-none
+                    ${isCompleted
+                      ? 'text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                      : isLocked
+                        ? 'text-slate-400 dark:text-slate-600'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                     }
-                    ${isLocked ? 'cursor-default' : 'cursor-pointer'}
                   `}
                 >
                   {isCompleted && (
@@ -265,16 +237,23 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
                     <Lock className='w-4 h-4' />
                   )}
                   {tab.label}
-                </button>
+                </TabsTrigger>
               )
             })}
-          </nav>
-        </div>
+          </TabsList>
 
-        {/* Tab Content */}
-        <div className='p-8'>
-          {renderStepContent()}
-        </div>
+          <div className='p-8'>
+            <TabsContent value='0'>
+              <PlayerBasicInfoStep {...stepProps} />
+            </TabsContent>
+            <TabsContent value='1'>
+              <PlayerAthleticProfileStep {...stepProps} />
+            </TabsContent>
+            <TabsContent value='2'>
+              <PlayerAcademicProfileStep {...stepProps} />
+            </TabsContent>
+          </div>
+        </Tabs>
       </Card>
     </div>
   )

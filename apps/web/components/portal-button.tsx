@@ -11,7 +11,9 @@ export function PortalButton() {
   const handlePortal = async () => {
     try {
       setIsLoading(true)
-      await createPortalSession()
+      const portalUrl = await createPortalSession()
+      window.location.href = portalUrl
+      setIsLoading(false)
     } catch (error) {
       console.error('Portal error:', error)
       setIsLoading(false)

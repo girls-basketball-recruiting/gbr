@@ -16,6 +16,7 @@ interface PlayersPageContentProps {
   currentPage: number
   savedPlayerIds: number[]
   isCoach: boolean
+  currentPlayerId?: number
 }
 
 export function PlayersPageContent({
@@ -25,6 +26,7 @@ export function PlayersPageContent({
   currentPage,
   savedPlayerIds,
   isCoach,
+  currentPlayerId,
 }: PlayersPageContentProps) {
   const { view, handleViewChange } = useViewPreference('players', 'grid')
 
@@ -50,6 +52,7 @@ export function PlayersPageContent({
           players={players}
           savedPlayerIds={savedPlayerIds}
           isCoach={isCoach}
+          currentPlayerId={currentPlayerId}
         />
       ) : (
         <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
@@ -57,6 +60,7 @@ export function PlayersPageContent({
             <PlayerCard
               key={player.id}
               player={player}
+              isOwnCard={currentPlayerId === player.id}
               action={
                 isCoach ? (
                   <SavePlayerButton

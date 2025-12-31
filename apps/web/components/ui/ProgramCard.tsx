@@ -1,8 +1,11 @@
+'use client'
+
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import Link from 'next/link'
 import { BadgeCheck, MapPin, Building2, GraduationCap } from 'lucide-react'
 import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
+import { SaveProgramButton } from '../SaveProgramButton'
 
 interface Program {
   id: number
@@ -17,12 +20,13 @@ interface Program {
 
 interface ProgramCardProps {
   program: Program
+  isSaved?: boolean
 }
 
-export function ProgramCard({ program }: ProgramCardProps) {
+export function ProgramCard({ program, isSaved = false }: ProgramCardProps) {
   return (
     <Card
-      className={`min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all ${
+      className={`py-0 min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all ${
         program.hasCoach
           ? 'ring-2 ring-blue-500/30 border-blue-500/50 dark:border-blue-500/50'
           : ''
@@ -72,10 +76,10 @@ export function ProgramCard({ program }: ProgramCardProps) {
           )}
         </div>
 
-        {/* Action Button */}
-        <div className='pt-2'>
+        {/* Action Buttons */}
+        <div className='pt-2 flex gap-2'>
           <Button
-            className={`w-full cursor-pointer ${
+            className={`flex-1 cursor-pointer ${
               program.hasCoach
                 ? 'bg-blue-600 hover:bg-blue-700'
                 : 'bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600'
@@ -83,9 +87,16 @@ export function ProgramCard({ program }: ProgramCardProps) {
             asChild
           >
             <Link href={`/programs/${program.id}`}>
-              {program.hasCoach ? 'View Program & Coach' : 'View Program'}
+              {program.hasCoach ? 'View Program' : 'View Program'}
             </Link>
           </Button>
+          <SaveProgramButton
+            collegeId={program.id}
+            collegeName={program.school}
+            initialIsSaved={isSaved}
+            size="default"
+            variant="outline"
+          />
         </div>
       </div>
     </Card>

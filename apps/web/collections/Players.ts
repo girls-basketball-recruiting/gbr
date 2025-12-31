@@ -69,9 +69,7 @@ export const Players: CollectionConfig = {
         {
           name: 'year',
           type: 'text',
-          admin: {
-            description: 'Year received (optional)',
-          },
+          required: true,
         },
         {
           name: 'description',
@@ -210,8 +208,11 @@ export const Players: CollectionConfig = {
     },
     {
       name: 'profileImageUrl',
-      required: true,
+      required: false, // Optional - uploaded during onboarding, but not all steps
       type: 'text',
+      admin: {
+        description: 'URL to profile image (uploaded via blob storage)',
+      },
     },
     {
       name: 'highlightVideoUrls',
@@ -364,7 +365,7 @@ export const Players: CollectionConfig = {
         },
       ],
       admin: {
-        description: 'Tracks which onboarding steps have been completed (1-6)',
+        description: 'Tracks which onboarding steps have been completed (1-4)',
         readOnly: true,
       },
     },

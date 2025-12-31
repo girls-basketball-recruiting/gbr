@@ -44,8 +44,9 @@ export async function saveProgram(collegeId: number) {
     college: { equals: collegeId },
   })
 
+  // If already saved, just return (idempotent operation)
   if (existing.length > 0) {
-    throw new Error('Program already saved')
+    return
   }
 
   // Create saved program
@@ -56,6 +57,7 @@ export async function saveProgram(collegeId: number) {
   })
 
   revalidatePath('/')
+  revalidatePath('/programs')
   revalidatePath(`/programs/${collegeId}`)
 }
 
@@ -94,13 +96,15 @@ export async function unsaveProgram(collegeId: number) {
     college: { equals: collegeId },
   })
 
+  // If not saved, just return (idempotent operation)
   if (saved.length === 0) {
-    throw new Error('Program not saved')
+    return
   }
 
   await deleteById('player-saved-programs', saved[0]!.id)
 
   revalidatePath('/')
+  revalidatePath('/programs')
   revalidatePath(`/programs/${collegeId}`)
 }
 

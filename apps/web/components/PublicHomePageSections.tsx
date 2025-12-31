@@ -25,7 +25,7 @@ export function PlayersSection() {
             <ul className='space-y-3 mb-8'>
               {['Detailed athletic and academic profiles', 'Highlight video reels and game footage', 'Advanced filtering by position, GPA, height, and more'].map((item, i) => (
                 <li key={i} className='flex items-start gap-3'>
-                  <div className='w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0 mt-0.5'>
+                  <div className='w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center shrink-0 mt-0.5'>
                     <Check className='w-4 h-4 text-orange-600 dark:text-orange-500' />
                   </div>
                   <span className='text-slate-700 dark:text-slate-300'>{item}</span>
@@ -40,7 +40,7 @@ export function PlayersSection() {
             </Link>
           </div>
           <div className='order-1 md:order-2'>
-            <div className='bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
+            <div className='bg-linear-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
               <Users className='w-32 h-32 text-orange-400 dark:text-orange-500' />
             </div>
           </div>
@@ -56,7 +56,7 @@ export function ProgramsSection() {
       <div className='container mx-auto px-4'>
         <div className='grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto'>
           <div>
-            <div className='bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
+            <div className='bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
               <Building2 className='w-32 h-32 text-blue-400 dark:text-blue-500' />
             </div>
           </div>
@@ -77,7 +77,7 @@ export function ProgramsSection() {
             <ul className='space-y-3 mb-8'>
               {['Comprehensive program information', 'Filter by division, state, and conference', 'Direct contact information for coaching staff'].map((item, i) => (
                 <li key={i} className='flex items-start gap-3'>
-                  <div className='w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 mt-0.5'>
+                  <div className='w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0 mt-0.5'>
                     <Check className='w-4 h-4 text-blue-600 dark:text-blue-500' />
                   </div>
                   <span className='text-slate-700 dark:text-slate-300'>{item}</span>
@@ -118,7 +118,7 @@ export function TournamentsSection() {
             <ul className='space-y-3 mb-8'>
               {['Complete tournament calendar with dates and locations', 'See which players are attending each event', 'Plan your recruiting schedule efficiently'].map((item, i) => (
                 <li key={i} className='flex items-start gap-3'>
-                  <div className='w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0 mt-0.5'>
+                  <div className='w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0 mt-0.5'>
                     <Check className='w-4 h-4 text-purple-600 dark:text-purple-500' />
                   </div>
                   <span className='text-slate-700 dark:text-slate-300'>{item}</span>
@@ -133,7 +133,7 @@ export function TournamentsSection() {
             </Link>
           </div>
           <div className='order-1 md:order-2'>
-            <div className='bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
+            <div className='bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
               <Trophy className='w-32 h-32 text-purple-400 dark:text-purple-500' />
             </div>
           </div>
@@ -162,14 +162,14 @@ export function PricingSection() {
 
         <div className='grid md:grid-cols-2 gap-8 max-w-4xl mx-auto'>
           {/* Player Pro */}
-          <Card className='bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30 border-orange-200 dark:border-orange-800 p-8 relative flex flex-col'>
+          <Card className='bg-linear-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30 border-orange-200 dark:border-orange-800 p-8 relative flex flex-col'>
             <div className='absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-600 text-white px-4 py-1 rounded-full text-sm font-medium'>
               For Players
             </div>
             <div className='flex flex-col justify-between flex-1'>
               <div>
                 <h3 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>Player Pro</h3>
-                <p className='text-slate-700 dark:text-slate-300 mb-6'>Connect with college coaches</p>
+                <p className='text-slate-700 dark:text-slate-300 mb-6'>Connect with college programs</p>
                 <div className='mb-6'>
                   <span className='text-4xl font-bold text-slate-900 dark:text-white'>$39</span>
                   <span className='text-slate-700 dark:text-slate-300'>/year</span>
@@ -178,12 +178,11 @@ export function PricingSection() {
                   {[
                     'Create and manage your player profile',
                     'Upload stats, highlights, and achievements',
-                    'Get discovered by college coaches',
-                    'Direct messaging with recruiters',
+                    'Get discovered by college programs',
                     'Tournament and showcase visibility',
                   ].map((feature) => (
                     <li key={feature} className='flex items-start gap-2'>
-                      <Check className='w-5 h-5 text-orange-600 dark:text-orange-500 flex-shrink-0 mt-0.5' />
+                      <Check className='w-5 h-5 text-orange-600 dark:text-orange-500 shrink-0 mt-0.5' />
                       <span className='text-slate-700 dark:text-slate-300 text-sm'>{feature}</span>
                     </li>
                   ))}
@@ -196,7 +195,7 @@ export function PricingSection() {
           </Card>
 
           {/* Coach Pro */}
-          <Card className='bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 border-blue-200 dark:border-blue-800 p-8 relative flex flex-col'>
+          <Card className='bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 border-blue-200 dark:border-blue-800 p-8 relative flex flex-col'>
             <div className='absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium'>
               For Coaches
             </div>
@@ -213,11 +212,10 @@ export function PricingSection() {
                     'Search and filter thousands of players',
                     'Save players to your recruiting list',
                     'Add private notes and track prospects',
-                    'Direct messaging with athletes',
-                    'Access to player contact information',
+                    'Access to player athletic stats',
                   ].map((feature) => (
                     <li key={feature} className='flex items-start gap-2'>
-                      <Check className='w-5 h-5 text-blue-600 dark:text-blue-500 flex-shrink-0 mt-0.5' />
+                      <Check className='w-5 h-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5' />
                       <span className='text-slate-700 dark:text-slate-300 text-sm'>{feature}</span>
                     </li>
                   ))}

@@ -17,12 +17,14 @@ import {
 import Link from 'next/link'
 import { BadgeCheck } from 'lucide-react'
 import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
+import { SaveProgramButton } from './SaveProgramButton'
 
 interface ProgramsTableProps {
   programs: any[]
+  savedProgramIds?: Set<number>
 }
 
-export function ProgramsTable({ programs }: ProgramsTableProps) {
+export function ProgramsTable({ programs, savedProgramIds = new Set() }: ProgramsTableProps) {
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: 'school',
@@ -92,6 +94,23 @@ export function ProgramsTable({ programs }: ProgramsTableProps) {
         ) : null
       },
     },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const program = row.original
+        const isSaved = savedProgramIds.has(program.id)
+        return (
+          <SaveProgramButton
+            collegeId={program.id}
+            collegeName={program.school}
+            initialIsSaved={isSaved}
+            size="sm"
+            variant="outline"
+          />
+        )
+      },
+    },
   ]
 
   const table = useReactTable({
@@ -101,7 +120,7 @@ export function ProgramsTable({ programs }: ProgramsTableProps) {
   })
 
   return (
-    <div className='rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50'>
+    <div className='w-full max-w-2xl rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 overflow-x-scroll'>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

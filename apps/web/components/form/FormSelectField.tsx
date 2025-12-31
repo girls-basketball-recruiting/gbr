@@ -22,6 +22,14 @@ export interface FormSelectFieldProps<T extends FieldValues> {
   placeholder?: string
   description?: string
   options: SelectOption[]
+  /**
+   * Field width constraint. Use smaller widths for short selects.
+   * - 'full': Full width (default)
+   * - 'sm': Small (max-w-32) - for very short selects
+   * - 'md': Medium (max-w-48) - for moderate selects
+   * - 'lg': Large (max-w-md) - for longer selects
+   */
+  fieldWidth?: 'full' | 'sm' | 'md' | 'lg'
 }
 
 function FormSelectFieldInner<T extends FieldValues>({
@@ -32,7 +40,15 @@ function FormSelectFieldInner<T extends FieldValues>({
   placeholder,
   description,
   options,
+  fieldWidth = 'full',
 }: FormSelectFieldProps<T>) {
+  const widthClass = {
+    full: 'w-full',
+    sm: 'w-full max-w-32',
+    md: 'w-full max-w-48',
+    lg: 'w-full max-w-md',
+  }[fieldWidth]
+
   return (
     <Controller
       control={control}
@@ -45,7 +61,7 @@ function FormSelectFieldInner<T extends FieldValues>({
           description={description}
         >
           <Select onValueChange={field.onChange} value={field.value ?? ''}>
-            <SelectTrigger>
+            <SelectTrigger className={widthClass}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

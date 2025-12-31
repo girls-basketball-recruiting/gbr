@@ -56,7 +56,7 @@ function GraduationYearSelectInner<T extends FieldValues>({
           description={description}
         >
           <Select
-            onValueChange={value => field.onChange(parseInt(value, 10))}
+            onValueChange={value => field.onChange(Number(value))}
             value={field.value ? String(field.value) : ''}
           >
             <SelectTrigger>

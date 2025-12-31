@@ -33,7 +33,7 @@ export default async function TournamentsPage({
               <p className='text-slate-600 dark:text-slate-400'>
                 {isPlayer
                   ? "View upcoming tournaments and mark which ones you'll be attending"
-                  : 'View upcoming tournaments and see which players are attending'}
+                  : 'View upcoming tournaments and see how many players are attending'}
               </p>
             </div>
 
@@ -42,7 +42,7 @@ export default async function TournamentsPage({
               <div className='mb-8'>
                 <UnauthenticatedCTA
                   title='Join to Track Your Schedule'
-                  description="Sign up as a player to mark tournaments you're attending and get discovered by college coaches. Coaches can see which events have the most talent."
+                  description="Sign up as a player to mark tournaments you're attending and get discovered by college programs. Coaches can see which events have the most players attending."
                   variant='premium'
                 />
               </div>

@@ -2,260 +2,151 @@
 
 import { useState } from 'react'
 import { Button } from '@workspace/ui/components/button'
-import { Input } from '@workspace/ui/components/input'
-import { Field, FieldLabel, FieldError } from '@workspace/ui/components/field'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
-import { Card } from '@workspace/ui/components/card'
-import { getPositionOptions } from '@/lib/zod/Positions'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { AlertCircle } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
 import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
 import { US_STATES_AND_TERRITORIES } from '@/lib/zod/States'
-import { HeightSelect } from '@/components/HeightSelect'
-import { useUser } from '@clerk/nextjs'
-import { ProfileImageUpload } from '../ui/ProfileImageUpload'
+import { PlayerBasicInfoSchema } from '@/lib/zod/PlayerSteps'
+import { useSchemaForm } from '@/hooks/useSchemaForm'
+import { FormTextField } from '@/components/form/FormTextField'
+import { FormSelectField } from '@/components/form/FormSelectField'
+import { ProfileImageUpload } from '@/components/form/ProfileImageUpload'
+import type { Player } from '@/payload-types'
 
 interface PlayerBasicInfoStepProps {
   onSave: (data: any) => Promise<void>
   error: string | null
   isLastStep: boolean
+  profile?: Partial<Player> | null
 }
 
 export function PlayerBasicInfoStep({
   onSave,
   error,
   isLastStep,
+  profile,
 }: PlayerBasicInfoStepProps) {
-  const {user} = useUser()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { user } = useUser()
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
 
-  const [formData, setFormData] = useState({
-    graduationYear: '',
-    primaryPosition: '',
-    secondaryPosition: '',
-    heightInInches: 0,
-    weight: '',
-    highSchool: '',
-    city: '',
-    state: '',
-  })
+  // Get profile image URL
+  const profileImageUrl = profile?.profileImageUrl || null
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    if (!user) return
-
-    try {
-      const formDataToSend = new FormData()
-
-      // Add user info from Clerk
-      if (user.firstName) formDataToSend.append('firstName', user.firstName)
-      if (user.lastName) formDataToSend.append('lastName', user.lastName)
-      if (user.primaryEmailAddress?.emailAddress) {
-        formDataToSend.append('email', user.primaryEmailAddress.emailAddress)
-      }
-
-      // Add form data
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value) {
-          formDataToSend.append(key, String(value))
+  const form = useSchemaForm({
+    defaultValues: {
+      graduationYear: profile?.graduationYear || '',
+      highSchool: profile?.highSchool || '',
+      city: profile?.city || '',
+      state: profile?.state || '',
+    },
+    schema: PlayerBasicInfoSchema,
+    fileFields: {
+      profileImage: {
+        file: profileImageFile,
+        existingUrl: profileImageUrl || undefined,
+      },
+    },
+    onSubmit: async (formData) => {
+      // Add Clerk user info to FormData
+      if (formData instanceof FormData) {
+        if (user?.firstName) formData.append('firstName', user.firstName)
+        if (user?.lastName) formData.append('lastName', user.lastName)
+        if (user?.primaryEmailAddress?.emailAddress) {
+          formData.append('email', user.primaryEmailAddress.emailAddress)
         }
-      })
-
-      if (profileImageFile) {
-        formDataToSend.append('profileImage', profileImageFile)
       }
-
-      await onSave(formDataToSend)
-    } catch {
-      setIsSubmitting(false)
-    }
-  }
+      await onSave(formData)
+    },
+  })
 
   if (!user) {
     return null
   }
 
-  return (
-    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8'>
-      <form onSubmit={handleSubmit} className='space-y-6'>
-        <div>
-          <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
-            Let&apos;s start with the basics
-          </h2>
-          <p className='text-slate-600 dark:text-slate-400'>
-            Tell us about yourself so coaches can find you
-          </p>
-        </div>
+  const isLoading = form.isSubmitting
 
-        {error && <FieldError>{error}</FieldError>}
+  return (
+    <form onSubmit={form.handleSubmit} className='space-y-6'>
+      <div>
+        <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
+          Let&apos;s start with the basics
+        </h2>
+        <p className='text-slate-600 dark:text-slate-400'>
+          Tell us about yourself so coaches can find you
+        </p>
+      </div>
+
+        {(error || form.error) && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error || form.error}</AlertDescription>
+          </Alert>
+        )}
 
         <ProfileImageUpload
           label='Player Photo'
-          initialImageUrl={undefined}
+          required
+          initialImageUrl={profileImageUrl}
           onImageChange={setProfileImageFile}
           userType='player'
         />
 
-        {/* Name */}
-        <div className='grid md:grid-cols-2 gap-5'>
-          <Field className='gap-1'>
-            <FieldLabel htmlFor='firstName'>First Name</FieldLabel>
-            <p>{user.firstName}</p>
-          </Field>
-          <Field className='gap-1'>
-            <FieldLabel htmlFor='lastName'>Last Name</FieldLabel>
-            <p>{user.lastName}</p>
-          </Field>
-        </div>
-
-        {/* Graduation Year & Height/Weight */}
-        <div className='grid md:grid-cols-2 gap-5'>
-          <Field className='gap-1'>
-            <FieldLabel htmlFor='graduationYear'>Graduation Year *</FieldLabel>
-            <Select
-              value={formData.graduationYear}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, graduationYear: value }))
-              }
+        <div className='space-y-5'>
+          <div className='grid grid-cols-2 gap-5'>
+            <FormSelectField
+              control={form.control}
+              name='graduationYear'
+              label='Graduation Year'
               required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Select year' />
-              </SelectTrigger>
-              <SelectContent>
-                {getGraduationYearOptions().map((year) => (
-                  <SelectItem key={year.value} value={year.value}>
-                    {year.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <div className='grid md:grid-cols-2 gap-2'>
-            <Field className='gap-1'>
-              <FieldLabel>Height</FieldLabel>
-              <HeightSelect
-                value={formData.heightInInches || undefined}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, heightInInches: value }))}
-              />
-            </Field>
-            <Field className='gap-1'>
-              <FieldLabel htmlFor='weight'>Weight (lbs)</FieldLabel>
-              <Input
-                id='weight'
-                name='weight'
-                type='number'
-                value={formData.weight}
-                onChange={handleChange}
-                placeholder='lbs'
-              />
-            </Field>
+              placeholder='Select year'
+              options={getGraduationYearOptions()}
+            />
+            <FormTextField
+              control={form.control}
+              name='highSchool'
+              label='High School'
+              required
+              placeholder='High School Name'
+            />
+          </div>
+
+          <div className='grid grid-cols-2 gap-5'>
+            <FormTextField
+              control={form.control}
+              name='city'
+              label='City'
+              required
+              placeholder='City'
+            />
+            <FormSelectField
+              control={form.control}
+              name='state'
+              label='State'
+              required
+              placeholder='Select state'
+              options={US_STATES_AND_TERRITORIES.map(state => ({
+                value: state.value,
+                label: state.label,
+              }))}
+            />
           </div>
         </div>
 
-        {/* Positions */}
-        <div className='grid md:grid-cols-2 gap-5'>
-          <Field className='gap-1'>
-            <FieldLabel htmlFor='primaryPosition'>Primary Position *</FieldLabel>
-            <Select
-              value={formData.primaryPosition}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, primaryPosition: value }))
-              }
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Select position' />
-              </SelectTrigger>
-              <SelectContent>
-                {getPositionOptions().map((position) => (
-                  <SelectItem key={position.value} value={position.value}>
-                    {position.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field className='gap-1'>
-            <FieldLabel htmlFor='secondaryPosition'>Secondary Position</FieldLabel>
-            <Select
-              value={formData.secondaryPosition}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, secondaryPosition: value }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Select position' />
-              </SelectTrigger>
-              <SelectContent>
-                {getPositionOptions().map((position) => (
-                  <SelectItem key={position.value} value={position.value}>
-                    {position.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-        </div>
-
-        {/* High School */}
-        <Field className='gap-1'>
-          <FieldLabel htmlFor='highSchool'>High School *</FieldLabel>
-          <Input
-            id='highSchool'
-            name='highSchool'
-            value={formData.highSchool}
-            onChange={handleChange}
-            required
-            placeholder='Required'
-          />
-        </Field>
-
-        {/* Location */}
-        <div className='grid md:grid-cols-2 gap-5'>
-          <Field className='gap-1'>
-            <FieldLabel htmlFor='city'>City</FieldLabel>
-            <Input
-              id='city'
-              name='city'
-              value={formData.city}
-              onChange={handleChange}
-              placeholder='City'
-            />
-          </Field>
-          <Field className='gap-1'>
-            <FieldLabel htmlFor='state'>State</FieldLabel>
-            <Select
-              value={formData.state}
-              onValueChange={(value) => setFormData((prev) => ({ ...prev, state: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Select state' />
-              </SelectTrigger>
-              <SelectContent>
-                {US_STATES_AND_TERRITORIES.map((state) => (
-                  <SelectItem key={state.value} value={state.value}>
-                    {state.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-        </div>
-
-        {/* Navigation */}
-        <div className='flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700'>
-          <Button type='submit' disabled={isSubmitting} className='bg-blue-600 hover:bg-blue-700'>
-            {isSubmitting ? 'Saving...' : isLastStep ? 'Complete Profile' : 'Save & Continue'}
-          </Button>
-        </div>
-      </form>
-    </Card>
+      {/* Navigation */}
+      <div className='flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700'>
+        <Button
+          type='submit'
+          disabled={isLoading}
+          className='bg-blue-600 hover:bg-blue-700'
+        >
+          {isLoading
+            ? 'Saving...'
+            : isLastStep
+              ? 'Complete Profile'
+              : 'Save & Continue'}
+        </Button>
+      </div>
+    </form>
   )
 }

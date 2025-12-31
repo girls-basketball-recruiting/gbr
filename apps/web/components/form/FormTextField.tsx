@@ -11,6 +11,14 @@ export interface FormTextFieldProps<T extends FieldValues> {
   placeholder?: string
   description?: string
   type?: 'text' | 'email' | 'url' | 'tel'
+  /**
+   * Field width constraint. Use smaller widths for short inputs like names, numbers, etc.
+   * - 'full': Full width (default)
+   * - 'sm': Small (max-w-32) - for very short inputs like jersey numbers
+   * - 'md': Medium (max-w-48) - for names, cities, short text
+   * - 'lg': Large (max-w-md) - for longer text
+   */
+  fieldWidth?: 'full' | 'sm' | 'md' | 'lg'
 }
 
 function FormTextFieldInner<T extends FieldValues>({
@@ -21,7 +29,15 @@ function FormTextFieldInner<T extends FieldValues>({
   placeholder,
   description,
   type = 'text',
+  fieldWidth = 'full',
 }: FormTextFieldProps<T>) {
+  const widthClass = {
+    full: 'w-full',
+    sm: 'w-full max-w-32',
+    md: 'w-full max-w-48',
+    lg: 'w-full max-w-md',
+  }[fieldWidth]
+
   return (
     <Controller
       control={control}
@@ -38,6 +54,7 @@ function FormTextFieldInner<T extends FieldValues>({
             type={type}
             placeholder={placeholder}
             value={field.value ?? ''}
+            className={widthClass}
           />
         </FormFieldWrapper>
       )}

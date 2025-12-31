@@ -16,6 +16,8 @@ import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
 import { currentUser } from '@clerk/nextjs/server'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import { PublicNav } from '@/components/PublicNav'
+import { SaveProgramButton } from '@/components/SaveProgramButton'
+import { isProgramSaved } from '@/actions/player-program-actions'
 
 interface ProgramPageProps {
   params: Promise<{ id: string }>
@@ -32,6 +34,7 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
 
   const clerkUser = await currentUser()
   const isLoggedOut = !clerkUser
+  const isPlayer = clerkUser?.publicMetadata?.role === 'player'
 
   const coaches = await findAll('coaches', {
     collegeId: { equals: parseInt(id) }
@@ -39,16 +42,19 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
 
   const hasCoaches = coaches.length > 0
 
+  // Check if player has saved this program
+  const isSaved = isPlayer ? await isProgramSaved(parseInt(id)) : false
+
   return (
     <>
       {isLoggedOut && <PublicNav activePage='programs' />}
       <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
-        <div className='max-w-6xl mx-auto'>
+        <div className='max-w-lg mx-auto'>
         {/* Unauthenticated CTA */}
         {isLoggedOut && (
           <div className='mb-8'>
             <UnauthenticatedCTA
-              title='Connect with College Coaches'
+              title='Connect with College Programs'
               description='Create an account to view coach contact information, send messages to coaching staff, and get recruited to play college basketball.'
               variant='premium'
             />
@@ -56,22 +62,36 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
         )}
 
         {/* Program Header */}
-        <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
-          <div className='flex items-start justify-between mb-6'>
-            <div>
-              <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
-                {college.school}
-              </h1>
-              <p className='text-xl text-slate-600 dark:text-slate-400'>
-                Women&apos;s Basketball Program
-              </p>
+        <Card className='max-w-lg bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
+          <div className='mb-6'>
+            <div className='flex items-start justify-between mb-4'>
+              <div className='flex-1'>
+                <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
+                  {college.school}
+                </h1>
+                <p className='text-xl text-slate-600 dark:text-slate-400'>
+                  Women&apos;s Basketball Program
+                </p>
+              </div>
+              {hasCoaches && (
+                <div className='flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/50 rounded-lg shrink-0'>
+                  <BadgeCheck className='w-5 h-5 text-blue-600 dark:text-blue-400' />
+                  <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
+                    {coaches.length} {coaches.length === 1 ? 'Coach' : 'Coaches'} on Platform
+                  </span>
+                </div>
+              )}
             </div>
-            {hasCoaches && (
-              <div className='flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/50 rounded-lg'>
-                <BadgeCheck className='w-5 h-5 text-blue-600 dark:text-blue-400' />
-                <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
-                  {coaches.length} {coaches.length === 1 ? 'Coach' : 'Coaches'} on Platform
-                </span>
+            {isPlayer && (
+              <div className='flex gap-2'>
+                <SaveProgramButton
+                  collegeId={parseInt(id)}
+                  collegeName={college.school}
+                  initialIsSaved={isSaved}
+                  size="default"
+                  variant="outline"
+                  className="w-full"
+                />
               </div>
             )}
           </div>

@@ -12,8 +12,12 @@ export interface UseSchemaFormOptions<T extends FieldValues> {
   defaultValues: T
   schema: any // Using any to avoid zod version compatibility issues with zodResolver
   onSubmit: (data: T | FormData) => Promise<void>
+  /**
+   * File fields to include in FormData.
+   * Keys don't need to match form fields - allows arbitrary file uploads.
+   */
   fileFields?: {
-    [K in keyof Partial<T>]: FileField
+    [key: string]: FileField
   }
 }
 
@@ -36,12 +40,15 @@ export function useSchemaForm<T extends FieldValues>({
     resolver: zodResolver(schema),
     defaultValues: memoizedDefaults,
     mode: 'onBlur', // CRITICAL: Validates only on blur, not on keystroke
+    reValidateMode: 'onChange', // Re-validate on change after first validation
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Wrapped submit handler with auto-detection of file uploads
+  // NOTE: react-hook-form automatically validates ALL fields before calling this function
+  // If validation fails, this function is never called and errors appear inline
   const handleSubmit = form.handleSubmit(async (data) => {
     setIsSubmitting(true)
     setError(null)
@@ -77,8 +84,9 @@ export function useSchemaForm<T extends FieldValues>({
         await onSubmit(data as T)
       }
     } catch (err) {
+      // Set error but DO NOT reset form - form state is preserved
       setError(err instanceof Error ? err.message : 'Submission failed')
-      throw err // Re-throw so caller can handle if needed
+      // Don't re-throw - let the error display in the form
     } finally {
       setIsSubmitting(false)
     }

@@ -58,7 +58,7 @@ export default function PlayerSignUpPage() {
           Player Registration
         </h1>
         <p className='text-slate-600 dark:text-slate-400'>
-          Create your profile to connect with college coaches
+          Create your profile to connect with college programs
         </p>
         {invitation?.promoCode && (
           <div className='mt-4 inline-block px-4 py-2 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg'>

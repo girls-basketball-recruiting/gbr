@@ -31,7 +31,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { user } = useUser()
 
-  const role = user?.publicMetadata?.role as 'coach' | 'player' | undefined
+  const role = user?.publicMetadata?.role as 'coach' | 'player'
   const isCoach = role === 'coach'
   const isPlayer = role === 'player'
 
@@ -73,6 +73,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: 'AAU Tournaments',
       url: '/tournaments',
       icon: Calendar,
+    },
+    {
+      title: 'Browse Players',
+      url: '/players',
+      icon: Users,
     },
   ]
 
@@ -128,7 +133,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     Girls Basketball Recruiting
                   </span>
                   <span className='truncate text-xs'>
-                    {isCoach ? 'Coach Portal' : isPlayer ? 'Player Portal' : 'Portal'}
+                    Database
                   </span>
                 </div>
               </Link>
