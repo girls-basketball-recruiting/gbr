@@ -32,7 +32,7 @@ interface CoachFormProps {
   initialLastName?: string
 }
 
-export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
+export function CoachForm({ profile, mode = 'create', initialFirstName, initialLastName }: CoachFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
@@ -41,8 +41,8 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
   const defaultValues: CoachProfileFormData = profile
     ? mapCoachToFormData(profile)
     : {
-        firstName: '',
-        lastName: '',
+        firstName: initialFirstName || '',
+        lastName: initialLastName || '',
         collegeId: 0,
         collegeName: '',
         city: '',
@@ -64,7 +64,7 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
     },
     onSubmit: async formData => {
       const url =
-        mode === 'edit' ? `/api/coaches/${profile?.id}` : '/api/coaches'
+        mode === 'edit' ? `/api/coaches/${profile?.id}/details` : '/api/coaches/list'
       const method = mode === 'edit' ? 'PUT' : 'POST'
 
       const response = await fetch(url, {
@@ -162,7 +162,7 @@ export function CoachForm({ profile, mode = 'create' }: CoachFormProps) {
                 }}
                 placeholder='Search for your college...'
               />
-              {form.watch('collegeId') === 0 && (
+              {form.formState.isSubmitted && form.watch('collegeId') === 0 && (
                 <FieldError>Please select a college from the list</FieldError>
               )}
             </Field>

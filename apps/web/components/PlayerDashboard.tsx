@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { TournamentScheduleSection } from './dashboard/TournamentScheduleSection'
 import { SavedProgramsSection } from './dashboard/SavedProgramsSection'
-import { ProgramCardsSkeleton } from './ui/skeletons/ProgramCardSkeleton'
 import { Suspense } from 'react'
 import { getAuthContext } from '@/lib/auth-context'
 import { hasActiveSubscription } from '@/lib/stripe'
@@ -95,7 +94,7 @@ export default async function PlayerDashboard() {
               Saved Programs
             </h3>
 
-            <Suspense fallback={<ProgramCardsSkeleton count={6} />}>
+            <Suspense>
               <SavedProgramsSection playerId={playerProfile.id} />
             </Suspense>
           </div>
@@ -108,7 +107,7 @@ export default async function PlayerDashboard() {
               Tournament Schedule
             </h3>
 
-            <Suspense fallback={<div className='animate-pulse space-y-3'>{[...Array(3)].map((_, i) => (<div key={i} className='h-20 bg-slate-200 dark:bg-slate-800 rounded-xl' />))}</div>}>
+            <Suspense>
               <TournamentScheduleSection playerId={playerProfile.id} />
             </Suspense>
           </div>

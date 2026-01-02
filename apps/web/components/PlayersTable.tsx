@@ -176,7 +176,7 @@ export function PlayersTable({
                   data-state={row.getIsSelected() && 'selected'}
                   className={
                     isOwnRow
-                      ? 'bg-gradient-to-r from-amber-50 via-orange-50 to-pink-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-pink-950/30 border-l-4 border-l-amber-500 hover:from-amber-100 hover:via-orange-100 hover:to-pink-100 dark:hover:from-amber-950/50 dark:hover:via-orange-950/50 dark:hover:to-pink-950/50'
+                      ? 'bg-linear-to-r from-amber-50 via-orange-50 to-pink-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-pink-950/30 border-l-4 border-l-amber-500 hover:from-amber-100 hover:via-orange-100 hover:to-pink-100 dark:hover:from-amber-950/50 dark:hover:via-orange-950/50 dark:hover:to-pink-950/50'
                       : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }
                 >

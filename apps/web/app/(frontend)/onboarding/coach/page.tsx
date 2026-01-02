@@ -12,7 +12,8 @@ export default async function CoachOnboardingPage() {
 
   // CRITICAL: Prevent players from accessing coach onboarding
   // This prevents role corruption bugs
-  const userRole = user.publicMetadata?.role as string | undefined
+  // Check publicMetadata first (after webhook processes), then unsafeMetadata (during race condition)
+  const userRole = (user.publicMetadata?.role || user.unsafeMetadata?.role) as string | undefined
   if (userRole && userRole !== 'coach') {
     redirect(`/onboarding/${userRole}`)
   }

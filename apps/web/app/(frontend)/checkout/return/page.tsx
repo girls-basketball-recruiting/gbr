@@ -46,7 +46,8 @@ export default async function CheckoutReturnPage({ searchParams }: CheckoutRetur
   })
 
   const user = users.docs[0]
-  const role = clerkUser.publicMetadata?.role as string
+  // Check publicMetadata first (after webhook processes), then unsafeMetadata (during race condition)
+  const role = (clerkUser.publicMetadata?.role || clerkUser.unsafeMetadata?.role) as string
 
   if (!user) {
     // User doesn't exist yet (should be created by webhook)

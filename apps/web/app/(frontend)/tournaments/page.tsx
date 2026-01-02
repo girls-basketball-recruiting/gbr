@@ -3,7 +3,7 @@ import { currentUser } from '@clerk/nextjs/server'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import { TournamentsList } from './TournamentsList'
-import { TournamentCardsSkeleton } from '@/components/ui/skeletons/TournamentCardSkeleton'
+import { PageLoadingState } from '@/components/PageLoadingState'
 
 interface TournamentsPageProps {
   searchParams: Promise<{
@@ -49,7 +49,7 @@ export default async function TournamentsPage({
             )}
 
             {/* Content */}
-            <Suspense fallback={<TournamentCardsSkeleton count={6} />}>
+            <Suspense fallback={<PageLoadingState message='Loading tournaments...' />}>
               <TournamentsList searchParams={params} />
             </Suspense>
           </div>

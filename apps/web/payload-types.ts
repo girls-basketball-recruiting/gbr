@@ -543,6 +543,10 @@ export interface Coach {
   bio?: string | null;
   profileImageUrl?: string | null;
   /**
+   * Select tournaments you will be attending
+   */
+  tournamentSchedule?: (number | Tournament)[] | null;
+  /**
    * Soft delete timestamp - if set, profile is archived
    */
   deletedAt?: string | null;
@@ -1192,6 +1196,7 @@ export interface CoachesSelect<T extends boolean = true> {
   phone?: T;
   bio?: T;
   profileImageUrl?: T;
+  tournamentSchedule?: T;
   deletedAt?: T;
   updatedAt?: T;
   createdAt?: T;

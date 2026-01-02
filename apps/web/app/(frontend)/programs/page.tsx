@@ -4,7 +4,7 @@ import { ProgramFilters } from '@/components/ProgramFilters'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import { ProgramsList } from './ProgramsList'
-import { ProgramCardsSkeleton } from '@/components/ui/skeletons/ProgramCardSkeleton'
+import { PageLoadingState } from '@/components/PageLoadingState'
 
 interface ProgramsPageProps {
   searchParams: Promise<{
@@ -57,7 +57,7 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
             <ProgramFilters />
 
             {/* Content */}
-            <Suspense fallback={<ProgramCardsSkeleton count={24} />}>
+            <Suspense fallback={<PageLoadingState message='Loading college programs...' />}>
               <ProgramsList searchParams={params} />
             </Suspense>
           </div>

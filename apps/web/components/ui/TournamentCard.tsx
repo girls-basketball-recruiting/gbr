@@ -2,16 +2,16 @@
 
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
-import { Calendar, MapPin, Users, ExternalLink, Bookmark, Lock } from 'lucide-react'
+import { Calendar, Users, Bookmark, Lock } from 'lucide-react'
 import { useState } from 'react'
 import { Toggle } from '@workspace/ui/components/toggle'
 import Link from 'next/link'
 import type { Tournament } from '@/payload-types'
 
 interface TournamentCardProps {
-  tournament: Tournament & { attendeeCount?: number }
+  tournament: Tournament & { playerCount?: number; coachCount?: number }
   isAttending?: boolean
-  isPlayer?: boolean
+  userRole?: 'player' | 'coach' | null
   isAuthenticated?: boolean
   onToggleAttendance?: (tournamentId: number) => Promise<void>
 }
@@ -19,41 +19,41 @@ interface TournamentCardProps {
 export function TournamentCard({
   tournament,
   isAttending = false,
-  isPlayer = false,
+  userRole = null,
   isAuthenticated = false,
   onToggleAttendance,
 }: TournamentCardProps) {
   const [attending, setAttending] = useState(isAttending)
   const [isLoading, setIsLoading] = useState(false)
 
-  const formatDateRange = (start: string, end: string) => {
+  const formatDateLocationRange = (start: string, end: string, city: string, state: string) => {
     const startDate = new Date(start)
     const endDate = new Date(end)
-
-    const options: Intl.DateTimeFormatOptions = {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }
-
-    if (startDate.toDateString() === endDate.toDateString()) {
-      return startDate.toLocaleDateString('en-US', options)
-    }
 
     const startFormatted = startDate.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
     })
-    const endFormatted = endDate.toLocaleDateString('en-US', options)
 
-    return `${startFormatted} - ${endFormatted}`
-  }
+    if (startDate.toDateString() === endDate.toDateString()) {
+      return `${startFormatted} in ${city}, ${state}`
+    }
 
-  const isUpcoming = () => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const endDate = new Date(tournament.endDate)
-    return endDate >= today
+    const endDay = endDate.toLocaleDateString('en-US', {
+      day: 'numeric',
+    })
+
+    // Check if same month
+    if (startDate.getMonth() === endDate.getMonth()) {
+      return `${startFormatted}-${endDay} in ${city}, ${state}`
+    }
+
+    // Different months
+    const endFormatted = endDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    })
+    return `${startFormatted} - ${endFormatted} in ${city}, ${state}`
   }
 
   const handleToggle = async () => {
@@ -70,119 +70,77 @@ export function TournamentCard({
     }
   }
 
-  const upcoming = isUpcoming()
-
   return (
     <Card
-      className={`min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors ${
-        !upcoming ? 'opacity-75' : ''
-      }`}
+      className='min-w-72 py-0 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors'
     >
-      <div className='p-6 space-y-6'>
-        {/* Header with badge */}
-        <div className='flex items-start justify-between gap-4'>
-          <div className='flex-1'>
-            <div className='flex items-center gap-2 mb-2'>
-              <h3 className='text-xl font-semibold text-slate-900 dark:text-white'>
-                {tournament.name}
-              </h3>
-              <span
-                className={`text-xs px-2 py-1 rounded ${
-                  upcoming
-                    ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-700 dark:text-blue-300 border border-blue-500/50'
-                    : 'bg-slate-100 dark:bg-slate-600/20 text-slate-600 dark:text-slate-400 border border-slate-400/50 dark:border-slate-600/50'
-                }`}
-              >
-                {upcoming ? 'Upcoming' : 'Past'}
-              </span>
-            </div>
-          </div>
-        </div>
+      <div className='p-6'>
+        {/* Header */}
+        <div>
+          <Link href={`/tournaments/${tournament.id}`} className='hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer'>
+            <h3 className='text-xl font-semibold text-slate-900 dark:text-white mb-3'>
+              {tournament.name}
+            </h3>
+          </Link>
 
-        {/* Date and Location */}
-        <div className='space-y-2'>
+          {/* Combined Date and Location */}
           <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
             <Calendar className='w-4 h-4 text-slate-500 dark:text-slate-400' />
-            <span className='font-medium'>
-              {formatDateRange(tournament.startDate, tournament.endDate)}
+            <span className='text-sm'>
+              {formatDateLocationRange(tournament.startDate, tournament.endDate, tournament.city, tournament.state)}
             </span>
           </div>
-          <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
-            <MapPin className='w-4 h-4 text-slate-500 dark:text-slate-400' />
-            <span>{tournament.city}</span>
-          </div>
         </div>
 
-        {/* Description */}
-        {tournament.description && (
-          <p className='text-sm text-slate-600 dark:text-slate-400 line-clamp-2'>
-            {tournament.description}
-          </p>
-        )}
-
-        {/* Footer */}
-        <div className='flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700'>
+        {/* Attendance count */}
+        <div className='flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-700'>
           {isAuthenticated ? (
-            <div className='flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400'>
+            <>
               <Users className='w-4 h-4' />
               <span>
-                {tournament.attendeeCount ?? 0}{' '}
-                {tournament.attendeeCount === 1 ? 'player' : 'players'} attending
-              </span>
-            </div>
-          ) : (
-            <div className='flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400'>
-              <Lock className='w-4 h-4' />
-              <span>Sign in to see who&apos;s attending</span>
-            </div>
-          )}
-
-          <div className='flex items-center gap-2'>
-            {tournament.website && (
-              <Button
-                variant='outline'
-                size='sm'
-                asChild
-                className='border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700'
-              >
-                <a
-                  href={tournament.website}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='flex items-center gap-1'
-                >
-                  <ExternalLink className='w-3 h-3' />
-                  Website
-                </a>
-              </Button>
-            )}
-          </div>
-        </div>
-        <div className='mt-4'>
-          {isAuthenticated ? (
-            isPlayer && onToggleAttendance && (
-              <Toggle
-                variant='outline'
-                pressed={attending}
-                onPressedChange={handleToggle}
-                disabled={isLoading}
-                className={
-                  attending
-                    ? 'bg-blue-600 hover:bg-blue-700 w-full'
-                    : 'border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 w-full'
+                {userRole === 'player'
+                  ? `${tournament.coachCount ?? 0} ${tournament.coachCount === 1 ? 'coach' : 'coaches'} attending`
+                  : `${tournament.playerCount ?? 0} ${tournament.playerCount === 1 ? 'player' : 'players'} attending`
                 }
-                aria-label={attending ? 'Mark as Not Attending' : 'Mark as Attending'}
-              >
-                <Bookmark className={attending ? 'fill-current' : ''} />
-                <span className='ml-2'>{attending ? 'Attending' : 'Mark as Attending'}</span>
-              </Toggle>
-            )
+              </span>
+            </>
           ) : (
-            <Button className='w-full bg-blue-600 hover:bg-blue-700 cursor-pointer' asChild>
-              <Link href='/register-player'>Sign Up to RSVP</Link>
-            </Button>
+            <>
+              <Lock className='w-4 h-4' />
+              <span>Sign in for tournament stats</span>
+            </>
           )}
         </div>
+
+        {/* Attendance toggle */}
+        {isAuthenticated && userRole && onToggleAttendance && (
+          <Toggle
+            variant='outline'
+            pressed={attending}
+            onPressedChange={handleToggle}
+            disabled={isLoading}
+            className={
+              attending
+                ? 'bg-blue-600 hover:bg-blue-700 text-white w-full'
+                : 'border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 w-full'
+            }
+            aria-label={attending ? 'Mark as Not Attending' : 'Mark as Attending'}
+          >
+            <Bookmark className={attending ? 'fill-current' : ''} />
+            <span className='ml-2'>{attending ? 'Attending' : 'Mark as Attending'}</span>
+          </Toggle>
+        )}
+
+        {!isAuthenticated && (
+          <div className='space-y-2'>
+            <Button className='w-full bg-orange-600 hover:bg-orange-700 cursor-pointer' asChild>
+              <Link href='/register-player'>RSVP as a Player</Link>
+            </Button>
+            <Button className='w-full bg-blue-600 hover:bg-blue-700 cursor-pointer' asChild>
+              <Link href='/register-coach'>RSVP as a Coach</Link>
+            </Button>
+          </div>
+        )}
       </div>
     </Card>
   )

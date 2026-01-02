@@ -21,8 +21,9 @@ export async function createCheckoutSession() {
     throw new Error('User does not have an email address.')
   }
 
-  const role = user.publicMetadata?.role
-  const promoCode = user.publicMetadata?.promoCode as string | undefined
+  // Check publicMetadata first (after webhook processes), then unsafeMetadata (during race condition)
+  const role = user.publicMetadata?.role || user.unsafeMetadata?.role
+  const promoCode = (user.publicMetadata?.promoCode || user.unsafeMetadata?.promoCode) as string | undefined
 
   if (!role) {
     throw new Error('User does not have a role.')

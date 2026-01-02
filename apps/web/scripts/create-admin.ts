@@ -1,18 +1,26 @@
-import * as dotenv from 'dotenv'
-import * as path from 'path'
-
-// Load environment variables FIRST before any other imports
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
-
-// Now import payload after env vars are loaded
-import { getPayload } from 'payload'
-import config from '@payload-config'
-
 /**
  * Script to create a PayloadCMS admin user
  * Usage: tsx scripts/create-admin.ts
+ *
+ * Note: Requires .env.local to be present with PAYLOAD_SECRET, ADMIN_EMAIL, and ADMIN_PASSWORD
  */
 async function createAdmin() {
+  // Load env vars using dynamic import to ensure they load first
+  const dotenv = await import('dotenv')
+  const path = await import('path')
+  dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+
+  // Verify PAYLOAD_SECRET is loaded
+  if (!process.env.PAYLOAD_SECRET) {
+    console.error('❌ PAYLOAD_SECRET not found in .env.local')
+    process.exit(1)
+  }
+
+  // Now import payload after env vars are loaded
+  const { getPayload } = await import('payload')
+  const configModule = await import('../payload.config.js')
+  const config = configModule.default
+
   const email = process.env.ADMIN_EMAIL
   const password = process.env.ADMIN_PASSWORD
 

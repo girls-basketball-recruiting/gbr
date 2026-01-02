@@ -25,12 +25,12 @@ export const GET = handleApiError(async (
       website: tables.tournaments.website,
       createdAt: tables.tournaments.createdAt,
       updatedAt: tables.tournaments.updatedAt,
-      attendeeCount: sql<number>`count(${tables['players-tournaments'].id})`,
+      attendeeCount: sql<number>`count(${tables.players_rels.id})`,
     })
     .from(tables.tournaments)
     .leftJoin(
-      tables['players-tournaments'],
-      eq(tables.tournaments.id, tables['players-tournaments'].tournament)
+      tables.players_rels,
+      eq(tables.tournaments.id, tables.players_rels.tournaments_id)
     )
     .where(eq(tables.tournaments.id, parseInt(id)))
     .groupBy(tables.tournaments.id)

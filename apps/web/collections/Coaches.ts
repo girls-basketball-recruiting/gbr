@@ -90,6 +90,15 @@ export const Coaches: CollectionConfig = {
               type: 'text',
             },
             {
+              name: 'tournamentSchedule',
+              type: 'relationship',
+              relationTo: 'tournaments',
+              hasMany: true,
+              admin: {
+                description: 'Select tournaments you will be attending',
+              },
+            },
+            {
               name: 'deletedAt',
               type: 'date',
               admin: {

@@ -25,7 +25,7 @@ export default function PublicHomePage() {
       <PublicHomeNav />
 
       {/* Hero Section */}
-      <section id='home' className='py-20 bg-gradient-to-br from-orange-50 to-white dark:from-slate-900 dark:to-slate-800'>
+      <section id='home' className='py-20 bg-linear-to-br from-orange-50 to-white dark:from-slate-900 dark:to-slate-800'>
         <div className='container mx-auto px-4'>
           <div className='text-center mb-16 max-w-3xl mx-auto'>
             <h1 className='text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6'>

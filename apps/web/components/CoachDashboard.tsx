@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { getCoachPositionLabel } from '@/lib/zod/CoachPositions'
 import { SavedPlayersSection } from './dashboard/SavedPlayersSection'
 import { ProspectsSection } from './dashboard/ProspectsSection'
-import { PlayerCardsSkeleton } from './ui/skeletons/PlayerCardSkeleton'
 import { getAuthContext } from '@/lib/auth-context'
 import { redirect } from 'next/navigation'
 
@@ -70,7 +69,7 @@ export default async function CoachDashboard() {
             </h3>
           </div>
 
-          <Suspense fallback={<PlayerCardsSkeleton count={6} />}>
+          <Suspense>
             <SavedPlayersSection coachId={coachProfile.id} />
           </Suspense>
         </div>
@@ -89,7 +88,7 @@ export default async function CoachDashboard() {
             </Link>
           </div>
 
-          <Suspense fallback={<PlayerCardsSkeleton count={6} />}>
+          <Suspense>
             <ProspectsSection coachId={coachProfile.id} />
           </Suspense>
         </div>

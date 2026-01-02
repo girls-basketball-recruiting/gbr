@@ -24,8 +24,9 @@ export default async function PaymentPage() {
   })
 
   const user = users.docs[0]
-  const role = clerkUser.publicMetadata?.role as string
-  const promoCode = clerkUser.publicMetadata?.promoCode as string | undefined
+  // Check publicMetadata first (after webhook processes), then unsafeMetadata (during race condition)
+  const role = (clerkUser.publicMetadata?.role || clerkUser.unsafeMetadata?.role) as string
+  const promoCode = (clerkUser.publicMetadata?.promoCode || clerkUser.unsafeMetadata?.promoCode) as string | undefined
 
   // If user already has subscription, redirect appropriately
   if (user?.stripeSubscriptionId) {
@@ -60,7 +61,7 @@ export default async function PaymentPage() {
 
   return (
     <div className='min-h-screen bg-white'>
-      <div className='max-w-4xl mx-auto px-4 py-12'>
+      <div className='max-w-2xl mx-auto px-4 py-12'>
         <div className='text-center mb-12'>
           <h1 className='text-4xl font-bold text-slate-900 mb-3'>
             Complete Your Subscription
@@ -97,14 +98,12 @@ export default async function PaymentPage() {
           )}
         </div>
 
-        <div className='grid lg:grid-cols-3 gap-8 mb-12'>
-          <div className='lg:col-span-2 order-2 lg:order-1'>
-            <CheckoutButton />
-          </div>
+        <div className='grid md:grid-cols-2 sm:grid-cols-1 gap-5'>
+          <CheckoutButton />
 
-          <div className='order-1 lg:order-2'>
+          <div className='w-103 md:w-auto mx-auto'>
             <Card className='bg-slate-50 border-slate-200 p-6'>
-              <h3 className='font-semibold text-slate-900 mb-4'>What&apos;s included</h3>
+              <h3 className='font-semibold text-slate-900'>What&apos;s included</h3>
               <div className='space-y-3'>
                 <div className='flex items-start gap-2'>
                   <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
@@ -136,7 +135,7 @@ export default async function PaymentPage() {
                 </div>
               </div>
 
-              <div className='mt-6 pt-6 border-t border-slate-200'>
+              <div className='pt-6 border-t border-slate-200'>
                 <p className='text-slate-500 text-xs text-center'>
                   Secure payment powered by Stripe
                   <br />

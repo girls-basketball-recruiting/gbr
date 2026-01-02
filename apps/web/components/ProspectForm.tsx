@@ -30,10 +30,10 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
   useEffect(() => {
     async function fetchTournaments() {
       try {
-        const response = await fetch('/api/tournaments')
+        const response = await fetch('/api/tournaments/list')
         if (response.ok) {
           const data = await response.json()
-          setTournaments(data.docs || [])
+          setTournaments(data.tournaments || [])
         }
       } catch (error) {
         console.error('Failed to fetch tournaments:', error)

@@ -4,7 +4,7 @@ import { PlayerFilters } from '@/components/PlayerFilters'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import { PlayersList } from './PlayersList'
-import { PlayerCardsSkeleton } from '@/components/ui/skeletons/PlayerCardSkeleton'
+import { PageLoadingState } from '@/components/PageLoadingState'
 
 interface PlayersPageProps {
   searchParams: Promise<{
@@ -58,7 +58,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
             <PlayerFilters />
 
             {/* Content */}
-            <Suspense fallback={<PlayerCardsSkeleton count={24} />}>
+            <Suspense fallback={<PageLoadingState message='Loading players...' />}>
               <PlayersList searchParams={params} />
             </Suspense>
           </div>

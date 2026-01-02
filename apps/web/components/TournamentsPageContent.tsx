@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { TournamentCard } from '@/components/ui/TournamentCard'
+import { TournamentCalendarCard } from '@/components/ui/TournamentCalendarCard'
 import { EmptyState } from '@/components/ui/EmptyState'
 import type { Tournament } from '@/payload-types'
 
@@ -27,6 +27,11 @@ export function TournamentsPageContent({
 
   const [attendingIds, setAttendingIds] = useState(initialAttendingIds)
   const [localTournaments, setLocalTournaments] = useState(tournaments)
+
+  // Sync local tournaments when server-side filtered tournaments change
+  useEffect(() => {
+    setLocalTournaments(tournaments)
+  }, [tournaments])
 
   const handleFilterChange = (filter: FilterTab) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -57,7 +62,7 @@ export function TournamentsPageContent({
       }
 
       // Refresh tournaments to update attendee counts
-      const tournamentsRes = await fetch('/api/tournaments')
+      const tournamentsRes = await fetch('/api/tournaments/list')
       const tournamentsData = await tournamentsRes.json()
       setLocalTournaments(tournamentsData.tournaments || [])
     } catch (error) {
@@ -124,7 +129,7 @@ export function TournamentsPageContent({
       ) : (
         <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
           {localTournaments.map((tournament) => (
-            <TournamentCard
+            <TournamentCalendarCard
               key={tournament.id}
               tournament={tournament}
               isAttending={attendingIds.includes(tournament.id)}

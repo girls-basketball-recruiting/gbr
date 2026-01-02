@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { CoachProfileView } from '@/components/ui/CoachProfileView'
+import { CoachProfileView } from '@/components/profile/coach-profile-view'
 import { hasActiveSubscription } from '@/lib/stripe'
 import { ProfileLayout } from '@/components/profile/profile-layout'
 import { PlayerProfileView } from '@/components/profile/player-profile-view'

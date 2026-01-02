@@ -169,7 +169,7 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
   async function handleProfileUpdate(formData: FormData) {
     if (!profile) return
 
-    const response = await fetch(`/api/players/${profile.id}`, {
+    const response = await fetch(`/api/players/${profile.id}/details`, {
       method: 'PUT',
       body: formData,
     })
