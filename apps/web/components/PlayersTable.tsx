@@ -39,10 +39,15 @@ export function PlayersTable({
       cell: ({ row }) => {
         const firstName = row.getValue('firstName') as string
         const lastName = row.original.lastName
+        const isOwnRow = currentPlayerId === row.original.id
         return (
           <Link
             href={`/players/${row.original.id}`}
-            className='font-medium text-blue-600 dark:text-blue-400 hover:underline'
+            className={`font-medium hover:underline ${
+              isOwnRow
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-blue-600 dark:text-blue-400'
+            }`}
           >
             {firstName} {lastName}
           </Link>
@@ -76,16 +81,6 @@ export function PlayersTable({
         const heightInInches = row.getValue('heightInInches') as number
         return heightInInches ? (
           <span className='text-slate-600 dark:text-slate-400'>{formatHeight(heightInInches)}</span>
-        ) : null
-      },
-    },
-    {
-      accessorKey: 'weight',
-      header: 'Weight',
-      cell: ({ row }) => {
-        const weight = row.getValue('weight') as number
-        return weight ? (
-          <span className='text-slate-600 dark:text-slate-400'>{weight} lbs</span>
         ) : null
       },
     },
@@ -133,7 +128,7 @@ export function PlayersTable({
   if (isCoach) {
     columns.push({
       id: 'actions',
-      header: '',
+      header: 'Save',
       cell: ({ row }) => {
         return (
           <SavePlayerButton
@@ -185,14 +180,6 @@ export function PlayersTable({
                       : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }
                 >
-                  {isOwnRow && (
-                    <TableCell className='py-0 px-2'>
-                      <span className='text-xs font-black text-amber-600 dark:text-amber-400 tracking-wider flex items-center gap-1'>
-                        <span>★</span>
-                        <span>YOU</span>
-                      </span>
-                    </TableCell>
-                  )}
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

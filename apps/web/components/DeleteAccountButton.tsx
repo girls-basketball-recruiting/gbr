@@ -15,20 +15,25 @@ import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { Alert, AlertDescription } from '@workspace/ui/components/alert'
 import { Trash2, AlertTriangle } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
+import { useUser, useReverification } from '@clerk/nextjs'
 
 interface DeleteAccountButtonProps {
   userRole: 'player' | 'coach'
 }
 
 export function DeleteAccountButton({ userRole }: DeleteAccountButtonProps) {
-  const router = useRouter()
   const { user } = useUser()
   const [open, setOpen] = useState(false)
   const [confirmText, setConfirmText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Wrap the delete operation with reverification
+  const performDelete = useReverification(async () => {
+    await user?.delete()
+    // Use full page reload instead of client-side navigation to ensure session is cleared
+    window.location.href = '/'
+  })
 
   const handleDelete = async () => {
     if (confirmText !== 'DELETE') {
@@ -40,11 +45,8 @@ export function DeleteAccountButton({ userRole }: DeleteAccountButtonProps) {
     setError(null)
 
     try {
-      // Delete the user from Clerk
-      await user?.delete()
-
-      // Redirect to homepage after successful deletion
-      router.push('/')
+      // Delete the user from Clerk with reverification
+      await performDelete()
     } catch (err) {
       console.error('Error deleting account:', err)
       setError(err instanceof Error ? err.message : 'Failed to delete account')
@@ -76,7 +78,7 @@ export function DeleteAccountButton({ userRole }: DeleteAccountButtonProps) {
           Delete Account
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[500px]'>
+      <DialogContent className='sm:max-w-120'>
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2 text-red-600'>
             <AlertTriangle className='w-5 h-5' />

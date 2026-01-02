@@ -127,9 +127,11 @@ export async function ProgramsList({ searchParams }: ProgramsListProps) {
   // Fetch saved programs for current player
   let savedProgramIds = new Set<number>()
   const clerkUser = await currentUser()
-  if (clerkUser && clerkUser.publicMetadata?.role === 'player') {
+  const isPlayer = clerkUser?.publicMetadata?.role === 'player'
+
+  if (isPlayer) {
     const payloadUser = await findOne('users', {
-      clerkId: { equals: clerkUser.id },
+      clerkId: { equals: clerkUser!.id },
     })
 
     if (payloadUser) {
@@ -162,6 +164,7 @@ export async function ProgramsList({ searchParams }: ProgramsListProps) {
       totalPages={totalPages}
       currentPage={page}
       savedProgramIds={savedProgramIds}
+      isPlayer={isPlayer}
     />
   )
 }

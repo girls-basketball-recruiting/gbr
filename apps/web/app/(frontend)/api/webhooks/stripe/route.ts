@@ -292,8 +292,8 @@ export async function POST(req: Request) {
         })
         console.log(`✅ Cleared subscription data for user ${user.id}`)
       } else {
-        console.error(
-          `❌ User with subscription ${subscription.id} not found`,
+        console.log(
+          `⭕️ User with subscription ${subscription.id} not found (expected)`,
         )
       }
     }

@@ -5,38 +5,16 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Label } from '@workspace/ui/components/label'
 import { Input } from '@workspace/ui/components/input'
 import { Button } from '@workspace/ui/components/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select'
 import { US_STATES_AND_TERRITORIES } from '@/lib/zod/States'
 import { getPositionOptions } from '@/lib/zod/Positions'
 import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
+import { AAU_CIRCUITS } from '@/lib/zod/AauCircuits'
+import { LEVELS_OF_PLAY } from '@/lib/zod/LevelsOfPlay'
+import { DISTANCE_FROM_HOME_OPTIONS } from '@/lib/zod/DistanceFromHome'
 import { RangeSlider } from './RangeSlider'
 import { MultiSelect } from './ui/multi-select'
 import { X } from 'lucide-react'
 import { formatHeight } from '@/lib/formatters'
-
-const desiredLevelsOptions = [
-  { value: 'any', label: 'Any Level' },
-  { value: 'ncaa-d1', label: 'NCAA D1' },
-  { value: 'ncaa-d2', label: 'NCAA D2' },
-  { value: 'ncaa-d3', label: 'NCAA D3' },
-  { value: 'naia', label: 'NAIA' },
-  { value: 'uscaa', label: 'USCAA' },
-  { value: 'nccaa', label: 'NCCAA' },
-  { value: 'juco', label: 'JUCO' },
-]
-
-const distanceOptions = [
-  { value: 'anywhere', label: 'Anywhere' },
-  { value: 'less-than-2', label: 'Within 2 hours' },
-  { value: 'less-than-4', label: 'Within 4 hours' },
-  { value: 'less-than-8', label: 'Within 8 hours' },
-]
 
 export function PlayerFilters() {
   const router = useRouter()
@@ -44,22 +22,19 @@ export function PlayerFilters() {
   const [isPending, startTransition] = useTransition()
 
   // Parse array params from URL
-  const parseDesiredLevels = (): string[] => {
-    const param = searchParams.get('desiredLevels')
-    return param ? param.split(',') : []
+  const parseArrayParam = (paramName: string): string[] => {
+    const param = searchParams.get(paramName)
+    return param ? param.split(',').filter(Boolean) : []
   }
 
   // Initialize state from URL params
-  const [graduationYear, setGraduationYear] = useState(
-    searchParams.get('graduationYear') || '',
-  )
-  const [position, setPosition] = useState(searchParams.get('position') || '')
-  const [state, setState] = useState(searchParams.get('state') || '')
+  const [graduationYears, setGraduationYears] = useState<string[]>(parseArrayParam('graduationYears'))
+  const [positions, setPositions] = useState<string[]>(parseArrayParam('positions'))
+  const [states, setStates] = useState<string[]>(parseArrayParam('states'))
   const [city, setCity] = useState(searchParams.get('city') || '')
-  const [desiredDistance, setDesiredDistance] = useState(
-    searchParams.get('desiredDistance') || '',
-  )
-  const [desiredLevels, setDesiredLevels] = useState<string[]>(parseDesiredLevels())
+  const [desiredDistances, setDesiredDistances] = useState<string[]>(parseArrayParam('desiredDistances'))
+  const [desiredLevels, setDesiredLevels] = useState<string[]>(parseArrayParam('desiredLevels'))
+  const [aauCircuits, setAauCircuits] = useState<string[]>(parseArrayParam('aauCircuits'))
   const [gpaRange, setGpaRange] = useState<[number, number]>([
     parseFloat(searchParams.get('minGpa') || '0'),
     parseFloat(searchParams.get('maxGpa') || '4'),
@@ -104,30 +79,27 @@ export function PlayerFilters() {
     })
   }
 
-  const handleSelectChange = (key: string, value: string) => {
+  const handleMultiSelectChange = (key: string, values: string[]) => {
     // Update state
     switch (key) {
-      case 'graduationYear':
-        setGraduationYear(value)
+      case 'graduationYears':
+        setGraduationYears(values)
         break
-      case 'position':
-        setPosition(value)
+      case 'positions':
+        setPositions(values)
         break
-      case 'state':
-        setState(value)
+      case 'states':
+        setStates(values)
         break
-      case 'desiredDistance':
-        setDesiredDistance(value)
+      case 'desiredDistances':
+        setDesiredDistances(values)
         break
-    }
-
-    // Immediately update URL for selects
-    updateURL({ [key]: value })
-  }
-
-  const handleMultiSelectChange = (key: string, values: string[]) => {
-    if (key === 'desiredLevels') {
-      setDesiredLevels(values)
+      case 'desiredLevels':
+        setDesiredLevels(values)
+        break
+      case 'aauCircuits':
+        setAauCircuits(values)
+        break
     }
     // Update URL with comma-separated values
     updateURL({ [key]: values.join(',') })
@@ -178,12 +150,13 @@ export function PlayerFilters() {
   }
 
   const clearAllFilters = () => {
-    setGraduationYear('')
-    setPosition('')
-    setState('')
+    setGraduationYears([])
+    setPositions([])
+    setStates([])
     setCity('')
-    setDesiredDistance('')
+    setDesiredDistances([])
     setDesiredLevels([])
+    setAauCircuits([])
     setGpaRange([0, 4])
     setHeightRange([60, 90])
     setPpgRange([0, 40])
@@ -206,12 +179,13 @@ export function PlayerFilters() {
 
   // Count active filters
   const activeFilterCount = [
-    graduationYear,
-    position,
-    state,
+    graduationYears.length > 0,
+    positions.length > 0,
+    states.length > 0,
     city,
-    desiredDistance,
+    desiredDistances.length > 0,
     desiredLevels.length > 0,
+    aauCircuits.length > 0,
     gpaRange[0] > 0 || gpaRange[1] < 4,
     heightRange[0] > 60 || heightRange[1] < 90,
     ppgRange[0] > 0 || ppgRange[1] < 40,
@@ -226,68 +200,47 @@ export function PlayerFilters() {
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
           {/* Graduation Year */}
           <div className='space-y-2'>
-            <Label htmlFor='graduationYear' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               Graduation Year
             </Label>
-            <Select
-              value={graduationYear}
-              onValueChange={(value) => handleSelectChange('graduationYear', value)}
-            >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
-                <SelectValue placeholder='All Years' />
-              </SelectTrigger>
-              <SelectContent>
-                {getGraduationYearOptions().map((year) => (
-                  <SelectItem key={year.value} value={year.value}>
-                    {year.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={getGraduationYearOptions()}
+              selected={graduationYears}
+              onChange={(values) => handleMultiSelectChange('graduationYears', values)}
+              placeholder='All Years'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search years...'
+            />
           </div>
 
           {/* Position */}
           <div className='space-y-2'>
-            <Label htmlFor='position' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               Position
             </Label>
-            <Select
-              value={position}
-              onValueChange={(value) => handleSelectChange('position', value)}
-            >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
-                <SelectValue placeholder='All Positions' />
-              </SelectTrigger>
-              <SelectContent>
-                {getPositionOptions().map((pos) => (
-                  <SelectItem key={pos.value} value={pos.value}>
-                    {pos.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={getPositionOptions()}
+              selected={positions}
+              onChange={(values) => handleMultiSelectChange('positions', values)}
+              placeholder='All Positions'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search positions...'
+            />
           </div>
 
           {/* State */}
           <div className='space-y-2'>
-            <Label htmlFor='state' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               State
             </Label>
-            <Select
-              value={state}
-              onValueChange={(value) => handleSelectChange('state', value)}
-            >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
-                <SelectValue placeholder='All States' />
-              </SelectTrigger>
-              <SelectContent>
-                {US_STATES_AND_TERRITORIES.map((stateOption) => (
-                  <SelectItem key={stateOption.value} value={stateOption.value}>
-                    {stateOption.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={US_STATES_AND_TERRITORIES as any}
+              selected={states}
+              onChange={(values) => handleMultiSelectChange('states', values)}
+              placeholder='All States'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search states...'
+            />
           </div>
 
           {/* City */}
@@ -307,14 +260,14 @@ export function PlayerFilters() {
         </div>
 
         {/* Preferences */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
           {/* Desired Levels */}
           <div className='space-y-2'>
             <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               Desired College Level
             </Label>
             <MultiSelect
-              options={desiredLevelsOptions}
+              options={LEVELS_OF_PLAY}
               selected={desiredLevels}
               onChange={(values) => handleMultiSelectChange('desiredLevels', values)}
               placeholder='Any Level'
@@ -325,29 +278,34 @@ export function PlayerFilters() {
 
           {/* Desired Distance */}
           <div className='space-y-2'>
-            <Label htmlFor='desiredDistance' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
               Distance from Home
             </Label>
-            <Select
-              value={desiredDistance}
-              onValueChange={(value) => handleSelectChange('desiredDistance', value)}
-            >
-              <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
-                <SelectValue placeholder='Any Distance' />
-              </SelectTrigger>
-              <SelectContent>
-                {distanceOptions.map((dist) => (
-                  <SelectItem key={dist.value} value={dist.value}>
-                    {dist.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={DISTANCE_FROM_HOME_OPTIONS}
+              selected={desiredDistances}
+              onChange={(values) => handleMultiSelectChange('desiredDistances', values)}
+              placeholder='Any Distance'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search distance...'
+            />
           </div>
-        </div>
 
-        {/* Stats Filters */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
+          {/* AAU Circuit */}
+          <div className='space-y-2'>
+            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+              AAU Circuit
+            </Label>
+            <MultiSelect
+              options={AAU_CIRCUITS}
+              selected={aauCircuits}
+              onChange={(values) => handleMultiSelectChange('aauCircuits', values)}
+              placeholder='All Circuits'
+              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
+              searchPlaceholder='Search circuits...'
+            />
+          </div>
+
           {/* Height Range */}
           <div>
             <RangeSlider
@@ -360,7 +318,10 @@ export function PlayerFilters() {
               label='Height'
             />
           </div>
+        </div>
 
+        {/* Stats Filters */}
+        <div className='grid grid-cols-1 sm:grid-cols-4 gap-5'>
           {/* GPA Range */}
           <div>
             <RangeSlider

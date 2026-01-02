@@ -14,6 +14,7 @@ interface ProgramsPageContentProps {
   totalPages: number
   currentPage: number
   savedProgramIds?: Set<number>
+  isPlayer?: boolean
 }
 
 export function ProgramsPageContent({
@@ -22,6 +23,7 @@ export function ProgramsPageContent({
   totalPages,
   currentPage,
   savedProgramIds = new Set(),
+  isPlayer = false,
 }: ProgramsPageContentProps) {
   const { view, handleViewChange } = useViewPreference('programs', 'grid')
 
@@ -46,7 +48,7 @@ export function ProgramsPageContent({
           description='Try adjusting your filters to see more results.'
         />
       ) : view === 'table' ? (
-        <ProgramsTable programs={programs} savedProgramIds={savedProgramIds} />
+        <ProgramsTable programs={programs} savedProgramIds={savedProgramIds} isPlayer={isPlayer} />
       ) : (
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {programs.map((program) => (
@@ -54,6 +56,7 @@ export function ProgramsPageContent({
               key={program.id}
               program={program}
               isSaved={savedIds.includes(program.id)}
+              isPlayer={isPlayer}
             />
           ))}
         </div>

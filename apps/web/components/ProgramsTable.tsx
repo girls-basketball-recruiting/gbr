@@ -22,9 +22,10 @@ import { SaveProgramButton } from './SaveProgramButton'
 interface ProgramsTableProps {
   programs: any[]
   savedProgramIds?: Set<number>
+  isPlayer?: boolean
 }
 
-export function ProgramsTable({ programs, savedProgramIds = new Set() }: ProgramsTableProps) {
+export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer = false }: ProgramsTableProps) {
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: 'school',
@@ -94,9 +95,13 @@ export function ProgramsTable({ programs, savedProgramIds = new Set() }: Program
         ) : null
       },
     },
-    {
+  ]
+
+  // Add actions column only for players
+  if (isPlayer) {
+    columns.push({
       id: 'actions',
-      header: 'Actions',
+      header: 'Save',
       cell: ({ row }) => {
         const program = row.original
         const isSaved = savedProgramIds.has(program.id)
@@ -110,8 +115,8 @@ export function ProgramsTable({ programs, savedProgramIds = new Set() }: Program
           />
         )
       },
-    },
-  ]
+    })
+  }
 
   const table = useReactTable({
     data: programs,

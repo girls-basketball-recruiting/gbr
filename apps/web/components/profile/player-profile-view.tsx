@@ -3,9 +3,15 @@ import Image from 'next/image';
 import { getPositionLabel } from '@/lib/zod/Positions';
 import { formatHeight } from '@/lib/formatters';
 import { divisionLabels } from '@/lib/zod/LevelsOfPlay';
+import { getAAUCircuitLabel } from '@/lib/zod/AauCircuits';
+import { getGeographicAreaLabel } from '@/lib/zod/GeographicAreas';
+import { getAreaOfStudyLabel } from '@/lib/zod/AreasOfStudy';
+import { getDistanceFromHomeLabel } from '@/lib/zod/DistanceFromHome';
+import { getLevelOfPlayLabel } from '@/lib/zod/LevelsOfPlay';
 import { PlayerTournamentSchedule } from './player-tournament-schedule';
 import { PlayerHighlightVideos } from './player-highlight-videos';
-import { Mail, Phone } from 'lucide-react';
+import { CopyableEmail } from './copyable-email';
+import { Phone } from 'lucide-react';
 import { X as XIcon } from 'lucide-react';
 import { Instagram } from 'lucide-react';
 
@@ -30,7 +36,7 @@ function DataPoint({ label, value }: { label: string; value: string | number | u
 
 export function PlayerProfileView({ player, tournamentSchedule }: PlayerProfileViewProps) {
   return (
-    <div className='space-y-16'>
+    <div className='space-y-16 max-w-2xl'>
       {/* Hero Section */}
       <div className='relative'>
         <div className='flex flex-col md:flex-row gap-8 md:gap-12 items-start'>
@@ -71,15 +77,7 @@ export function PlayerProfileView({ player, tournamentSchedule }: PlayerProfileV
             {/* Contact Links */}
             {(player.email || player.phoneNumber || player.xHandle || player.instaHandle) && (
               <div className='flex flex-wrap gap-4 mb-6'>
-                {player.email && (
-                  <a
-                    href={`mailto:${player.email}`}
-                    className='inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline'
-                  >
-                    <Mail className='w-4 h-4' />
-                    Email
-                  </a>
-                )}
+                {player.email && <CopyableEmail email={player.email} />}
                 {player.phoneNumber && (
                   <a
                     href={`tel:${player.phoneNumber}`}
@@ -138,7 +136,7 @@ export function PlayerProfileView({ player, tournamentSchedule }: PlayerProfileV
         <DataPoint label='APG' value={player.apg} />
         <DataPoint label='Weighted GPA' value={player.weightedGpa} />
         <DataPoint label='Unweighted GPA' value={player.unweightedGpa} />
-        {player.ncaaId && <DataPoint label='NCAA ID' value={player.ncaaId} />}
+        {player.ncaaId && <DataPoint label='NCAA Eligibility ID' value={player.ncaaId} />}
       </div>
 
       {/* High School & Location */}
@@ -165,7 +163,7 @@ export function PlayerProfileView({ player, tournamentSchedule }: PlayerProfileV
           <dl className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <DataPoint label='Program' value={player.aauProgramName} />
             <DataPoint label='Team' value={player.aauTeamName} />
-            <DataPoint label='Circuit' value={player.aauCircuit} />
+            <DataPoint label='Circuit' value={getAAUCircuitLabel(player.aauCircuit)} />
             <DataPoint label='Coach' value={player.aauCoach} />
           </dl>
         </div>
@@ -218,7 +216,7 @@ export function PlayerProfileView({ player, tournamentSchedule }: PlayerProfileV
                     key={level}
                     className='px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 rounded-full text-sm font-medium'
                   >
-                    {divisionLabels[level] || level}
+                    {getLevelOfPlayLabel(level) || level}
                   </span>
                 ))}
               </dd>
@@ -235,14 +233,14 @@ export function PlayerProfileView({ player, tournamentSchedule }: PlayerProfileV
                     key={area}
                     className='px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-full text-sm font-medium'
                   >
-                    {area}
+                    {getGeographicAreaLabel(area) || area}
                   </span>
                 ))}
               </dd>
             </div>
           )}
           {player.desiredDistanceFromHome && (
-            <DataPoint label='Distance from Home' value={player.desiredDistanceFromHome} />
+            <DataPoint label='Desired Distance from Home' value={getDistanceFromHomeLabel(player.desiredDistanceFromHome)} />
           )}
           {player.potentialAreasOfStudy && player.potentialAreasOfStudy.length > 0 && (
             <div>
@@ -255,7 +253,7 @@ export function PlayerProfileView({ player, tournamentSchedule }: PlayerProfileV
                     key={area}
                     className='px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-900 dark:text-purple-300 rounded-full text-sm font-medium'
                   >
-                    {area}
+                    {getAreaOfStudyLabel(area) || area}
                   </span>
                 ))}
               </dd>

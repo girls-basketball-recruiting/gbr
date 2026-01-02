@@ -21,9 +21,10 @@ interface Program {
 interface ProgramCardProps {
   program: Program
   isSaved?: boolean
+  isPlayer?: boolean
 }
 
-export function ProgramCard({ program, isSaved = false }: ProgramCardProps) {
+export function ProgramCard({ program, isSaved = false, isPlayer = false }: ProgramCardProps) {
   return (
     <Card
       className={`py-0 min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all ${
@@ -79,7 +80,7 @@ export function ProgramCard({ program, isSaved = false }: ProgramCardProps) {
         {/* Action Buttons */}
         <div className='pt-2 flex gap-2'>
           <Button
-            className={`flex-1 cursor-pointer ${
+            className={`${isPlayer ? 'flex-1' : 'w-full'} cursor-pointer ${
               program.hasCoach
                 ? 'bg-blue-600 hover:bg-blue-700'
                 : 'bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600'
@@ -90,13 +91,15 @@ export function ProgramCard({ program, isSaved = false }: ProgramCardProps) {
               {program.hasCoach ? 'View Program' : 'View Program'}
             </Link>
           </Button>
-          <SaveProgramButton
-            collegeId={program.id}
-            collegeName={program.school}
-            initialIsSaved={isSaved}
-            size="default"
-            variant="outline"
-          />
+          {isPlayer && (
+            <SaveProgramButton
+              collegeId={program.id}
+              collegeName={program.school}
+              initialIsSaved={isSaved}
+              size="default"
+              variant="outline"
+            />
+          )}
         </div>
       </div>
     </Card>
