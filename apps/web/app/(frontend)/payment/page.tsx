@@ -5,6 +5,11 @@ import { Check } from 'lucide-react'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { CheckoutButton } from '@/components/checkout-button'
+import { H1 } from '@/components/ui/typography/H1'
+import { H3 } from '@/components/ui/typography/H3'
+import { P } from '@/components/ui/typography/P'
+import { MutedText } from '@/components/ui/typography/MutedText'
+import { Small } from '@/components/ui/typography/Small'
 
 export default async function PaymentPage() {
   const clerkUser = await currentUser()
@@ -60,40 +65,36 @@ export default async function PaymentPage() {
   const price = isPlayer ? 39 : 99
 
   return (
-    <div className='min-h-screen bg-white'>
+    <div className='min-h-screen'>
       <div className='max-w-2xl mx-auto px-4 py-12'>
         <div className='text-center mb-12'>
-          <h1 className='text-4xl font-bold text-slate-900 mb-3'>
-            Complete Your Subscription
-          </h1>
-          <p className='text-slate-600 text-lg'>
-            {isPlayer ? 'Player Pro' : 'Coach Pro'} - Annual Plan
-          </p>
+          <H1>Complete Your Subscription</H1>
+          <P>{isPlayer ? 'Player Pro' : 'Coach Pro'} - Annual Plan</P>
           {promoCode === 'FIRST_YEAR_FREE' ? (
             <div className='mt-4'>
               <div className='flex items-center justify-center gap-4 mb-2'>
-                <span className='text-2xl font-bold text-slate-400 line-through'>
+                <span className='text-2xl font-bold line-through'>
                   ${price}/year
                 </span>
-                <span className='text-4xl font-bold text-emerald-600'>
+                <span className='text-4xl font-bold'>
                   Free for 1 year
                 </span>
               </div>
-              <div className='inline-block px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg'>
-                <p className='text-emerald-700 font-semibold text-sm'>
-                  🎉 First Year Free Promotion Applied
+              <div className='inline-block px-4 py-2 border rounded-lg'>
+                <p className='font-semibold text-sm'>
+                  First Year Free Promotion Applied
                 </p>
               </div>
-              <p className='text-slate-500 text-sm mt-2'>
+              <MutedText className='text-sm mt-2'>
                 Then ${price}/year after your first 12 months
-              </p>
+              </MutedText>
             </div>
           ) : (
             <div className='mt-4'>
-              <div className='text-4xl font-bold text-slate-900'>
-                ${price}<span className='text-xl text-slate-500 font-normal'>/year</span>
+              <div className='text-4xl font-bold'>
+                ${price}<span className='text-xl font-normal'>/year</span>
               </div>
-              <p className='text-slate-500 text-sm mt-1'>Billed annually</p>
+              <MutedText className='text-sm mt-1'>Billed annually</MutedText>
             </div>
           )}
         </div>
@@ -102,45 +103,45 @@ export default async function PaymentPage() {
           <CheckoutButton />
 
           <div className='w-103 md:w-auto mx-auto'>
-            <Card className='bg-slate-50 border-slate-200 p-6'>
-              <h3 className='font-semibold text-slate-900'>What&apos;s included</h3>
+            <Card className='p-6'>
+              <H3>What&apos;s included</H3>
               <div className='space-y-3'>
                 <div className='flex items-start gap-2'>
-                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 text-sm'>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <Small>
                     {isPlayer
                       ? 'Create and manage your player profile'
                       : 'Search thousands of player profiles'}
-                  </p>
+                  </Small>
                 </div>
                 <div className='flex items-start gap-2'>
-                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 text-sm'>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <Small>
                     {isPlayer
                       ? 'Get discovered by college programs'
                       : 'Save players to your recruiting list'}
-                  </p>
+                  </Small>
                 </div>
                 <div className='flex items-start gap-2'>
-                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 text-sm'>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <Small>
                     {isPlayer
                       ? 'Tournament visibility'
                       : 'Full prospect management'}
-                  </p>
+                  </Small>
                 </div>
                 <div className='flex items-start gap-2'>
-                  <Check className='w-5 h-5 text-emerald-600 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 text-sm'>Priority support</p>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <Small>Priority support</Small>
                 </div>
               </div>
 
-              <div className='pt-6 border-t border-slate-200'>
-                <p className='text-slate-500 text-xs text-center'>
+              <div className='pt-6 border-t'>
+                <MutedText className='text-xs text-center'>
                   Secure payment powered by Stripe
                   <br />
                   Cancel anytime
-                </p>
+                </MutedText>
               </div>
             </Card>
           </div>

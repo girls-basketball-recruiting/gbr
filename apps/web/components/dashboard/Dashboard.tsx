@@ -15,8 +15,8 @@ export async function Dashboard() {
   }
 
   return (
-    <div className='min-h-svh flex items-center justify-center bg-slate-50 dark:bg-slate-900'>
-      <p className='text-slate-900 dark:text-white'>
+    <div className='min-h-svh flex items-center justify-center'>
+      <p>
         User has no role assigned.
       </p>
     </div>

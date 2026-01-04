@@ -1,22 +1,22 @@
 import { ArrowRight, Users, Building2, Trophy, Check, DollarSign } from 'lucide-react'
-import Link from 'next/link'
-import { Button } from '@workspace/ui/components/button'
 import { Card } from '@workspace/ui/components/card'
+import { ButtonLink } from './ui/ButtonLink'
+import { H2, H3, P } from './ui/typography'
 
 export function PlayersSection() {
   return (
-    <section id='players' className='py-24 bg-white dark:bg-slate-800'>
+    <section id='players' className='py-24 bg-accent'>
       <div className='container mx-auto px-4'>
         <div className='grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto'>
           <div className='order-2 md:order-1'>
-            <div className='inline-flex items-center gap-2 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full text-sm font-medium mb-4'>
+            <div className='inline-flex items-center gap-2 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-primary rounded-full text-sm font-medium mb-4'>
               <Users className='w-4 h-4' />
               Player Profiles
             </div>
-            <h2 className='text-4xl font-bold text-slate-900 dark:text-white mb-6'>
+            <H2 className='mb-6'>
               Discover Talented Athletes
-            </h2>
-            <p className='text-lg text-slate-600 dark:text-slate-400 mb-6'>
+            </H2>
+            <p className='text-lg mb-6'>
               Browse hundreds of student-athlete profiles with detailed stats, highlight
               videos, academic information, and tournament schedules. Filter by
               graduation year, position, GPA, height, and location to find the perfect
@@ -25,23 +25,21 @@ export function PlayersSection() {
             <ul className='space-y-3 mb-8'>
               {['Detailed athletic and academic profiles', 'Highlight video reels and game footage', 'Advanced filtering by position, GPA, height, and more'].map((item, i) => (
                 <li key={i} className='flex items-start gap-3'>
-                  <div className='w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center shrink-0 mt-0.5'>
-                    <Check className='w-4 h-4 text-orange-600 dark:text-orange-500' />
+                  <div className='w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary'>
+                    <Check className='w-4 h-4 text-accent' />
                   </div>
-                  <span className='text-slate-700 dark:text-slate-300'>{item}</span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <Link href='/players'>
-              <Button size='lg' className='bg-orange-600 hover:bg-orange-700 cursor-pointer'>
-                Browse Players
-                <ArrowRight className='ml-2 w-4 h-4' />
-              </Button>
-            </Link>
+            <ButtonLink href='/players' size='lg'>
+              Browse Players
+              <ArrowRight className='ml-2 w-4 h-4' />
+            </ButtonLink>
           </div>
           <div className='order-1 md:order-2'>
             <div className='bg-linear-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
-              <Users className='w-32 h-32 text-orange-400 dark:text-orange-500' />
+              <Users className='w-32 h-32 text-primary' />
             </div>
           </div>
         </div>
@@ -52,12 +50,12 @@ export function PlayersSection() {
 
 export function ProgramsSection() {
   return (
-    <section id='programs' className='py-24 bg-slate-50 dark:bg-slate-900'>
+    <section id='programs' className='py-24'>
       <div className='container mx-auto px-4'>
         <div className='grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto'>
-          <div>
-            <div className='bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
-              <Building2 className='w-32 h-32 text-blue-400 dark:text-blue-500' />
+          <div className='bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
+            <div className='rounded-2xl p-12 aspect-square flex items-center justify-center'>
+              <Building2 className='w-32 h-32 text-blue-500' />
             </div>
           </div>
           <div>
@@ -65,31 +63,29 @@ export function ProgramsSection() {
               <Building2 className='w-4 h-4' />
               College Programs
             </div>
-            <h2 className='text-4xl font-bold text-slate-900 dark:text-white mb-6'>
+            <H2 className='mb-6'>
               Explore College Programs
-            </h2>
-            <p className='text-lg text-slate-600 dark:text-slate-400 mb-6'>
+            </H2>
+            <P className='text-lg mb-6'>
               Search through hundreds of college basketball programs across all
               divisions. View detailed program information, coaching staff, conference
               affiliations, and academic requirements to find the right fit for your
               basketball journey.
-            </p>
+            </P>
             <ul className='space-y-3 mb-8'>
               {['Comprehensive program information', 'Filter by division, state, and conference', 'Direct contact information for coaching staff'].map((item, i) => (
                 <li key={i} className='flex items-start gap-3'>
-                  <div className='w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0 mt-0.5'>
-                    <Check className='w-4 h-4 text-blue-600 dark:text-blue-500' />
+                  <div className='w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-blue-500'>
+                    <Check className='w-4 h-4 text-accent' />
                   </div>
-                  <span className='text-slate-700 dark:text-slate-300'>{item}</span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <Link href='/programs'>
-              <Button size='lg' className='bg-blue-600 hover:bg-blue-700 cursor-pointer'>
-                Explore Programs
-                <ArrowRight className='ml-2 w-4 h-4' />
-              </Button>
-            </Link>
+            <ButtonLink href='/programs' size='lg' variant='blue'>
+              Explore Programs
+              <ArrowRight className='ml-2 w-4 h-4' />
+            </ButtonLink>
           </div>
         </div>
       </div>
@@ -99,42 +95,40 @@ export function ProgramsSection() {
 
 export function TournamentsSection() {
   return (
-    <section id='tournaments' className='py-24 bg-white dark:bg-slate-800'>
+    <section id='tournaments' className='py-24 bg-accent'>
       <div className='container mx-auto px-4'>
         <div className='grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto'>
           <div className='order-2 md:order-1'>
             <div className='inline-flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full text-sm font-medium mb-4'>
               <Trophy className='w-4 h-4' />
-              Tournaments
+              AAU Tournaments
             </div>
-            <h2 className='text-4xl font-bold text-slate-900 dark:text-white mb-6'>
+            <H2 className='mb-6'>
               Track Tournament Schedules
-            </h2>
-            <p className='text-lg text-slate-600 dark:text-slate-400 mb-6'>
-              Stay updated on upcoming tournaments and exposure events. See which
+            </H2>
+            <p className='text-lg mb-6'>
+              Stay updated on upcoming AAU tournaments and exposure events. See which
               players are attending, find the best opportunities to scout talent, and
               plan your recruiting calendar around major showcase events.
             </p>
             <ul className='space-y-3 mb-8'>
               {['Complete tournament calendar with dates and locations', 'See which players are attending each event', 'Plan your recruiting schedule efficiently'].map((item, i) => (
                 <li key={i} className='flex items-start gap-3'>
-                  <div className='w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0 mt-0.5'>
-                    <Check className='w-4 h-4 text-purple-600 dark:text-purple-500' />
+                  <div className='w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-purple-500'>
+                    <Check className='w-4 h-4 text-accent' />
                   </div>
-                  <span className='text-slate-700 dark:text-slate-300'>{item}</span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <Link href='/tournaments'>
-              <Button size='lg' className='bg-purple-600 hover:bg-purple-700 cursor-pointer'>
-                View Tournaments
-                <ArrowRight className='ml-2 w-4 h-4' />
-              </Button>
-            </Link>
+            <ButtonLink href='/tournaments' size='lg' variant='purple'>
+              View Tournaments
+              <ArrowRight className='ml-2 w-4 h-4' />
+            </ButtonLink>
           </div>
           <div className='order-1 md:order-2'>
             <div className='bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/30 rounded-2xl p-12 aspect-square flex items-center justify-center'>
-              <Trophy className='w-32 h-32 text-purple-400 dark:text-purple-500' />
+              <Trophy className='w-32 h-32 text-purple-500' />
             </div>
           </div>
         </div>
@@ -145,19 +139,19 @@ export function TournamentsSection() {
 
 export function PricingSection() {
   return (
-    <section id='pricing' className='py-24 bg-slate-50 dark:bg-slate-900'>
+    <section id='pricing' className='py-24'>
       <div className='container mx-auto px-4'>
         <div className='text-center mb-16 max-w-3xl mx-auto'>
-          <div className='inline-flex items-center gap-2 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full text-sm font-medium mb-4'>
+          <div className='inline-flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm font-medium mb-4'>
             <DollarSign className='w-4 h-4' />
             Pricing
           </div>
-          <h2 className='text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6'>
+          <H2 className='mb-6'>
             Simple, Transparent Pricing
-          </h2>
-          <p className='text-xl text-slate-600 dark:text-slate-400'>
+          </H2>
+          <P className='text-xl'>
             Get full access to all features and connect with recruits
-          </p>
+          </P>
         </div>
 
         <div className='grid md:grid-cols-2 gap-8 max-w-4xl mx-auto'>
@@ -188,9 +182,9 @@ export function PricingSection() {
                   ))}
                 </ul>
               </div>
-              <Link href='/register-player'>
-                <Button className='w-full bg-orange-600 hover:bg-orange-700 cursor-pointer'>Register as Player</Button>
-              </Link>
+              <ButtonLink href='/register-player' className='w-full'>
+                Register as Player
+              </ButtonLink>
             </div>
           </Card>
 
@@ -221,9 +215,9 @@ export function PricingSection() {
                   ))}
                 </ul>
               </div>
-              <Link href='/register-coach'>
-                <Button className='w-full bg-blue-600 hover:bg-blue-700 cursor-pointer'>Register as Coach</Button>
-              </Link>
+              <ButtonLink href='/register-coach' variant='blue' className='w-full'>
+                Register as Coach
+              </ButtonLink>
             </div>
           </Card>
         </div>

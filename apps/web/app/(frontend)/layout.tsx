@@ -24,7 +24,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang='en' suppressHydrationWarning>
         <body
-          className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased bg-slate-900`}
+          className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
         >
           <Providers>
             <AuthenticatedLayout>{children}</AuthenticatedLayout>

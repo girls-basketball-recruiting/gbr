@@ -1,36 +1,28 @@
-import Link from 'next/link';
-import { Button } from '@workspace/ui/components/button';
+import { Alert, AlertTitle } from '@workspace/ui/components/alert'
+import { Globe2Icon } from 'lucide-react'
+import Link from 'next/link'
 
 interface ProfileLayoutProps {
-  isSubscribed: boolean;
-  role: 'player' | 'coach';
-  currentPeriodEnd: string | null;
-  children: React.ReactNode;
+  role: 'player' | 'coach'
+  children: React.ReactNode
 }
 
-export function ProfileLayout({ isSubscribed, role, currentPeriodEnd, children }: ProfileLayoutProps) {
+export function ProfileLayout({ role, children }: ProfileLayoutProps) {
   return (
-    <div className='min-h-screen bg-slate-50 dark:bg-slate-900'>
-      <div className='max-w-4xl mx-auto px-6 py-12'>
-        {/* Header */}
-        <div className='mb-8 flex justify-between items-center'>
-          <div>
-            <h1 className='text-2xl font-semibold text-slate-900 dark:text-white mb-1'>
-              Your Profile
-            </h1>
-            <p className='text-slate-600 dark:text-slate-400 text-sm'>
-              This is how programs, coaches, and other players see your profile
-            </p>
-          </div>
-          <Link href='/profile/edit'>
-            <Button variant='outline' className='cursor-pointer'>
-              Edit Profile
-            </Button>
-          </Link>
-        </div>
+    <div className='max-w-4xl mx-auto'>
+      <Alert className='mb-4'>
+        <Globe2Icon />
+        <AlertTitle className='flex flex-col xs:flex-row justify-between items-center gap-3'>
+          {role === 'player' ? (
+            <span>This is how programs, coaches, and other players see your profile.</span>
+          ) : (
+            <span>This is how players and other coaches see your profile.</span>
+          )}
+          <Link href='/profile/edit' className='text-primary hover:underline min-w-22'>Edit Profile &rarr;</Link>
+        </AlertTitle>
+      </Alert>
 
-        {children}
-      </div>
+      {children}
     </div>
-  );
+  )
 }

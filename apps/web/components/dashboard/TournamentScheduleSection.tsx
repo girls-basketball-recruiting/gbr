@@ -4,6 +4,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { findById } from '@/lib/payload-helpers'
 import type { Tournament } from '@/payload-types'
 import { Calendar, ExternalLink, MapPin } from 'lucide-react'
+import { ButtonLink } from '../ui/ButtonLink'
 
 interface TournamentScheduleSectionProps {
   playerId: number
@@ -74,10 +75,10 @@ function groupTournaments(tournaments: Tournament[]) {
 // Tournament card component
 function TournamentCard({ tournament }: { tournament: Tournament }) {
   return (
-    <div className="group relative bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800/40 dark:to-slate-800/20 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:border-orange-500/50 dark:hover:border-orange-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/10">
+    <div className="group relative border rounded-xl p-4 transition-all duration-300 shadow hover:shadow-lg">
       <div className="flex gap-4">
         {/* Date Badge */}
-        <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex flex-col items-center justify-center text-white shadow-lg shadow-orange-500/20">
+        <div className="flex-shrink-0 w-16 h-16 rounded-lg flex flex-col items-center justify-center shadow-lg">
           <div className="text-[10px] font-bold uppercase tracking-wider opacity-90">
             {formatDayOfWeek(tournament.startDate)}
           </div>
@@ -91,16 +92,16 @@ function TournamentCard({ tournament }: { tournament: Tournament }) {
 
         {/* Tournament Info */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-bold text-slate-900 dark:text-white text-base mb-1 truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+          <h4 className="font-bold text-base mb-1 truncate transition-colors">
             {tournament.name}
           </h4>
-          <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400 mb-1">
+          <div className="flex items-center gap-1.5 text-sm mb-1">
             <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="truncate">
               {tournament.city}, {tournament.state}
             </span>
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-500 font-medium">
+          <div className="text-xs font-medium">
             {formatDateRange(tournament.startDate, tournament.endDate)}
           </div>
         </div>
@@ -113,7 +114,7 @@ function TournamentCard({ tournament }: { tournament: Tournament }) {
             rel="noopener noreferrer"
             className="flex-shrink-0 self-start opacity-0 group-hover:opacity-100 transition-opacity"
           >
-            <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors">
               <ExternalLink className="w-4 h-4" />
             </div>
           </a>
@@ -130,11 +131,11 @@ function PeriodSection({ title, tournaments }: { title: string; tournaments: Tou
   return (
     <div className="mb-8 last:mb-0">
       <div className="flex items-center gap-3 mb-4">
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
-        <h3 className="text-sm font-black uppercase tracking-wider text-orange-600 dark:text-orange-500">
+        <div className="h-px flex-1" />
+        <h3 className="text-sm font-black uppercase tracking-wider">
           {title}
         </h3>
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
+        <div className="h-px flex-1" />
       </div>
       <div className="space-y-3">
         {tournaments.map((tournament) => (
@@ -152,7 +153,7 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
   if (!player) {
     return (
       <EmptyState
-        icon={<Calendar className="w-12 h-12 text-slate-400 dark:text-slate-600" />}
+        icon={<Calendar className="w-8 h-8" />}
         title="Player Not Found"
         description="Unable to load tournament schedule"
       />
@@ -177,15 +178,13 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
   if (upcomingTournaments.length === 0) {
     return (
       <EmptyState
-        icon={<Calendar className="w-12 h-12 text-slate-400 dark:text-slate-600" />}
+        icon={<Calendar className="w-8 h-8" />}
         title="No Tournaments Scheduled Yet"
         description="Mark tournaments you're planning to attend to keep track of your schedule"
         action={
-          <Link href="/tournaments">
-            <Button className="mt-4 bg-orange-500 hover:bg-orange-600 text-white cursor-pointer shadow-lg shadow-orange-500/30">
-              Browse All Tournaments
-            </Button>
-          </Link>
+          <ButtonLink href="/tournaments" className='mt-4'>
+            Browse All Tournaments
+          </ButtonLink>
         }
       />
     )
@@ -203,14 +202,9 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
 
       {/* View All Link */}
       <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <Link href="/tournaments">
-          <Button
-            variant="outline"
-            className="w-full cursor-pointer border-orange-500/30 text-orange-600 dark:text-orange-500 hover:bg-orange-500/10 hover:border-orange-500"
-          >
-            View All Tournaments
-          </Button>
-        </Link>
+        <ButtonLink href="/tournaments" variant="outline" className='w-full'>
+          View All Tournaments
+        </ButtonLink>
       </div>
     </div>
   )

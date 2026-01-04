@@ -59,7 +59,7 @@ export function ActiveFilterChips() {
           size='sm'
           onClick={() => removeFilter(filter.key)}
           disabled={isPending}
-          className='border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 h-7 px-2'
+          className='h-7 px-2'
         >
           <span className='text-xs'>
             {filter.label}: {formatValue(filter.key, filter.value!)}

@@ -116,20 +116,17 @@ export function TournamentAttendeesTable({ attendees }: TournamentAttendeesTable
           <Link
             key={attendee.id}
             href={attendee.profileUrl}
-            className='block p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors'
+            className='block p-4 py-2 rounded-lg border transition-colors'
           >
             <div className='flex items-center justify-between'>
               <div>
-                <p className='font-semibold text-slate-900 dark:text-white'>
+                <p className='font-semibold'>
                   {attendee.name}
                 </p>
-                <p className='text-sm text-slate-600 dark:text-slate-400'>
+                <p className='text-sm'>
                   {attendee.detail}
                 </p>
               </div>
-              <span className='text-sm text-blue-600 dark:text-blue-400'>
-                View Profile →
-              </span>
             </div>
           </Link>
         ))}

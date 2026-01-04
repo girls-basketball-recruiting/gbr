@@ -26,6 +26,11 @@ import {
   SidebarRail,
 } from '@workspace/ui/components/sidebar'
 import { NavUser } from './NavUser'
+import { P, Small } from './ui/typography'
+
+// Regex patterns for detecting coach routes
+const NESTED_COACH_ROUTE_PATTERN = /^\/programs\/\d+\/coaches\/\d+/
+const OLD_COACH_ROUTE_PATTERN = /^\/coaches\/\d+/
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
@@ -125,16 +130,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size='lg' asChild>
               <Link href='/'>
-                <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-blue-600 text-white'>
-                  <span className='font-bold'>GB</span>
-                </div>
-                <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>
+                <div className='grid flex-1'>
+                  <P className='text-sm font-semibold text-accent-foreground'>
                     Girls Basketball Recruiting
-                  </span>
-                  <span className='truncate text-xs'>
+                  </P>
+                  <Small className='text-xs font-bold text-muted-foreground'>
                     Database
-                  </span>
+                  </Small>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -147,20 +149,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname === item.url}
-                      tooltip={item.title}
-                    >
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {navItems.map((item) => {
+                  // Check if this nav item should be active
+                  let isActive = pathname === item.url || pathname.startsWith(item.url + '/')
+
+                  // Special case: /programs/[id]/coaches/[id] should highlight "College Programs"
+                  // Also keep the old /coaches/[id] pattern for backwards compatibility during transition
+                  if (item.url === '/programs') {
+                    const isNestedCoachRoute = NESTED_COACH_ROUTE_PATTERN.test(pathname)
+                    const isOldCoachRoute = OLD_COACH_ROUTE_PATTERN.test(pathname)
+                    if (isNestedCoachRoute || isOldCoachRoute) {
+                      isActive = true
+                    }
+                  }
+
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                      >
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

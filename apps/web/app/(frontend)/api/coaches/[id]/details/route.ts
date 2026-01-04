@@ -4,10 +4,28 @@ import {
   apiSuccess,
   apiValidationError,
   apiForbidden,
+  apiNotFound,
   handleApiError,
 } from '@/lib/api-helpers'
-import { updateById } from '@/lib/payload-helpers'
+import { findById, updateById } from '@/lib/payload-helpers'
 import { uploadProfileImage } from '@/lib/blob-storage'
+
+/**
+ * Get coach by ID (public)
+ */
+export const GET = handleApiError(async (
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) => {
+  const { id } = await params
+
+  const coach = await findById('coaches', parseInt(id))
+  if (!coach) {
+    return apiNotFound('Coach not found')
+  }
+
+  return apiSuccess({ coach })
+})
 
 /**
  * Update coach profile

@@ -91,7 +91,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
   }
 
   return (
-    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8'>
+    <Card className='p-8'>
       <form onSubmit={form.handleSubmit}>
         <FieldSet>
           <FieldLegend className='mb-6'>Prospect Information</FieldLegend>
@@ -229,7 +229,7 @@ export function ProspectForm({ coachId }: ProspectFormProps) {
               </Button>
               <Button
                 type='submit'
-                className='flex-1 bg-purple-600 hover:bg-purple-700'
+                className='flex-1'
                 disabled={form.isSubmitting}
               >
                 {form.isSubmitting ? 'Creating...' : 'Create Prospect'}

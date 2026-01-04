@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Check, X, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@workspace/ui/lib/utils'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -17,7 +17,7 @@ import {
   CommandItem,
   CommandList,
 } from '@workspace/ui/components/command'
-import { Badge } from '@workspace/ui/components/badge'
+import { Checkbox } from '@workspace/ui/components/checkbox'
 
 export interface MultiSelectOption {
   label: string
@@ -52,10 +52,10 @@ export function MultiSelect({
     onChange(newSelected)
   }
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onChange([])
-  }
+  // const handleClear = (e: React.MouseEvent) => {
+  //   e.stopPropagation()
+  //   onChange([])
+  // }
 
   const selectedOptions = options.filter((option) =>
     selected.includes(option.value)
@@ -63,13 +63,13 @@ export function MultiSelect({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className='hover:bg-white'>
         <Button
           variant='outline'
           role='combobox'
           aria-expanded={open}
           className={cn(
-            'w-full justify-between h-9 font-normal',
+            'w-full justify-between',
             className
           )}
         >
@@ -85,12 +85,6 @@ export function MultiSelect({
             )}
           </div>
           <div className='flex items-center gap-1'>
-            {selected.length > 0 && (
-              <X
-                className='h-4 w-4 shrink-0 opacity-50 hover:opacity-100'
-                onClick={handleClear}
-              />
-            )}
             <ChevronDown className='h-4 w-4 shrink-0 opacity-50' />
           </div>
         </Button>
@@ -109,16 +103,7 @@ export function MultiSelect({
                     value={option.value}
                     onSelect={() => handleSelect(option.value)}
                   >
-                    <div
-                      className={cn(
-                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                        isSelected
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible'
-                      )}
-                    >
-                      <Check className={cn('h-4 w-4')} />
-                    </div>
+                    <Checkbox checked={isSelected} />
                     <span>{option.label}</span>
                   </CommandItem>
                 )

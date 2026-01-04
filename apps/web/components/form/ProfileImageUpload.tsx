@@ -71,7 +71,7 @@ export function ProfileImageUpload({
   }
 
   return (
-    <Field className="gap-2">
+    <Field className="gap-1">
       <FieldLabel>
         {label}
         {required && <span className="ml-1 text-red-600 dark:text-red-400" aria-label="required">*</span>}

@@ -73,13 +73,13 @@ export function TournamentsPageContent({
   return (
     <>
       {/* Filter Tabs */}
-      <div className='mb-6 flex gap-2 border-b border-slate-300 dark:border-slate-700'>
+      <div className='mb-6 flex gap-2 border-b'>
         <button
           onClick={() => handleFilterChange('upcoming')}
           className={`px-4 py-2 font-medium transition-colors border-b-2 ${
             activeFilter === 'upcoming'
-              ? 'text-orange-600 dark:text-orange-500 border-orange-600 dark:border-orange-500'
-              : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-300'
+              ? 'border-current'
+              : 'border-transparent'
           }`}
         >
           Upcoming
@@ -88,8 +88,8 @@ export function TournamentsPageContent({
           onClick={() => handleFilterChange('past')}
           className={`px-4 py-2 font-medium transition-colors border-b-2 ${
             activeFilter === 'past'
-              ? 'text-orange-600 dark:text-orange-500 border-orange-600 dark:border-orange-500'
-              : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-300'
+              ? 'border-current'
+              : 'border-transparent'
           }`}
         >
           Past
@@ -98,8 +98,8 @@ export function TournamentsPageContent({
           onClick={() => handleFilterChange('all')}
           className={`px-4 py-2 font-medium transition-colors border-b-2 ${
             activeFilter === 'all'
-              ? 'text-orange-600 dark:text-orange-500 border-orange-600 dark:border-orange-500'
-              : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-300'
+              ? 'border-current'
+              : 'border-transparent'
           }`}
         >
           All
@@ -108,7 +108,7 @@ export function TournamentsPageContent({
 
       {/* Results count */}
       <div className='mb-6'>
-        <p className='text-slate-600 dark:text-slate-400'>
+        <p>
           {localTournaments.length}{' '}
           {localTournaments.length === 1 ? 'tournament' : 'tournaments'}
         </p>

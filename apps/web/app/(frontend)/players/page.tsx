@@ -5,6 +5,8 @@ import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import { PlayersList } from './PlayersList'
 import { PageLoadingState } from '@/components/PageLoadingState'
+import { H1 } from '@/components/ui/typography/H1'
+import { MutedText } from '@/components/ui/typography/MutedText'
 
 interface PlayersPageProps {
   searchParams: Promise<{
@@ -30,17 +32,15 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   return (
     <>
       {isLoggedOut && <PublicNav activePage='players' />}
-      <div className='min-h-screen bg-slate-50 dark:bg-slate-900'>
-        <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
+      <div>
+        <div className={isLoggedOut ? 'py-12 px-4' : 'px-8'}>
           <div className='max-w-7xl mx-auto'>
             {/* Header */}
             <div className='mb-8'>
-              <h1 className='text-4xl font-bold mb-2 text-slate-900 dark:text-white'>
-                Browse Players
-              </h1>
-              <p className='text-slate-600 dark:text-slate-400'>
+              <H1 className='mb-6'>Browse Players</H1>
+              <MutedText className='text-center text-xl'>
                 Find talented recruits and save them to your board
-              </p>
+              </MutedText>
             </div>
 
             {/* Unauthenticated CTA */}

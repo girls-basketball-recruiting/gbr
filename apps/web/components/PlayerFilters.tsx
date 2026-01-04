@@ -194,13 +194,13 @@ export function PlayerFilters() {
   ].filter(Boolean).length
 
   return (
-    <div className='bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-5 mb-6'>
+    <div className='rounded-lg p-5 mb-6 bg-accent'>
       <div className='flex flex-col gap-5'>
         {/* Basic Info & Location */}
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
           {/* Graduation Year */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+          <div className='space-y-0.5'>
+            <Label className='text-sm font-medium'>
               Graduation Year
             </Label>
             <MultiSelect
@@ -208,14 +208,13 @@ export function PlayerFilters() {
               selected={graduationYears}
               onChange={(values) => handleMultiSelectChange('graduationYears', values)}
               placeholder='All Years'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
               searchPlaceholder='Search years...'
             />
           </div>
 
           {/* Position */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+          <div className='space-y-0.5'>
+            <Label className='text-sm font-medium'>
               Position
             </Label>
             <MultiSelect
@@ -223,14 +222,13 @@ export function PlayerFilters() {
               selected={positions}
               onChange={(values) => handleMultiSelectChange('positions', values)}
               placeholder='All Positions'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
               searchPlaceholder='Search positions...'
             />
           </div>
 
           {/* State */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+          <div className='space-y-0.5'>
+            <Label className='text-sm font-medium'>
               State
             </Label>
             <MultiSelect
@@ -238,14 +236,13 @@ export function PlayerFilters() {
               selected={states}
               onChange={(values) => handleMultiSelectChange('states', values)}
               placeholder='All States'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
               searchPlaceholder='Search states...'
             />
           </div>
 
           {/* City */}
-          <div className='space-y-2'>
-            <Label htmlFor='city' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+          <div className='space-y-0.5'>
+            <Label htmlFor='city' className='text-sm font-medium'>
               City
             </Label>
             <Input
@@ -254,7 +251,7 @@ export function PlayerFilters() {
               placeholder='Enter city name'
               value={city}
               onChange={(e) => handleTextChange('city', e.target.value)}
-              className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'
+              className='w-full bg-white border-gray'
             />
           </div>
         </div>
@@ -262,8 +259,8 @@ export function PlayerFilters() {
         {/* Preferences */}
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
           {/* Desired Levels */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+          <div className='space-y-0.5'>
+            <Label className='text-sm font-medium'>
               Desired College Level
             </Label>
             <MultiSelect
@@ -271,14 +268,13 @@ export function PlayerFilters() {
               selected={desiredLevels}
               onChange={(values) => handleMultiSelectChange('desiredLevels', values)}
               placeholder='Any Level'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
               searchPlaceholder='Search levels...'
             />
           </div>
 
           {/* Desired Distance */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+          <div className='space-y-0.5'>
+            <Label className='text-sm font-medium'>
               Distance from Home
             </Label>
             <MultiSelect
@@ -286,14 +282,13 @@ export function PlayerFilters() {
               selected={desiredDistances}
               onChange={(values) => handleMultiSelectChange('desiredDistances', values)}
               placeholder='Any Distance'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
               searchPlaceholder='Search distance...'
             />
           </div>
 
           {/* AAU Circuit */}
-          <div className='space-y-2'>
-            <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+          <div className='space-y-0.5'>
+            <Label className='text-sm font-medium'>
               AAU Circuit
             </Label>
             <MultiSelect
@@ -301,7 +296,6 @@ export function PlayerFilters() {
               selected={aauCircuits}
               onChange={(values) => handleMultiSelectChange('aauCircuits', values)}
               placeholder='All Circuits'
-              className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
               searchPlaceholder='Search circuits...'
             />
           </div>
@@ -309,8 +303,8 @@ export function PlayerFilters() {
           {/* Height Range */}
           <div>
             <RangeSlider
-              min={60}
-              max={90}
+              min={48}
+              max={96}
               step={1}
               value={heightRange}
               onValueChange={handleHeightRangeChange}
@@ -339,7 +333,7 @@ export function PlayerFilters() {
           <div>
             <RangeSlider
               min={0}
-              max={40}
+              max={50}
               step={0.5}
               value={ppgRange}
               onValueChange={handlePpgRangeChange}
@@ -352,7 +346,7 @@ export function PlayerFilters() {
           <div>
             <RangeSlider
               min={0}
-              max={20}
+              max={50}
               step={0.5}
               value={rpgRange}
               onValueChange={handleRpgRangeChange}
@@ -365,7 +359,7 @@ export function PlayerFilters() {
           <div>
             <RangeSlider
               min={0}
-              max={15}
+              max={50}
               step={0.5}
               value={apgRange}
               onValueChange={handleApgRangeChange}

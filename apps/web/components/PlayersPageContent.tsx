@@ -6,7 +6,7 @@ import { PlayerCard } from './ui/PlayerCard'
 import { PlayersTable } from './PlayersTable'
 import { SavePlayerButton } from './SavePlayerButton'
 import { EmptyState } from './ui/EmptyState'
-import { Pagination } from './Pagination'
+import { URLPagination } from './URLPagination'
 import { useViewPreference } from '@/hooks/useViewPreference'
 
 interface PlayersPageContentProps {
@@ -79,7 +79,7 @@ export function PlayersPageContent({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className='mt-8'>
-          <Pagination
+          <URLPagination
             currentPage={currentPage}
             totalPages={totalPages}
           />

@@ -1,9 +1,8 @@
-import { Button } from '@workspace/ui/components/button'
-import Link from 'next/link'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ProgramCard } from '@/components/ui/ProgramCard'
 import { findAll } from '@/lib/payload-helpers'
 import type { College } from '@/payload-types'
+import { ButtonLink } from '../ui/ButtonLink'
 
 export async function SavedProgramsSection({ playerId }: { playerId: number }) {
   const savedPrograms = await findAll('player-saved-programs', {
@@ -23,9 +22,9 @@ export async function SavedProgramsSection({ playerId }: { playerId: number }) {
           title='No Saved Programs Yet'
           description="You haven't saved any college programs yet. Browse all programs to find your perfect fit!"
           action={
-            <Link href='/programs'>
-              <Button className='mt-4 bg-blue-600 hover:bg-blue-700 cursor-pointer'>Browse All Programs</Button>
-            </Link>
+            <ButtonLink href='/programs' variant='secondary'>
+              Browse All Programs
+            </ButtonLink>
           }
         />
       ) : (

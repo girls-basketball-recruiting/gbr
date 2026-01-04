@@ -3,6 +3,7 @@
 import { ReactNode } from 'react'
 import { ViewToggle } from './ViewToggle'
 import { PageSizeSelector } from './PageSizeSelector'
+import { MutedText } from './ui/typography/MutedText'
 
 interface ListPageToolbarProps {
   totalCount: number
@@ -21,10 +22,10 @@ export function ListPageToolbar({
 }: ListPageToolbarProps) {
   return (
     <div className='flex items-center justify-between mb-6'>
-      <p className='text-slate-600 dark:text-slate-400'>
+      <MutedText className=''>
         {totalCount.toLocaleString()} {itemLabel}
         {totalCount !== 1 && 's'}
-      </p>
+      </MutedText>
       <div className='flex items-center gap-3'>
         <PageSizeSelector />
         {sortSelector}

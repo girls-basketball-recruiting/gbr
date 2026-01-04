@@ -28,7 +28,7 @@ export function ProgramSortSelector() {
 
   return (
     <Select value={sortBy} onValueChange={handleSortChange}>
-      <SelectTrigger className='w-[180px] bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'>
+      <SelectTrigger className='w-36 border-gray' size='sm'>
         <SelectValue placeholder='Sort by' />
       </SelectTrigger>
       <SelectContent>

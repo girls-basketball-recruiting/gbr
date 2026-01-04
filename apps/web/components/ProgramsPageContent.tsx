@@ -4,7 +4,7 @@ import { ListPageToolbar } from './ListPageToolbar'
 import { ProgramCard } from './ui/ProgramCard'
 import { ProgramsTable } from './ProgramsTable'
 import { EmptyState } from './ui/EmptyState'
-import { Pagination } from './Pagination'
+import { URLPagination } from './URLPagination'
 import { ProgramSortSelector } from './ProgramSortSelector'
 import { useViewPreference } from '@/hooks/useViewPreference'
 
@@ -50,7 +50,7 @@ export function ProgramsPageContent({
       ) : view === 'table' ? (
         <ProgramsTable programs={programs} savedProgramIds={savedProgramIds} isPlayer={isPlayer} />
       ) : (
-        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <div className='flex flex-wrap gap-5'>
           {programs.map((program) => (
             <ProgramCard
               key={program.id}
@@ -65,7 +65,7 @@ export function ProgramsPageContent({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className='mt-8'>
-          <Pagination
+          <URLPagination
             currentPage={currentPage}
             totalPages={totalPages}
           />

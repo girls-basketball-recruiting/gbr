@@ -2,6 +2,7 @@
 
 import { LayoutGrid, List } from 'lucide-react'
 import { Button } from '@workspace/ui/components/button'
+import { ButtonGroup } from '@workspace/ui/components/button-group'
 import { cn } from '@workspace/ui/lib/utils'
 
 interface ViewToggleProps {
@@ -11,35 +12,31 @@ interface ViewToggleProps {
 
 export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
-    <div className='flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1'>
+    <ButtonGroup>
       <Button
-        variant='ghost'
+        variant='outline'
         size='sm'
         onClick={() => onViewChange('grid')}
         className={cn(
           'h-8 w-8 p-0',
-          view === 'grid'
-            ? 'bg-white dark:bg-slate-700 shadow-sm'
-            : 'hover:bg-slate-200 dark:hover:bg-slate-700',
+          view === 'grid' && 'bg-accent dark:bg-accent'
         )}
         aria-label='Grid view'
       >
         <LayoutGrid className='w-4 h-4' />
       </Button>
       <Button
-        variant='ghost'
+        variant='outline'
         size='sm'
         onClick={() => onViewChange('table')}
         className={cn(
           'h-8 w-8 p-0',
-          view === 'table'
-            ? 'bg-white dark:bg-slate-700 shadow-sm'
-            : 'hover:bg-slate-200 dark:hover:bg-slate-700',
+          view === 'table' && 'bg-accent dark:bg-accent'
         )}
         aria-label='Table view'
       >
         <List className='w-4 h-4' />
       </Button>
-    </div>
+    </ButtonGroup>
   )
 }

@@ -1,6 +1,9 @@
 import { Card } from '@workspace/ui/components/card'
 import { createCheckoutSession, createPortalSession } from '@/actions/stripe-actions'
 import { SubscriptionActionButton } from './SubscriptionActionButton'
+import { H2 } from './ui/typography/H2'
+import { P } from './ui/typography/P'
+import { Small } from './ui/typography/Small'
 
 interface SubscriptionCardProps {
   isSubscribed: boolean
@@ -14,21 +17,19 @@ export function SubscriptionCard({
   role,
 }: SubscriptionCardProps) {
   return (
-    <Card className='p-6 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 mb-8'>
+    <Card className='p-6 mb-8'>
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
         <div>
-          <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
-            Subscription
-          </h2>
-          <p className='text-slate-600 dark:text-slate-400'>
+          <H2>Subscription</H2>
+          <P>
             {isSubscribed
               ? `You are subscribed to the ${role === 'coach' ? 'Coach' : 'Player'} Pro plan.`
               : `Upgrade to ${role === 'coach' ? 'Coach' : 'Player'} Pro to unlock all features.`}
-          </p>
+          </P>
           {isSubscribed && currentPeriodEnd && (
-            <p className='text-sm text-slate-500 mt-1'>
+            <Small>
               Renews on {new Date(currentPeriodEnd).toLocaleDateString()}
-            </p>
+            </Small>
           )}
         </div>
         <SubscriptionActionButton

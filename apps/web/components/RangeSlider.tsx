@@ -31,8 +31,8 @@ export function RangeSlider({
     <div className={cn('space-y-3', className)}>
       {label && (
         <div className='flex items-center justify-between'>
-          <span className='text-sm font-medium text-slate-900 dark:text-white'>{label}</span>
-          <span className='text-sm text-slate-600 dark:text-slate-400'>
+          <span className='text-sm font-medium'>{label}</span>
+          <span className='text-sm'>
             {format(value[0])} - {format(value[1])}
           </span>
         </div>
@@ -56,7 +56,7 @@ export function RangeSlider({
         className='w-full'
       />
 
-      <div className='flex items-center justify-between text-xs text-slate-500 dark:text-slate-500'>
+      <div className='flex items-center justify-between text-xs'>
         <span>{format(min)}</span>
         <span>{format(max)}</span>
       </div>

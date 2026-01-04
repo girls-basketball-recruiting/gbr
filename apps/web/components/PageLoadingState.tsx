@@ -6,8 +6,8 @@ interface PageLoadingStateProps {
 
 export function PageLoadingState({ message = 'Loading...' }: PageLoadingStateProps) {
   return (
-    <div className='flex items-center justify-center min-h-[calc(100vh-4rem)]'>
-      <LoadingSpinner size='lg' text={message} />
+    <div className='flex items-center justify-center mt-20'>
+      <LoadingSpinner text={message} />
     </div>
   )
 }

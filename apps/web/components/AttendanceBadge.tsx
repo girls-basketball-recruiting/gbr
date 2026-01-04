@@ -9,14 +9,12 @@ interface AttendanceBadgeProps {
   tournamentId: number
   isAttending: boolean
   size?: 'sm' | 'lg'
-  variant?: 'default' | 'outline'
 }
 
 export function AttendanceBadge({
   tournamentId,
   isAttending: initialIsAttending,
   size = 'sm',
-  variant = 'default',
 }: AttendanceBadgeProps) {
   const router = useRouter()
   const [isAttending, setIsAttending] = useState(initialIsAttending)
@@ -52,12 +50,7 @@ export function AttendanceBadge({
       onClick={handleToggle}
       disabled={isLoading}
       size={size}
-      variant={isAttending ? 'outline' : variant}
-      className={
-        isAttending
-          ? 'border-green-500 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/10'
-          : ''
-      }
+      variant={isAttending ? 'green' : 'secondary'}
     >
       {isAttending ? (
         <>

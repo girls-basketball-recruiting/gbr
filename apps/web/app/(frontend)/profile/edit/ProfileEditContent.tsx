@@ -5,6 +5,7 @@ import { FormPageLayout } from '@/components/ui/FormPageLayout'
 import { getAuthContext } from '@/lib/auth-context'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { P } from '@/components/ui/typography'
 
 export async function ProfileEditContent() {
   const { clerkUser, dbUser } = await getAuthContext()
@@ -16,8 +17,8 @@ export async function ProfileEditContent() {
 
   if (!isPlayer && !isCoach) {
     return (
-      <div className='min-h-svh bg-slate-900 flex items-center justify-center'>
-        <p className='text-white'>User has no roles assigned.</p>
+      <div className='min-h-svh flex items-center justify-center'>
+        <P>User has no roles assigned.</P>
       </div>
     )
   }
@@ -68,7 +69,7 @@ export async function ProfileEditContent() {
 
     return (
       <FormPageLayout
-        title='Edit Your Coach Profile'
+        title='Edit Coach Profile'
         description='Keep your information up to date for recruits'
         maxWidth='sm'
       >

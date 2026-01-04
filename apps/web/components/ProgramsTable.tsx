@@ -37,12 +37,12 @@ export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer 
           <div className='flex items-center gap-2'>
             <Link
               href={`/programs/${row.original.id}`}
-              className='font-medium text-blue-600 dark:text-blue-400 hover:underline'
+              className='font-medium text-primary hover:underline'
             >
               {school}
             </Link>
             {hasCoach && (
-              <BadgeCheck className='w-4 h-4 text-blue-500 dark:text-blue-400' />
+              <BadgeCheck className='w-4 h-4' />
             )}
           </div>
         )
@@ -54,7 +54,7 @@ export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer 
       cell: ({ row }) => {
         const division = row.getValue('division') as string
         return (
-          <span className='text-slate-600 dark:text-slate-400'>
+          <span>
             {divisionLabels[division] || division}
           </span>
         )
@@ -67,7 +67,7 @@ export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer 
         const city = row.original.city
         const state = row.original.state
         return (
-          <span className='text-slate-600 dark:text-slate-400'>
+          <span>
             {city}, {state}
           </span>
         )
@@ -79,7 +79,7 @@ export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer 
       cell: ({ row }) => {
         const type = row.getValue('type') as string
         return (
-          <span className='text-slate-600 dark:text-slate-400 capitalize'>
+          <span className='capitalize'>
             {type}
           </span>
         )
@@ -91,7 +91,7 @@ export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer 
       cell: ({ row }) => {
         const conference = row.getValue('conference') as string
         return conference ? (
-          <span className='text-slate-600 dark:text-slate-400'>{conference}</span>
+          <span>{conference}</span>
         ) : null
       },
     },
@@ -125,9 +125,9 @@ export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer 
   })
 
   return (
-    <div className='w-full max-w-2xl rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 overflow-x-scroll'>
-      <Table>
-        <TableHeader>
+    <div className='w-full max-w-full rounded-md border overflow-x-scroll'>
+      <Table className='w-full'>
+        <TableHeader className='pointer-events-none'>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -149,7 +149,6 @@ export function ProgramsTable({ programs, savedProgramIds = new Set(), isPlayer 
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
-                className='hover:bg-slate-50 dark:hover:bg-slate-700/50'
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

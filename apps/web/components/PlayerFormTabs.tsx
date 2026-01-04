@@ -187,8 +187,8 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
 
   if (isLoading && !isEditMode) {
     return (
-      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8'>
-        <p className='text-center text-slate-600 dark:text-slate-400'>
+      <Card className='p-8'>
+        <p className='text-center'>
           Loading your progress...
         </p>
       </Card>
@@ -204,9 +204,9 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
 
   return (
     <div className='max-w-lg mx-auto'>
-      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 py-0 overflow-hidden'>
+      <Card className='py-0 overflow-hidden'>
         <Tabs value={activeTab.toString()} onValueChange={handleTabChange}>
-          <TabsList className='w-full h-auto rounded-none border-b border-slate-200 dark:border-slate-700 bg-transparent p-0'>
+          <TabsList className='w-full h-auto rounded-none border-b p-0'>
             {TABS.map((tab) => {
               const state = getTabState(tab.id)
               const isCompleted = state === 'completed'
@@ -217,21 +217,10 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
                   key={tab.id}
                   value={tab.id.toString()}
                   disabled={isLocked}
-                  className={`
-                    flex-1 px-6 py-4 text-sm font-medium transition-colors
-                    flex items-center gap-2 whitespace-nowrap
-                    rounded-none border-none
-                   data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/10 data-[state=active]:shadow-none
-                    ${isCompleted
-                      ? 'text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                      : isLocked
-                        ? 'text-slate-400 dark:text-slate-600'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                    }
-                  `}
+                  className='flex-1 px-6 py-4 text-sm font-medium transition-colors flex items-center gap-2 whitespace-nowrap rounded-none border-none'
                 >
                   {isCompleted && (
-                    <Check className='w-4 h-4 text-green-600 dark:text-green-400' />
+                    <Check className='w-4 h-4' />
                   )}
                   {isLocked && (
                     <Lock className='w-4 h-4' />

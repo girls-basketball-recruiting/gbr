@@ -9,11 +9,11 @@ interface ProgramsListProps {
     states?: string
     conferences?: string
     type?: string
-    hasCoach?: string
     search?: string
     page?: string
     sortBy?: string
     pageSize?: string
+    hasCoach?: string
   }
 }
 
@@ -98,30 +98,37 @@ export async function ProgramsList({ searchParams }: ProgramsListProps) {
   let totalDocs = totalResult[0]?.count || 0
   let totalPages = Math.ceil(totalDocs / limit)
 
-  // Fetch all coaches to determine which programs have coaches
+  // Fetch all coaches to determine coach counts per college
   const allCoaches = await db
     .select({ collegeId: coachesTable.collegeId })
     .from(coachesTable)
     .where(isNotNull(coachesTable.collegeId))
 
-  const collegeIdsWithCoaches = new Set(
-    allCoaches.map((coach) => coach.collegeId).filter(Boolean)
-  )
+  // Create a map of collegeId -> coach count
+  const collegeIdToCoachCount = new Map<number, number>()
+  allCoaches.forEach((coach) => {
+    if (coach.collegeId) {
+      collegeIdToCoachCount.set(
+        coach.collegeId,
+        (collegeIdToCoachCount.get(coach.collegeId) || 0) + 1
+      )
+    }
+  })
 
   // Filter if hasCoach is set
   let filteredPrograms = programs
   if (searchParams.hasCoach === 'true') {
     filteredPrograms = programs.filter((college) =>
-      collegeIdsWithCoaches.has(college.id)
+      collegeIdToCoachCount.has(college.id) && (collegeIdToCoachCount.get(college.id) || 0) > 0
     )
     totalDocs = filteredPrograms.length
     totalPages = Math.ceil(totalDocs / limit)
   }
 
-  // Add hasCoach flag to each program
+  // Add coachCount to each program
   const programsWithCoachStatus = filteredPrograms.map((college) => ({
     ...college,
-    hasCoach: collegeIdsWithCoaches.has(college.id),
+    coachCount: collegeIdToCoachCount.get(college.id) || 0,
   }))
 
   // Fetch saved programs for current player

@@ -34,7 +34,11 @@
       "Bash(pnpm --filter web run payload:generate-types:*)",
       "Bash(pnpm exec tsc:*)",
       "WebSearch",
-      "WebFetch(domain:clerk.com)"
+      "WebFetch(domain:clerk.com)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm eslint:*)",
+      "Bash(pnpm --filter web typecheck:*)",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": []

@@ -165,14 +165,14 @@ export function ProgramFilters() {
   ].reduce((sum, val) => sum + val, 0)
 
   return (
-    <div className='bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-5 mb-6'>
+    <div className='rounded-lg p-5 mb-6 bg-accent'>
       <div className='flex flex-col gap-5'>
         {/* Main Filters */}
         <div className='grid gap-5'>
-          <div className='grid md:grid-cols-2 gap-5'>
+          <div className='grid md:grid-cols-2 lg:grid-cols-5 gap-5'>
             {/* Search */}
-            <div className='space-y-2'>
-              <Label htmlFor='search' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <div className='space-y-0.5'>
+              <Label htmlFor='search' className='text-sm font-medium'>
                 School Name
               </Label>
               <Input
@@ -181,13 +181,13 @@ export function ProgramFilters() {
                 placeholder='Search schools...'
                 value={filters.search}
                 onChange={(e) => handleTextChange('search', e.target.value)}
-                className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'
+                className='w-full border-gray bg-white'
               />
             </div>
 
             {/* State Filter */}
-            <div className='space-y-2'>
-              <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <div className='space-y-0.5'>
+              <Label className='text-sm font-medium'>
                 State
               </Label>
               <MultiSelect
@@ -195,16 +195,13 @@ export function ProgramFilters() {
                 selected={filters.states}
                 onChange={(values) => handleMultiSelectChange('states', values)}
                 placeholder='All States'
-                className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
                 searchPlaceholder='Search states...'
               />
             </div>
-          </div>
 
-          <div className='grid md:grid-cols-3 gap-5'>
             {/* Division Filter */}
-            <div className='space-y-2'>
-              <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <div className='space-y-0.5'>
+              <Label className='text-sm font-medium'>
                 Division
               </Label>
               <MultiSelect
@@ -212,14 +209,13 @@ export function ProgramFilters() {
                 selected={filters.divisions}
                 onChange={(values) => handleMultiSelectChange('divisions', values)}
                 placeholder='All Divisions'
-                className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
                 searchPlaceholder='Search divisions...'
               />
             </div>
 
             {/* Conference Filter */}
-            <div className='space-y-2'>
-              <Label className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <div className='space-y-0.5'>
+              <Label className='text-sm font-medium'>
                 Conference
               </Label>
               <MultiSelect
@@ -227,21 +223,20 @@ export function ProgramFilters() {
                 selected={filters.conferences}
                 onChange={(values) => handleMultiSelectChange('conferences', values)}
                 placeholder='All Conferences'
-                className='bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white'
                 searchPlaceholder='Search conferences...'
               />
             </div>
 
             {/* Type Filter */}
-            <div className='space-y-2'>
-              <Label htmlFor='type' className='text-slate-600 dark:text-slate-300 text-sm font-medium'>
+            <div className='space-y-0.5'>
+              <Label htmlFor='type' className='text-sm font-medium'>
                 Institution Type
               </Label>
               <Select
                 value={filters.type}
                 onValueChange={(value) => handleSelectChange('type', value)}
               >
-                <SelectTrigger className='w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white h-10'>
+                <SelectTrigger className='w-full border-gray bg-white'>
                   <SelectValue placeholder='All Types' />
                 </SelectTrigger>
                 <SelectContent>
@@ -254,7 +249,7 @@ export function ProgramFilters() {
               </Select>
             </div>
           </div>
-          </div>
+        </div>
 
         {/* Options & Clear */}
         <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
@@ -266,7 +261,7 @@ export function ProgramFilters() {
             />
             <Label
               htmlFor='hasCoach'
-              className='text-slate-600 dark:text-slate-300 cursor-pointer text-sm font-medium'
+              className='text-sm font-medium'
             >
               Only show programs with registered coaches
             </Label>
@@ -275,10 +270,9 @@ export function ProgramFilters() {
           {activeFilterCount > 0 && (
             <Button
               onClick={clearFilters}
-              variant='outline'
-              size='default'
+              variant='destructive'
+              size='sm'
               disabled={isPending}
-              className='h-10'
             >
               <X className='w-4 h-4 mr-2' />
               Clear {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'}

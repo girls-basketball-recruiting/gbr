@@ -98,11 +98,9 @@ export function CoachForm({ profile, mode = 'create', initialFirstName, initialL
   const isLoading = form.isSubmitting || isPending
 
   return (
-    <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8'>
+    <Card className='p-8'>
       <form onSubmit={form.handleSubmit}>
         <FieldSet>
-          <FieldLegend className='mb-6'>Coach Profile</FieldLegend>
-
           {/* Error Alert */}
           {form.error && (
             <Alert variant="destructive" className="mb-6">
@@ -120,14 +118,13 @@ export function CoachForm({ profile, mode = 'create', initialFirstName, initialL
               userType='coach'
             />
 
-            <div className='grid md:grid-cols-2 gap-5'>
+            <div className='grid grid-cols-2 gap-5'>
               <FormTextField
                 control={form.control}
                 name='firstName'
                 label='First Name'
                 required
                 placeholder='Required'
-                fieldWidth='md'
               />
 
               <FormTextField
@@ -136,14 +133,13 @@ export function CoachForm({ profile, mode = 'create', initialFirstName, initialL
                 label='Last Name'
                 required
                 placeholder='Required'
-                fieldWidth='md'
               />
             </div>
 
             <Field className='gap-1'>
               <FieldLabel htmlFor='college'>
                 College
-                <span className='ml-1 text-red-500'>*</span>
+                <span className='ml-1'>*</span>
               </FieldLabel>
               <CollegeCombobox
                 value={form.watch('collegeName')}
@@ -200,7 +196,7 @@ export function CoachForm({ profile, mode = 'create', initialFirstName, initialL
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='flex-1 bg-blue-600 hover:bg-blue-700'
+                className='flex-1'
               >
                 {isLoading
                   ? mode === 'edit'
@@ -210,16 +206,6 @@ export function CoachForm({ profile, mode = 'create', initialFirstName, initialL
                     ? 'Save Changes'
                     : 'Complete Profile'}
               </Button>
-              {mode === 'edit' && (
-                <Button
-                  type='button'
-                  variant='outline'
-                  onClick={() => startTransition(() => router.push('/'))}
-                  disabled={isLoading}
-                >
-                  Cancel
-                </Button>
-              )}
             </div>
           </FieldGroup>
         </FieldSet>

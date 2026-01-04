@@ -1,12 +1,16 @@
 import { redirect } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs/server'
 import { Card } from '@workspace/ui/components/card'
-import { Button } from '@workspace/ui/components/button'
 import { Check, CreditCard, Calendar, AlertCircle } from 'lucide-react'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { PortalButton } from '@/components/portal-button'
-import Link from 'next/link'
+import { ButtonLink } from '@/components/ui/ButtonLink'
+import { H1 } from '@/components/ui/typography/H1'
+import { H2 } from '@/components/ui/typography/H2'
+import { P } from '@/components/ui/typography/P'
+import { MutedText } from '@/components/ui/typography/MutedText'
+import { Small } from '@/components/ui/typography/Small'
 
 export default async function SubscriptionPage() {
   const clerkUser = await currentUser()
@@ -49,56 +53,40 @@ export default async function SubscriptionPage() {
     <div className='max-w-lg p-8'>
       <div className='max-w-4xl mx-auto'>
         <div className='mb-8'>
-          <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
-            Subscription
-          </h1>
-          <p className='text-slate-600 dark:text-slate-400'>
-            Manage your subscription and billing details
-          </p>
+          <H1>Subscription</H1>
+          <P>Manage your subscription and billing details</P>
         </div>
 
         {hasActiveSubscription ? (
           <div className='space-y-6'>
             {/* Current Plan */}
-            <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+            <Card className='p-6'>
               <div className='flex items-start justify-between mb-2'>
                 <div>
-                  <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
-                    {isPlayer ? 'Player Pro' : 'Coach Pro'}
-                  </h2>
-                  <p className='text-slate-600 dark:text-slate-400'>Annual Plan</p>
+                  <H2>{isPlayer ? 'Player Pro' : 'Coach Pro'}</H2>
+                  <P>Annual Plan</P>
                 </div>
-                <div className='flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-600/20 border border-green-200 dark:border-green-500/50 rounded-lg'>
-                  <Check className='w-4 h-4 text-green-600 dark:text-green-400' />
-                  <span className='text-sm font-medium text-green-600 dark:text-green-400'>
-                    Active
-                  </span>
+                <div className='flex items-center gap-2 px-3 py-2 border rounded-lg'>
+                  <Check className='w-4 h-4' />
+                  <span className='text-sm font-medium'>Active</span>
                 </div>
               </div>
 
               <div className='space-y-4 mb-2'>
                 <div className='flex items-start gap-3'>
-                  <CreditCard className='w-5 h-5 text-slate-600 dark:text-slate-400 mt-0.5' />
+                  <CreditCard className='w-5 h-5 mt-0.5' />
                   <div>
-                    <p className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                      Billing Amount
-                    </p>
-                    <p className='text-lg font-semibold text-slate-900 dark:text-white'>
-                      ${price}.00 / year
-                    </p>
+                    <Small>Billing Amount</Small>
+                    <p className='text-lg font-semibold'>${price}.00 / year</p>
                   </div>
                 </div>
 
                 {subscriptionEndDate && (
                   <div className='flex items-start gap-3'>
-                    <Calendar className='w-5 h-5 text-slate-600 dark:text-slate-400 mt-0.5' />
+                    <Calendar className='w-5 h-5 mt-0.5' />
                     <div>
-                      <p className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                        Next Billing Date
-                      </p>
-                      <p className='text-lg font-semibold text-slate-900 dark:text-white'>
-                        {subscriptionEndDate}
-                      </p>
+                      <Small>Next Billing Date</Small>
+                      <p className='text-lg font-semibold'>{subscriptionEndDate}</p>
                     </div>
                   </div>
                 )}
@@ -106,69 +94,62 @@ export default async function SubscriptionPage() {
 
               <div className='space-y-3'>
                 <div className='flex items-start gap-3'>
-                  <Check className='w-5 h-5 text-green-500 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 dark:text-slate-300'>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <P>
                     {isPlayer
                       ? 'Complete player profile with stats and highlights'
                       : 'Unlimited player profile searches'}
-                  </p>
+                  </P>
                 </div>
                 <div className='flex items-start gap-3'>
-                  <Check className='w-5 h-5 text-green-500 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 dark:text-slate-300'>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <P>
                     {isPlayer
                       ? 'Get discovered by college programs'
                       : 'Save and track unlimited prospects'}
-                  </p>
+                  </P>
                 </div>
                 <div className='flex items-start gap-3'>
-                  <Check className='w-5 h-5 text-green-500 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 dark:text-slate-300'>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <P>
                     {isPlayer
                       ? 'Save college programs of interest'
                       : 'Private notes and recruiting pipeline'}
-                  </p>
+                  </P>
                 </div>
                 <div className='flex items-start gap-3'>
-                  <Check className='w-5 h-5 text-green-500 mt-0.5 shrink-0' />
-                  <p className='text-slate-700 dark:text-slate-300'>
-                    Priority support and platform updates
-                  </p>
+                  <Check className='w-5 h-5 mt-0.5 shrink-0' />
+                  <P>Priority support and platform updates</P>
                 </div>
               </div>
 
-              <div className='mt-2 pt-6 border-t border-slate-200 dark:border-slate-700'>
+              <div className='mt-2 pt-6 border-t'>
                 <PortalButton />
-                <p className='text-center text-slate-500 dark:text-slate-400 text-sm mt-3'>
+                <MutedText className='text-center text-sm mt-3'>
                   Update payment method, view invoices, or cancel subscription
-                </p>
+                </MutedText>
               </div>
             </Card>
           </div>
         ) : (
           // No active subscription
-          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+          <Card className='p-6'>
             <div className='flex items-start gap-4 mb-6'>
-              <div className='p-3 bg-orange-50 dark:bg-orange-600/20 rounded-lg'>
-                <AlertCircle className='w-6 h-6 text-orange-600 dark:text-orange-400' />
+              <div className='p-3 rounded-lg'>
+                <AlertCircle className='w-6 h-6' />
               </div>
               <div>
-                <h2 className='text-xl font-bold text-slate-900 dark:text-white mb-2'>
-                  No Active Subscription
-                </h2>
-                <p className='text-slate-600 dark:text-slate-400'>
+                <H2>No Active Subscription</H2>
+                <P>
                   You don&apos;t have an active subscription yet. Subscribe to unlock full
                   access to the platform.
-                </p>
+                </P>
               </div>
             </div>
 
-            <Button
-              className='w-full bg-blue-600 hover:bg-blue-700 text-white'
-              asChild
-            >
-              <Link href='/payment'>Subscribe Now</Link>
-            </Button>
+            <ButtonLink href='/payment' className='w-full'>
+              Subscribe Now
+            </ButtonLink>
           </Card>
         )}
       </div>

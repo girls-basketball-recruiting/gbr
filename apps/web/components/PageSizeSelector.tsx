@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select'
+import { Small } from './ui/typography'
 
 const PAGE_SIZE_OPTIONS = [
   { value: '12', label: '12' },
@@ -30,11 +31,11 @@ export function PageSizeSelector() {
 
   return (
     <div className='flex items-center gap-2'>
-      <span className='text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap'>
+      <Small>
         Per page:
-      </span>
+      </Small>
       <Select value={currentPageSize} onValueChange={handlePageSizeChange}>
-        <SelectTrigger className='w-17.5 h-9'>
+        <SelectTrigger size='sm' className='w-17.5 border-gray'>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

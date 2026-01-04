@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@workspace/ui/components/button'
-import Link from 'next/link'
 import { cn } from '@workspace/ui/lib/utils'
 import { ThemeToggle } from './ThemeToggle'
 import { Menu, X } from 'lucide-react'
+import { ButtonLink } from './ui/ButtonLink'
 
 export function PublicHomeNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -52,7 +51,7 @@ export function PublicHomeNav() {
   ]
 
   return (
-    <header className='sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800'>
+    <header className='sticky top-0 z-50 bg-accent border-b-2'>
       <div className='container mx-auto px-4'>
         <div className='flex items-center justify-between h-16'>
           <button
@@ -83,11 +82,9 @@ export function PublicHomeNav() {
           {/* Desktop Actions */}
           <div className='hidden md:flex items-center gap-2'>
             <ThemeToggle />
-            <Link href='/sign-in'>
-              <Button variant='secondary' size='sm' className='cursor-pointer'>
-                Sign In
-              </Button>
-            </Link>
+            <ButtonLink href='/sign-in' variant='outline' size='sm'>
+              Sign In
+            </ButtonLink>
           </div>
 
           {/* Mobile Menu Button */}
@@ -126,11 +123,15 @@ export function PublicHomeNav() {
                 </button>
               ))}
               <div className='pt-4 px-4 border-t border-slate-200 dark:border-slate-800'>
-                <Link href='/sign-in' onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant='secondary' size='sm' className='w-full cursor-pointer'>
-                    Sign In
-                  </Button>
-                </Link>
+                <ButtonLink
+                  href='/sign-in'
+                  variant='outline'
+                  size='sm'
+                  className='w-full'
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign In
+                </ButtonLink>
               </div>
             </nav>
           </div>

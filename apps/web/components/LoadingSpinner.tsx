@@ -1,4 +1,5 @@
 import { Loader2 } from 'lucide-react'
+import { P } from './ui/typography'
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg'
@@ -13,10 +14,10 @@ export function LoadingSpinner({ size = 'md', text }: LoadingSpinnerProps) {
   }
 
   return (
-    <div className='flex flex-col items-center justify-center py-20'>
-      <Loader2 className={`${sizeClasses[size]} animate-spin text-orange-600 dark:text-orange-500 mb-4`} />
+    <div className='flex flex-col items-center justify-center gap-2'>
+      <Loader2 className={`${sizeClasses[size]} animate-spin`} />
       {text && (
-        <p className='text-slate-600 dark:text-slate-400 text-sm'>{text}</p>
+        <P className='text-sm'>{text}</P>
       )}
     </div>
   )

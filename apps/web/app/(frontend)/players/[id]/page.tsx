@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation'
 import { Card } from '@workspace/ui/components/card'
-import { Button } from '@workspace/ui/components/button'
-import Link from 'next/link'
 import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
 import { CoachNotesSection } from '@/components/CoachNotesSection'
@@ -12,6 +10,7 @@ import { getPositionLabel } from '@/lib/zod/Positions'
 import { formatHeight } from '@/lib/formatters'
 import { findById, findOne, exists } from '@/lib/payload-helpers'
 import { Tournament } from '@/payload-types'
+import { ButtonLink } from '@/components/ui/ButtonLink'
 
 // Generate metadata for SEO
 export async function generateMetadata({
@@ -113,16 +112,16 @@ export default async function PlayerProfilePage({
   // If not authenticated, show limited public view for SEO
   if (!isAuthenticated) {
     return (
-      <div className='min-h-svh bg-slate-50 dark:bg-slate-900 py-12'>
+      <div className='min-h-svh py-12'>
         <div className='container mx-auto px-4 max-w-3xl'>
 
           {/* Public Player Profile */}
-          <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-8 mb-8'>
+          <Card className='p-8 mb-8'>
             <div className='text-center space-y-6'>
               {/* Profile Image */}
               {player.profileImageUrl && (
                 <div className='flex justify-center'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 relative'>
+                  <div className='w-32 h-32 rounded-full overflow-hidden relative'>
                     <Image
                       src={player.profileImageUrl}
                       alt={`${player.firstName} ${player.lastName}`}
@@ -135,19 +134,19 @@ export default async function PlayerProfilePage({
 
               {/* Name */}
               <div>
-                <h1 className='text-4xl font-bold text-slate-900 dark:text-white mb-2'>
+                <h1 className='text-4xl font-bold mb-2'>
                   {player.firstName} {player.lastName}
                 </h1>
-                <p className='text-xl text-slate-600 dark:text-slate-400'>
+                <p className='text-xl'>
                   Class of {player.graduationYear}
                 </p>
               </div>
 
               {/* Limited Info */}
-              <div className='space-y-3 text-slate-700 dark:text-slate-300 max-w-md mx-auto'>
+              <div className='space-y-3 max-w-md mx-auto'>
                 {player.primaryPosition && (
                   <div className='flex items-center justify-center gap-2'>
-                    <span className='text-slate-600 dark:text-slate-400'>Position:</span>
+                    <span>Position:</span>
                     <span className='font-medium'>
                       {getPositionLabel(player.primaryPosition)}
                     </span>
@@ -155,48 +154,40 @@ export default async function PlayerProfilePage({
                 )}
                 {player.highSchool && (
                   <div className='flex items-center justify-center gap-2'>
-                    <span className='text-slate-600 dark:text-slate-400'>School:</span>
+                    <span>School:</span>
                     <span className='font-medium'>{player.highSchool}</span>
                   </div>
                 )}
                 {player.heightInInches && (
                   <div className='flex items-center justify-center gap-2'>
-                    <span className='text-slate-600 dark:text-slate-400'>Height:</span>
+                    <span>Height:</span>
                     <span className='font-medium'>{formatHeight(player.heightInInches)}</span>
                   </div>
                 )}
                 {player.weight && (
                   <div className='flex items-center justify-center gap-2'>
-                    <span className='text-slate-600 dark:text-slate-400'>Weight:</span>
+                    <span>Weight:</span>
                     <span className='font-medium'>{player.weight} lbs</span>
                   </div>
                 )}
               </div>
 
               {/* CTA to Sign Up */}
-              <div className='pt-6 border-t border-slate-200 dark:border-slate-700'>
-                <p className='text-slate-600 dark:text-slate-400 mb-4'>
-                  Sign in to view full profile including stats, highlight videos, and
+              <div className='pt-6 border-t'>
+                <p className='mb-4'>
+                  Sign in or register to view full profile including stats, highlight videos, and
                   contact information
                 </p>
-                <div className='flex flex-col gap-3'>
-                  <Link href='/sign-in' className='w-full cursor-pointer'>
-                    <Button className='w-full bg-blue-600 hover:bg-blue-700'>
-                      Sign In
-                    </Button>
-                  </Link>
-                  <div className='flex gap-3'>
-                    <Link href='/register-player' className='flex-1 cursor-pointer'>
-                      <Button variant='outline' className='w-full border-orange-500 text-orange-500 hover:bg-orange-500/10'>
-                        Register as Player
-                      </Button>
-                    </Link>
-                    <Link href='/register-coach' className='flex-1 cursor-pointer'>
-                      <Button variant='outline' className='w-full border-blue-500 text-blue-500 hover:bg-blue-500/10'>
-                        Register as Coach
-                      </Button>
-                    </Link>
-                  </div>
+                <div className='text-center space-x-3'>
+                  <ButtonLink href='/sign-in' variant='outline'>
+                    Sign In
+                  </ButtonLink>
+                  <ButtonLink href='/register-player'>
+                    Register as Player
+                  </ButtonLink>
+                  <ButtonLink href='/register-coach' variant='secondary'>
+                    Register as Coach
+                  </ButtonLink>
                 </div>
               </div>
             </div>

@@ -148,9 +148,9 @@ export function PlayersTable({
   })
 
   return (
-    <div className='w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 overflow-hidden'>
+    <div className='w-full border rounded-md overflow-hidden'>
       <Table>
-        <TableHeader>
+        <TableHeader className='pointer-events-none'>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (

@@ -1,6 +1,7 @@
 'use client'
 
 import { AuthPageLayout } from '@/components/AuthPageLayout'
+import { H1, P } from '@/components/ui/typography'
 import dynamic from 'next/dynamic'
 
 const DynamicSignIn = dynamic(
@@ -12,19 +13,16 @@ export default function SignInPage() {
   return (
     <AuthPageLayout>
       <div className='text-center mb-8'>
-        <h1 className='text-3xl font-bold text-slate-900 dark:text-white mb-2'>Welcome Back</h1>
-        <p className='text-slate-600 dark:text-slate-400'>Sign in to your account</p>
+        <H1>Welcome Back</H1>
+        <P>Sign in to your account</P>
       </div>
 
       <DynamicSignIn
         appearance={{
           elements: {
             rootBox: 'w-full m-auto',
-            card: 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700',
           },
         }}
-        afterSignInUrl='/'
-        redirectUrl='/'
       />
     </AuthPageLayout>
   )

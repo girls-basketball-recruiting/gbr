@@ -24,7 +24,7 @@ export function PortalButton() {
     <Button
       onClick={handlePortal}
       disabled={isLoading}
-      className='w-full bg-blue-600 hover:bg-blue-700 text-white'
+      className='w-full'
     >
       {isLoading ? (
         <>

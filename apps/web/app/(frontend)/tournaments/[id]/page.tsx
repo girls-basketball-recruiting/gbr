@@ -1,13 +1,15 @@
 import { notFound } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs/server'
-import { Card } from '@workspace/ui/components/card'
-import { Button } from '@workspace/ui/components/button'
 import { Calendar, ExternalLink, Users } from 'lucide-react'
 import type { Metadata } from 'next'
 import { findById, findAll, findOne } from '@/lib/payload-helpers'
 import { AttendanceBadge } from '@/components/AttendanceBadge'
 import { TournamentAttendeesTable } from './TournamentAttendeesTable'
 import { formatDateLocationRange } from '@/lib/format-date-location'
+import { ButtonLink } from '@/components/ui/ButtonLink'
+import { PublicNav } from '@/components/PublicNav'
+import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
+import { H1, H2, P, MutedText, H4 } from '@/components/ui/typography'
 
 // Generate metadata for SEO
 export async function generateMetadata({
@@ -112,103 +114,44 @@ export default async function TournamentDetailPage({
 
   // Check if tournament is in the past
   const isPast = new Date(tournament.endDate) < new Date()
+  const isLoggedOut = !clerkUser
 
   return (
-    <div className='min-h-screen bg-slate-50 dark:bg-slate-900 py-12 px-4'>
-      <div className='container mx-auto max-w-4xl'>
+    <>
+      {isLoggedOut && <PublicNav activePage='tournaments' />}
+      <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
+        <div className='container mx-auto max-w-4xl'>
+          {/* Unauthenticated CTA */}
+          {isLoggedOut && (
+            <div className='mb-8'>
+              <UnauthenticatedCTA
+                title='Join the Tournament Network'
+                description='Create an account to mark your attendance at tournaments, connect with coaches and players, and build your basketball recruiting profile.'
+                variant='premium'
+              />
+            </div>
+          )}
         {/* Main Content */}
         <div className='space-y-8'>
           {/* Title & Location */}
           <div>
-            <h1 className='text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4'>
+            <H1 className='text-4xl text-left md:text-5xl mb-4'>
               {tournament.name}
-            </h1>
+            </H1>
 
-            <div className='flex items-center gap-2 text-lg text-slate-600 dark:text-slate-300'>
-              <Calendar className='w-5 h-5 text-slate-400' />
+            <div className='flex items-center gap-2 text-lg'>
+              <Calendar className='w-5 h-5' />
               <span>{formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}</span>
             </div>
           </div>
 
-          {/* Description */}
-          {tournament.description && (
-            <div className='border-t border-slate-200 dark:border-slate-700 pt-8'>
-              <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-4'>
-                About This Tournament
-              </h2>
-              <p className='text-lg leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>
-                {tournament.description}
-              </p>
-            </div>
-          )}
-
-          {/* Attendance sections - only for authenticated users */}
-          {clerkUser && userRole && (
-            <div className='border-t border-slate-200 dark:border-slate-700 pt-8 space-y-8'>
-              {/* Players Attending */}
-              <div>
-                <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-4'>
-                  {userRole === 'player'
-                    ? `${players.length} ${players.length === 1 ? 'other player' : 'other players'} attending`
-                    : `Players Attending (${players.length})`
-                  }
-                </h2>
-                {players.length > 0 ? (
-                  <TournamentAttendeesTable
-                    attendees={players.map(p => ({
-                      id: p.id,
-                      name: `${p.firstName} ${p.lastName}`,
-                      detail: p.highSchool || 'N/A',
-                      profileUrl: `/players/${p.id}`
-                    }))}
-                  />
-                ) : (
-                  <p className='text-slate-600 dark:text-slate-400'>No players attending yet</p>
-                )}
-              </div>
-
-              {/* Coaches Attending */}
-              {userRole === 'coach' ? (
-                <div>
-                  <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-4'>
-                    {coaches.length} {coaches.length === 1 ? 'other coach' : 'other coaches'} attending
-                  </h2>
-                  {coaches.length > 0 ? (
-                    <TournamentAttendeesTable
-                      attendees={coaches.map(c => ({
-                        id: c.id,
-                        name: `${c.firstName} ${c.lastName}`,
-                        detail: `${c.collegeName} - ${c.jobTitle}`,
-                        profileUrl: `/coaches/${c.id}`
-                      }))}
-                    />
-                  ) : (
-                    <p className='text-slate-600 dark:text-slate-400'>No coaches attending yet</p>
-                  )}
-                </div>
-              ) : (
-                <div className='flex items-center gap-2 text-slate-600 dark:text-slate-400'>
-                  <Users className='w-5 h-5' />
-                  <span>{coaches.length} {coaches.length === 1 ? 'coach' : 'coaches'} attending</span>
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Actions */}
-          <div className='border-t border-slate-200 dark:border-slate-700 pt-8 flex flex-wrap gap-4'>
+          <div className='flex flex-wrap gap-4'>
             {tournament.website && (
-              <a
-                href={tournament.website}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='inline-block'
-              >
-                <Button variant='outline' size='lg'>
-                  <ExternalLink className='w-4 h-4 mr-2' />
-                  Tournament Website
-                </Button>
-              </a>
+              <ButtonLink variant='outline' size='lg' href={tournament.website} isExternal>
+                <ExternalLink className='w-4 h-4 mr-2' />
+                Tournament Website
+              </ButtonLink>
             )}
 
             {currentUserId && userRole && !isPast && (
@@ -219,8 +162,75 @@ export default async function TournamentDetailPage({
               />
             )}
           </div>
+
+          {/* Description */}
+          {tournament.description && (
+            <div className='border-t pt-8'>
+              <MutedText className='uppercase font-extrabold'>
+                About This Tournament
+              </MutedText>
+              <P className='text-lg whitespace-pre-wrap mt-4'>
+                {tournament.description}
+              </P>
+            </div>
+          )}
+
+          {/* Attendance sections - only for authenticated users */}
+          {clerkUser && userRole && (
+            <div className='border-t pt-8 space-y-8'>
+              {/* Players Attending */}
+              <div>
+                <MutedText className='uppercase font-extrabold'>
+                  {userRole === 'player'
+                    ? `${players.length} ${players.length === 1 ? 'other player' : 'other players'} attending`
+                    : `Players Attending (${players.length})`
+                  }
+                </MutedText>
+                {players.length > 0 ? (
+                  <TournamentAttendeesTable
+                    attendees={players.map(p => ({
+                      id: p.id,
+                      name: `${p.firstName} ${p.lastName}`,
+                      detail: p.highSchool || 'N/A',
+                      profileUrl: `/players/${p.id}`
+                    }))}
+                  />
+                ) : (
+                  <P className='mt-4 pb-8 border-b'>No players attending yet</P>
+                )}
+              </div>
+
+              {/* Coaches Attending */}
+              {userRole === 'coach' ? (
+                <div>
+                  <MutedText className='uppercase font-extrabold mb-4'>
+                    {coaches.length} {coaches.length === 1 ? 'other coach' : 'other coaches'} attending
+                  </MutedText>
+                  {coaches.length > 0 ? (
+                    <TournamentAttendeesTable
+                      attendees={coaches.map(c => ({
+                        id: c.id,
+                        name: `${c.firstName} ${c.lastName}`,
+                        detail: `${c.collegeName} - ${c.jobTitle}`,
+                        profileUrl: `/programs/${c.collegeId}/coaches/${c.id}`
+                      }))}
+                    />
+                  ) : (
+                    <P className='text-lg leading-relaxed'>No coaches attending yet</P>
+                  )}
+                </div>
+              ) : (
+                <div className='flex items-center gap-2'>
+                  <Users className='w-5 h-5' />
+                  <span>{coaches.length} {coaches.length === 1 ? 'coach' : 'coaches'} attending</span>
+                </div>
+              )}
+            </div>
+          )}
+
+        </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

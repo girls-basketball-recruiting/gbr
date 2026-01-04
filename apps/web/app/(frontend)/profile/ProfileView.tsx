@@ -7,6 +7,7 @@ import { getAuthContext } from '@/lib/auth-context'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Tournament } from '@/payload-types'
+import { P } from '@/components/ui/typography'
 
 export async function ProfileView() {
   const { clerkUser, dbUser } = await getAuthContext()
@@ -26,7 +27,7 @@ export async function ProfileView() {
     return (
       <div className='p-8'>
         <div className='max-w-3xl mx-auto text-center'>
-          <p className='text-slate-900 dark:text-white'>No profile found. Please contact support.</p>
+          <P>No profile found. Please contact support.</P>
         </div>
       </div>
     )
@@ -61,11 +62,7 @@ export async function ProfileView() {
 
     // Render player profile view
     return (
-      <ProfileLayout
-        isSubscribed={isSubscribed}
-        role="player"
-        currentPeriodEnd={dbUser.stripeCurrentPeriodEnd || null}
-      >
+      <ProfileLayout role='player'>
         <PlayerProfileView player={player} tournamentSchedule={tournamentSchedule} />
       </ProfileLayout>
     )
@@ -91,11 +88,7 @@ export async function ProfileView() {
 
     // Render coach profile view with edit button
     return (
-      <ProfileLayout
-        isSubscribed={isSubscribed}
-        role="coach"
-        currentPeriodEnd={dbUser.stripeCurrentPeriodEnd || null}
-      >
+      <ProfileLayout role='coach'>
         <CoachProfileView coach={coach} />
       </ProfileLayout>
     )

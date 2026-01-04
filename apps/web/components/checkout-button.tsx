@@ -24,18 +24,18 @@ export function CheckoutButton() {
 
   if (error) {
     return (
-      <div className='w-full p-6 bg-red-50 border border-red-200 rounded-lg text-center'>
-        <p className='text-red-700 font-medium mb-2'>Payment Error</p>
-        <p className='text-red-600 text-sm'>{error}</p>
+      <div className='w-full p-6 rounded-lg border text-center'>
+        <p className='font-medium mb-2'>Payment Error</p>
+        <p className='text-sm'>{error}</p>
       </div>
     )
   }
 
   if (!clientSecret) {
     return (
-      <div className='w-full py-20 flex flex-col items-center justify-center gap-3 bg-slate-50 rounded-lg border border-slate-200'>
-        <Loader2 className='h-8 w-8 animate-spin text-blue-600' />
-        <p className='text-slate-600 text-sm'>Loading secure checkout...</p>
+      <div className='w-full py-20 flex flex-col items-center justify-center gap-3 rounded-lg border'>
+        <Loader2 className='h-8 w-8 animate-spin' />
+        <p className='text-sm'>Loading secure checkout...</p>
       </div>
     )
   }

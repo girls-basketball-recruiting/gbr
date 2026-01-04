@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { H1, P } from './typography'
 
 interface FormPageLayoutProps {
   title: string
@@ -20,14 +21,15 @@ export function FormPageLayout({
   maxWidth = 'md',
 }: FormPageLayoutProps) {
   return (
-    <div className='min-h-screen bg-slate-50 dark:bg-slate-900 p-8'>
-      <div className={`mx-auto ${maxWidthClasses[maxWidth]}`}>
+    <div className='p-8'>
+      <div>
         <div className='text-center mb-8'>
-          <h1 className='text-3xl font-bold text-slate-900 dark:text-white mb-2'>{title}</h1>
-          <p className='text-slate-600 dark:text-slate-400'>{description}</p>
+          <H1 className='mb-2'>{title}</H1>
+          <P className='text-lg'>{description}</P>
         </div>
-
-        {children}
+        <div className={`${maxWidthClasses[maxWidth]} mx-auto`}>
+          {children}
+        </div>
       </div>
     </div>
   )

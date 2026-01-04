@@ -1,9 +1,8 @@
-import { Button } from '@workspace/ui/components/button'
-import Link from 'next/link'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PlayerCard } from '@/components/ui/PlayerCard'
 import { findAll } from '@/lib/payload-helpers'
 import type { Player } from '@/payload-types'
+import { ButtonLink } from '../ui/ButtonLink'
 
 export async function SavedPlayersSection({ coachId }: { coachId: number }) {
   const savedPlayers = await findAll('coach-saved-players', {
@@ -23,9 +22,9 @@ export async function SavedPlayersSection({ coachId }: { coachId: number }) {
           title='No Saved Players Yet'
           description="You haven't saved any players yet. Browse all players to find recruits and save them to your board!"
           action={
-            <Link href='/players'>
-              <Button className='mt-4 bg-blue-600 hover:bg-blue-700 cursor-pointer'>Browse All Players</Button>
-            </Link>
+            <ButtonLink href='/players' variant='secondary'>
+              Browse All Players
+            </ButtonLink>
           }
         />
       ) : (

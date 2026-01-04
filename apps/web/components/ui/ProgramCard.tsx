@@ -1,11 +1,12 @@
 'use client'
 
+import { Badge } from '@workspace/ui/components/badge'
 import { Card } from '@workspace/ui/components/card'
-import { Button } from '@workspace/ui/components/button'
-import Link from 'next/link'
 import { BadgeCheck, MapPin, Building2, GraduationCap } from 'lucide-react'
 import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
 import { SaveProgramButton } from '../SaveProgramButton'
+import Link from 'next/link'
+import { H4, P, Small } from './typography'
 
 interface Program {
   id: number
@@ -15,7 +16,7 @@ interface Program {
   type: 'public' | 'private'
   conference: string
   division: 'd1' | 'd2' | 'd3' | 'naia' | 'juco' | 'other'
-  hasCoach?: boolean
+  coachCount?: number
 }
 
 interface ProgramCardProps {
@@ -25,83 +26,68 @@ interface ProgramCardProps {
 }
 
 export function ProgramCard({ program, isSaved = false, isPlayer = false }: ProgramCardProps) {
+  const coachCount = program.coachCount ?? 0
   return (
-    <Card
-      className={`py-0 min-w-72 bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all ${
-        program.hasCoach
-          ? 'ring-2 ring-blue-500/30 border-blue-500/50 dark:border-blue-500/50'
-          : ''
-      }`}
-    >
-      <div className='p-6 space-y-4'>
-        {/* Header with badge if has coach */}
-        <div className='flex items-start justify-between gap-2'>
-          <div className='flex-1'>
-            <h3 className='text-xl font-semibold text-slate-900 dark:text-white leading-tight'>
-              {program.school}
-            </h3>
-          </div>
-          {program.hasCoach && (
-            <div className='flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-600/20 border border-blue-500/50 rounded-full'>
-              <BadgeCheck className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-              <span className='text-xs font-medium text-blue-700 dark:text-blue-400'>
-                Coach on Platform
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Program Details */}
-        <div className='space-y-2 text-sm'>
-          <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
-            <MapPin className='w-4 h-4 text-slate-500 dark:text-slate-400' />
-            <span>
-              {program.city}, {program.state}
-            </span>
-          </div>
-
-          <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
-            <GraduationCap className='w-4 h-4 text-slate-500 dark:text-slate-400' />
-            <span>{divisionLabels[program.division] || program.division}</span>
-          </div>
-
-          <div className='flex items-center gap-2 text-slate-700 dark:text-slate-300'>
-            <Building2 className='w-4 h-4 text-slate-500 dark:text-slate-400' />
-            <span className='capitalize'>{program.type}</span>
-          </div>
+    <Link href={`/programs/${program.id}`}>
+      <Card
+        className={`relative py-0 max-w-full w-90 hover:bg-accent ring-1 hover:ring-primary transition-all ${
+          coachCount > 0
+            ? 'ring-2 hover:ring-primary'
+            : ''
+        }`}
+      >
+        <div className='px-6 py-4 space-y-2'>
+          <H4 className='truncate'>
+            {program.school}
+          </H4>
 
           {program.conference && (
-            <div className='text-slate-600 dark:text-slate-400 text-xs'>
-              {program.conference}
+            <P className='truncate'>
+              <Small>{program.conference}</Small>
+            </P>
+          )}
+
+          {/* Program Details */}
+          <div className='space-y-2 text-sm'>
+            <div className='flex items-center gap-2'>
+              <MapPin className='w-4 h-4' />
+              <span>
+                {program.city}, {program.state}
+              </span>
+            </div>
+
+            <div className='flex items-center gap-2'>
+              <GraduationCap className='w-4 h-4' />
+              <span>{divisionLabels[program.division] || program.division}</span>
+            </div>
+
+            <div className='flex items-center gap-2'>
+              <Building2 className='w-4 h-4' />
+              <span className='capitalize'>{program.type}</span>
+            </div>
+          </div>
+
+          {isPlayer && (
+            <div className='absolute top-0 right-0'>
+              <SaveProgramButton
+                collegeId={program.id}
+                collegeName={program.school}
+                initialIsSaved={isSaved}
+                size="sm"
+                variant="outline"
+              />
             </div>
           )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className='pt-2 flex gap-2'>
-          <Button
-            className={`${isPlayer ? 'flex-1' : 'w-full'} cursor-pointer ${
-              program.hasCoach
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600'
-            }`}
-            asChild
-          >
-            <Link href={`/programs/${program.id}`}>
-              {program.hasCoach ? 'View Program' : 'View Program'}
-            </Link>
-          </Button>
-          {isPlayer && (
-            <SaveProgramButton
-              collegeId={program.id}
-              collegeName={program.school}
-              initialIsSaved={isSaved}
-              size="default"
-              variant="outline"
-            />
+          {coachCount > 0 && (
+            <Badge className='absolute right-6 bottom-6'>
+              <BadgeCheck className='w-4 h-4' />
+              <Small className='text-xs'>
+                {program.coachCount} {program.coachCount === 1 ? 'Coach' : 'Coaches'}
+              </Small>
+            </Badge>
           )}
         </div>
-      </div>
-    </Card>
+      </Card>
+    </Link>
   )
 }
