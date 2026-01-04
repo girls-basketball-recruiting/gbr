@@ -1,7 +1,7 @@
 import { ArrowRight, Users, Building2, Trophy, Check, DollarSign } from 'lucide-react'
 import { Card } from '@workspace/ui/components/card'
 import { ButtonLink } from './ui/ButtonLink'
-import { H2, H3, P } from './ui/typography'
+import { H2, P } from './ui/typography'
 
 export function PlayersSection() {
   return (

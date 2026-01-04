@@ -28,6 +28,7 @@
     "@stripe/stripe-js": "^8.6.0",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-table": "^8.21.3",
+    "@vercel/analytics": "^1.6.1",
     "@vercel/blob": "^2.0.0",
     "@workspace/ui": "workspace:*",
     "date-fns": "^4.1.0",
