@@ -193,7 +193,7 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
         title='No Tournaments Scheduled Yet'
         description="Mark tournaments you're planning to attend to keep track of your schedule"
         action={
-          <ButtonLink href='/tournaments' className='mt-4'>
+          <ButtonLink href='/tournaments' variant='purple'>
             Browse All Tournaments
           </ButtonLink>
         }

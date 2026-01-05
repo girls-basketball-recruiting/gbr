@@ -12,9 +12,9 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <Card className='p-12 border-primary-2'>
+    <Card className='p-12 bg-accent border-accent-card'>
       <div className='text-center space-y-6'>
-        <div className='w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-accent'>
+        <div className='w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-card border border-accent-card'>
           {icon || <SearchIcon className='w-8 h-8' />}
         </div>
         <H4>{title}</H4>

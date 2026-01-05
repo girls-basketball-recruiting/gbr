@@ -61,7 +61,8 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
       awards: existingAwards,
     },
     schema: PlayerAthleticProfileSchema,
-    fileFields: {}, // Force FormData creation for edit mode
+    // Only use FormData in edit mode - onboarding mode needs JSON
+    ...(profile ? { fileFields: {} } : {}),
     onSubmit: async (data) => {
       // Filter out empty video URLs and convert to objects for DB
       const filteredUrls = videoUrls

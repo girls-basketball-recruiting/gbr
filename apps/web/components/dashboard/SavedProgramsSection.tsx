@@ -22,7 +22,7 @@ export async function SavedProgramsSection({ playerId }: { playerId: number }) {
           title='No Saved Programs Yet'
           description="You haven't saved any college programs yet. Browse all programs to find your perfect fit!"
           action={
-            <ButtonLink href='/programs' variant='secondary'>
+            <ButtonLink href='/programs' variant='blue'>
               Browse All Programs
             </ButtonLink>
           }

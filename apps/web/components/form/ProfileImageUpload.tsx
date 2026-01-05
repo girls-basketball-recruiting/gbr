@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Button } from '@workspace/ui/components/button'
 import { Field, FieldLabel, FieldDescription, FieldError } from '@workspace/ui/components/field'
 import {
@@ -8,7 +9,6 @@ import {
   FileUploadDropzone,
 } from '@workspace/ui/components/file-upload'
 import { Upload, X, Check, CloudUpload } from 'lucide-react'
-import Image from 'next/image'
 import { cn } from '@workspace/ui/lib/utils'
 
 interface ProfileImageUploadProps {
@@ -38,10 +38,11 @@ export function ProfileImageUpload({
 }: ProfileImageUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialImageUrl ?? null)
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   // Determine current state
   const getState = (): ImageState => {
-    if (error) return 'error'
+    if (error || validationError) return 'error'
     if (selectedFile) return 'selected' // File selected but not yet saved
     if (initialImageUrl) return 'saved' // Has saved image
     return 'empty'
@@ -53,6 +54,8 @@ export function ProfileImageUpload({
     const file = files?.[0]
     if (!file) return
 
+    // Clear any validation errors when a valid file is selected
+    setValidationError(null)
     setSelectedFile(file)
     onImageChange?.(file)
 
@@ -64,24 +67,35 @@ export function ProfileImageUpload({
     reader.readAsDataURL(file)
   }
 
+  const handleChange = () => {
+    // Clear existing file to avoid 'Maximum 1 files allowed' error
+    // This happens before the file picker opens
+    setValidationError(null)
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    onImageChange?.(null)
+  }
+
   const handleRemove = () => {
+    setValidationError(null)
     setSelectedFile(null)
     setPreviewUrl(null)
     onImageChange?.(null)
   }
 
   return (
-    <Field className="gap-1">
+    <Field className='gap-1'>
       <FieldLabel>
         {label}
-        {required && <span className="ml-1 text-red-600 dark:text-red-400" aria-label="required">*</span>}
+        {required && <span className='ml-1 text-red-600 dark:text-red-400' aria-label='required'>*</span>}
       </FieldLabel>
 
       <FileUploadPrimitive
         maxFiles={1}
         maxSize={5 * 1024 * 1024}
-        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+        accept='image/jpeg,image/jpg,image/png,image/webp,image/gif'
         onValueChange={handleFilesChange}
+        onFileReject={(_, message) => setValidationError(message)}
         value={selectedFile ? [selectedFile] : undefined}
       >
         {!previewUrl ? (
@@ -100,7 +114,7 @@ export function ProfileImageUpload({
               'data-[dragging=true]:bg-blue-50 dark:data-[dragging=true]:bg-blue-900/10'
             )}
           >
-            <div className="flex flex-col items-center gap-3 text-center">
+            <div className='flex flex-col items-center gap-3 text-center'>
               <div
                 className={cn(
                   'w-16 h-16 rounded-full flex items-center justify-center',
@@ -111,28 +125,29 @@ export function ProfileImageUpload({
                     : 'border-slate-300 dark:border-slate-600'
                 )}
               >
-                <CloudUpload className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+                <CloudUpload className='w-8 h-8 text-slate-400 dark:text-slate-500' />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <p className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                   Drag & drop your photo here
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>
                   or click to browse
                 </p>
               </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500">
+              <p className='text-xs text-slate-400 dark:text-slate-500'>
                 JPG, PNG, WEBP or GIF (max 5MB)
               </p>
             </div>
           </FileUploadDropzone>
         ) : (
           /* Preview - shown when image is selected or saved */
-          <div className="flex items-start gap-4">
+          <div className='flex items-start gap-4'>
             {/* Preview Circle with Hover Edit UI */}
-            <div className="relative shrink-0 group">
+            <div className='relative shrink-0 group'>
               <FileUploadDropzone asChild>
                 <div
+                  onClick={handleChange}
                   className={cn(
                     'relative w-24 h-24 rounded-full overflow-hidden transition-all cursor-pointer',
                     state === 'selected' && 'bg-slate-100 dark:bg-slate-800 border-2 border-blue-500 dark:border-blue-400',
@@ -141,17 +156,17 @@ export function ProfileImageUpload({
                   )}
                 >
                   <Image
-                    src={previewUrl}
+                    src={previewUrl ?? undefined}
                     alt={`${userType} photo`}
                     fill
-                    className="object-cover"
+                    className='object-cover'
                   />
 
                   {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <Upload className="w-6 h-6 mx-auto mb-1" />
-                      <p className="text-xs font-medium">Change</p>
+                  <div className='absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
+                    <div className='text-white text-center'>
+                      <Upload className='w-6 h-6 mx-auto mb-1' />
+                      <p className='text-xs font-medium'>Change</p>
                     </div>
                   </div>
                 </div>
@@ -159,42 +174,42 @@ export function ProfileImageUpload({
 
               {/* State Indicator Badge */}
               {state === 'selected' && (
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 dark:bg-blue-400 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900">
-                  <Upload className="w-3 h-3 text-white" />
+                <div className='absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 dark:bg-blue-400 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900'>
+                  <Upload className='w-3 h-3 text-white' />
                 </div>
               )}
               {state === 'saved' && initialImageUrl && !selectedFile && (
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 dark:bg-green-400 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900">
-                  <Check className="w-3 h-3 text-white" />
+                <div className='absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 dark:bg-green-400 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900'>
+                  <Check className='w-3 h-3 text-white' />
                 </div>
               )}
             </div>
 
             {/* Info and Controls */}
-            <div className="flex-1 flex flex-col gap-2">
+            <div className='flex-1 flex flex-col gap-2'>
               {/* State Messages */}
               {state === 'selected' && (
-                <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
-                  <Upload className="w-3 h-3" />
+                <p className='text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1'>
+                  <Upload className='w-3 h-3' />
                   Photo will be saved when you submit the form
                 </p>
               )}
               {state === 'saved' && !selectedFile && (
-                <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
-                  <Check className="w-3 h-3" />
+                <p className='text-xs text-green-600 dark:text-green-400 flex items-center gap-1'>
+                  <Check className='w-3 h-3' />
                   Current photo
                 </p>
               )}
 
               {/* Remove Button */}
               <Button
-                type="button"
-                variant="outline"
-                size="sm"
+                type='button'
+                variant='destructive'
+                size='sm'
                 onClick={handleRemove}
-                className="text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 w-fit"
+                className='w-fit'
               >
-                <X className="w-4 h-4 mr-1" />
+                <X className='w-4 h-4 mr-1' />
                 Remove
               </Button>
             </div>
@@ -203,7 +218,7 @@ export function ProfileImageUpload({
       </FileUploadPrimitive>
 
       {description && <FieldDescription>{description}</FieldDescription>}
-      {error && <FieldError>{error}</FieldError>}
+      {(error || validationError) && <FieldError>{error || validationError}</FieldError>}
     </Field>
   )
 }

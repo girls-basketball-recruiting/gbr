@@ -39,7 +39,8 @@ export function PlayerAcademicProfileStep({ onSave, error, isLastStep, profile }
       interestedInHBCU: profile?.interestedInHBCU || false,
     },
     schema: PlayerAcademicProfileSchema,
-    fileFields: {}, // Force FormData creation for edit mode
+    // Only use FormData in edit mode - onboarding mode needs JSON
+    ...(profile ? { fileFields: {} } : {}),
     onSubmit: async (data) => {
       await onSave(data)
     },

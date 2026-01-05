@@ -13,6 +13,7 @@ import { CopyableText } from './copyable-text'
 import { MailIcon, Phone, PhoneIcon } from 'lucide-react'
 import { X as XIcon } from 'lucide-react'
 import { Instagram } from 'lucide-react'
+import { H1, H2, H3, P, Small } from '../ui/typography'
 
 interface PlayerProfileViewProps {
   player: Player
@@ -50,7 +51,7 @@ export function PlayerProfileView({
         <div className='flex flex-col md:flex-row gap-8 md:gap-12 items-start'>
           {/* Profile Image */}
           {player.profileImageUrl && (
-            <div className='w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-700 relative shrink-0 shadow-lg'>
+            <div className='w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden bg-accent relative shrink-0'>
               <Image
                 src={player.profileImageUrl}
                 alt={`${player.firstName} ${player.lastName}`}
@@ -63,10 +64,10 @@ export function PlayerProfileView({
 
           {/* Name & Key Info */}
           <div className='flex-1 pt-2'>
-            <h1 className='text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-3 tracking-tight'>
+            <H1 className='mb-2'>
               {player.firstName} {player.lastName}
-            </h1>
-            <div className='flex flex-wrap items-center gap-3 text-lg text-slate-600 dark:text-slate-300 mb-6'>
+            </H1>
+            <div className='flex flex-wrap items-center gap-3 text-lg mb-6'>
               {player.primaryPosition && (
                 <>
                   <span className='font-medium'>
@@ -74,13 +75,13 @@ export function PlayerProfileView({
                   </span>
                   {player.secondaryPosition && (
                     <>
-                      <span className='text-slate-400'>/</span>
+                      <span>/</span>
                       <span className='font-medium'>
                         {getPositionLabel(player.secondaryPosition)}
                       </span>
                     </>
                   )}
-                  <span className='text-slate-400'>•</span>
+                  <span>•</span>
                 </>
               )}
               <span className='font-semibold'>
@@ -141,17 +142,17 @@ export function PlayerProfileView({
       {/* Bio Section */}
       {player.bio && (
         <div className='max-w-3xl'>
-          <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-4'>
+          <H2 className='text-sm uppercase mb-4'>
             About
-          </h2>
-          <p className='text-lg leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>
+          </H2>
+          <P className='text-lg whitespace-pre-wrap'>
             {player.bio}
-          </p>
+          </P>
         </div>
       )}
 
       {/* Stats Grid */}
-      <div className='grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 py-8 border-y border-slate-200 dark:border-slate-700'>
+      <div className='grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 py-8 border-y'>
         <DataPoint
           label='Height'
           value={
@@ -176,18 +177,18 @@ export function PlayerProfileView({
 
       {/* High School & Location */}
       <div>
-        <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-4'>
+        <H2 className='text-sm uppercase mb-4'>
           High School
-        </h2>
-        <p className='text-2xl font-semibold text-slate-900 dark:text-white mb-2'>
+        </H2>
+        <P className='text-2xl mb-2'>
           {player.highSchool}
-        </p>
+        </P>
         {(player.city || player.state) && (
-          <p className='text-lg text-slate-600 dark:text-slate-300'>
+          <P className='text-lg'>
             {player.city}
             {player.city && player.state && ', '}
             {player.state}
-          </p>
+          </P>
         )}
       </div>
 
@@ -197,9 +198,9 @@ export function PlayerProfileView({
         player.aauCircuit ||
         player.aauCoach) && (
         <div>
-          <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-6'>
+          <H2 className='text-sm uppercase mb-6'>
             AAU Basketball
-          </h2>
+          </H2>
           <dl className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <DataPoint label='Program' value={player.aauProgramName} />
             <DataPoint label='Team' value={player.aauTeamName} />
@@ -215,29 +216,29 @@ export function PlayerProfileView({
       {/* Awards */}
       {player.awards && player.awards.length > 0 && (
         <div>
-          <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-6'>
+          <H2 className='text-sm uppercase mb-6'>
             Awards & Achievements
-          </h2>
+          </H2>
           <div className='space-y-6'>
             {player.awards.map((award: any, index: number) => (
               <div
                 key={index}
-                className='border-l-2 border-blue-600 dark:border-blue-400 pl-4'
+                className='border-l-2 pl-4'
               >
                 <div className='flex items-baseline gap-3 mb-1'>
-                  <h3 className='text-lg font-semibold text-slate-900 dark:text-white'>
+                  <H3 className='text-lg'>
                     {award.title}
-                  </h3>
+                  </H3>
                   {award.year && (
-                    <span className='text-sm text-slate-500 dark:text-slate-400'>
+                    <Small className='text-sm'>
                       {award.year}
-                    </span>
+                    </Small>
                   )}
                 </div>
                 {award.description && (
-                  <p className='text-slate-600 dark:text-slate-300'>
+                  <P>
                     {award.description}
-                  </p>
+                  </P>
                 )}
               </div>
             ))}
@@ -247,14 +248,14 @@ export function PlayerProfileView({
 
       {/* College Preferences */}
       <div>
-        <h2 className='text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-6'>
+        <H2 className='text-sm uppercase mb-6'>
           College Preferences
-        </h2>
+        </H2>
         <dl className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           {player.desiredLevelsOfPlay &&
             player.desiredLevelsOfPlay.length > 0 && (
               <div>
-                <dt className='text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-2'>
+                <dt className='text-xs uppercase mb-2'>
                   Desired Levels
                 </dt>
                 <dd className='flex flex-wrap gap-2'>
@@ -272,7 +273,7 @@ export function PlayerProfileView({
           {player.desiredGeographicAreas &&
             player.desiredGeographicAreas.length > 0 && (
               <div>
-                <dt className='text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-2'>
+                <dt className='text-xs uppercase mb-2'>
                   Geographic Preferences
                 </dt>
                 <dd className='flex flex-wrap gap-2'>
@@ -296,7 +297,7 @@ export function PlayerProfileView({
           {player.potentialAreasOfStudy &&
             player.potentialAreasOfStudy.length > 0 && (
               <div>
-                <dt className='text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium mb-2'>
+                <dt className='text-xs uppercase tracking-wider mb-2'>
                   Areas of Study
                 </dt>
                 <dd className='flex flex-wrap gap-2'>
