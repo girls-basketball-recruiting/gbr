@@ -64,7 +64,6 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
-    'payload-mcp-api-keys': PayloadMcpApiKeyAuthOperations;
   };
   blocks: {};
   collections: {
@@ -78,7 +77,6 @@ export interface Config {
     'player-saved-programs': PlayerSavedProgram;
     tournaments: Tournament;
     invitations: Invitation;
-    'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,7 +94,6 @@ export interface Config {
     'player-saved-programs': PlayerSavedProgramsSelect<false> | PlayerSavedProgramsSelect<true>;
     tournaments: TournamentsSelect<false> | TournamentsSelect<true>;
     invitations: InvitationsSelect<false> | InvitationsSelect<true>;
-    'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -109,37 +106,15 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user:
-    | (User & {
-        collection: 'users';
-      })
-    | (PayloadMcpApiKey & {
-        collection: 'payload-mcp-api-keys';
-      });
+  user: User & {
+    collection: 'users';
+  };
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
-  forgotPassword: {
-    email: string;
-    password: string;
-  };
-  login: {
-    email: string;
-    password: string;
-  };
-  registerFirstUser: {
-    email: string;
-    password: string;
-  };
-  unlock: {
-    email: string;
-    password: string;
-  };
-}
-export interface PayloadMcpApiKeyAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -259,7 +234,7 @@ export interface Player {
   /**
    * Height in total inches
    */
-  heightInInches: number;
+  heightInInches?: number | null;
   /**
    * Weight in pounds (lbs)
    */
@@ -287,7 +262,7 @@ export interface Player {
         | 'other'
       )[]
     | null;
-  primaryPosition: 'point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post';
+  primaryPosition?: ('point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post') | null;
   secondaryPosition?: ('point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post') | null;
   /**
    * Tell coaches about yourself, your playing style, and goals
@@ -790,176 +765,6 @@ export interface Invitation {
   createdAt: string;
 }
 /**
- * API keys control which collections, resources, tools, and prompts MCP clients can access
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-mcp-api-keys".
- */
-export interface PayloadMcpApiKey {
-  id: number;
-  /**
-   * The user that the API key is associated with.
-   */
-  user: number | User;
-  /**
-   * A useful label for the API key.
-   */
-  label?: string | null;
-  /**
-   * The purpose of the API key.
-   */
-  description?: string | null;
-  coaches?: {
-    /**
-     * Allow clients to find coaches.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create coaches.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update coaches.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete coaches.
-     */
-    delete?: boolean | null;
-  };
-  coachPlayerNotes?: {
-    /**
-     * Allow clients to find coach-player-notes.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create coach-player-notes.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update coach-player-notes.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete coach-player-notes.
-     */
-    delete?: boolean | null;
-  };
-  coachProspects?: {
-    /**
-     * Allow clients to find coach-prospects.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create coach-prospects.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update coach-prospects.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete coach-prospects.
-     */
-    delete?: boolean | null;
-  };
-  coachSavedPlayers?: {
-    /**
-     * Allow clients to find coach-saved-players.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create coach-saved-players.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update coach-saved-players.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete coach-saved-players.
-     */
-    delete?: boolean | null;
-  };
-  colleges?: {
-    /**
-     * Allow clients to find colleges.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create colleges.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update colleges.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete colleges.
-     */
-    delete?: boolean | null;
-  };
-  players?: {
-    /**
-     * Allow clients to find players.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create players.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update players.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete players.
-     */
-    delete?: boolean | null;
-  };
-  tournaments?: {
-    /**
-     * Allow clients to find tournaments.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create tournaments.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update tournaments.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete tournaments.
-     */
-    delete?: boolean | null;
-  };
-  users?: {
-    /**
-     * Allow clients to find users.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create users.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update users.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete users.
-     */
-    delete?: boolean | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-  enableAPIKey?: boolean | null;
-  apiKey?: string | null;
-  apiKeyIndex?: string | null;
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -1022,21 +827,12 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'invitations';
         value: number | Invitation;
-      } | null)
-    | ({
-        relationTo: 'payload-mcp-api-keys';
-        value: number | PayloadMcpApiKey;
       } | null);
   globalSlug?: string | null;
-  user:
-    | {
-        relationTo: 'users';
-        value: number | User;
-      }
-    | {
-        relationTo: 'payload-mcp-api-keys';
-        value: number | PayloadMcpApiKey;
-      };
+  user: {
+    relationTo: 'users';
+    value: number | User;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1046,15 +842,10 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user:
-    | {
-        relationTo: 'users';
-        value: number | User;
-      }
-    | {
-        relationTo: 'payload-mcp-api-keys';
-        value: number | PayloadMcpApiKey;
-      };
+  user: {
+    relationTo: 'users';
+    value: number | User;
+  };
   key?: string | null;
   value?:
     | {
@@ -1319,84 +1110,6 @@ export interface InvitationsSelect<T extends boolean = true> {
   invitationUrl?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-mcp-api-keys_select".
- */
-export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
-  user?: T;
-  label?: T;
-  description?: T;
-  coaches?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  coachPlayerNotes?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  coachProspects?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  coachSavedPlayers?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  colleges?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  players?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  tournaments?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  users?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  enableAPIKey?: T;
-  apiKey?: T;
-  apiKeyIndex?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

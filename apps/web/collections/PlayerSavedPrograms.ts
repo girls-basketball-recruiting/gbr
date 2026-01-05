@@ -6,6 +6,7 @@ export const PlayerSavedPrograms: CollectionConfig = {
     useAsTitle: 'id',
     defaultColumns: ['player', 'college', 'savedAt'],
     description: 'Programs saved by players for their college search',
+    hidden: true, // Hidden from sidebar - accessed via Player tabs
   },
   fields: [
     {

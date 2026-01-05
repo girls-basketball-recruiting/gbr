@@ -3,7 +3,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { mcpPlugin } from '@payloadcms/plugin-mcp'
+// import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
@@ -55,34 +55,40 @@ export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
   sharp,
   plugins: [
-    mcpPlugin({
-      collections: {
-        coaches: {
-          enabled: true,
-        },
-        'coach-player-notes': {
-          enabled: true,
-        },
-        'coach-prospects': {
-          enabled: true,
-        },
-        'coach-saved-players': {
-          enabled: true,
-        },
-        colleges: {
-          enabled: true,
-        },
-        players: {
-          enabled: true,
-        },
-        tournaments: {
-          enabled: true,
-        },
-        users: {
-          enabled: true,
-        },
-      },
-    }),
+    // mcpPlugin({
+    //   collections: {
+    //     coaches: {
+    //       enabled: true,
+    //     },
+    //     'coach-player-notes': {
+    //       enabled: true,
+    //     },
+    //     'coach-prospects': {
+    //       enabled: true,
+    //     },
+    //     'coach-saved-players': {
+    //       enabled: true,
+    //     },
+    //     colleges: {
+    //       enabled: true,
+    //     },
+    //     invitations: {
+    //       enabled: true,
+    //     },
+    //     players: {
+    //       enabled: true,
+    //     },
+    //     'player-saved-programs': {
+    //       enabled: true,
+    //     },
+    //     tournaments: {
+    //       enabled: true,
+    //     },
+    //     users: {
+    //       enabled: true,
+    //     },
+    //   },
+    // }),
     vercelBlobStorage({
       enabled: true,
       collections: {

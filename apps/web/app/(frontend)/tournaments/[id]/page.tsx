@@ -9,7 +9,7 @@ import { formatDateLocationRange } from '@/lib/format-date-location'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
-import { H1, H2, P, MutedText, H4 } from '@/components/ui/typography'
+import { H1, P, MutedText } from '@/components/ui/typography'
 
 // Generate metadata for SEO
 export async function generateMetadata({
@@ -180,44 +180,66 @@ export default async function TournamentDetailPage({
             <div className='border-t pt-8 space-y-8'>
               {/* Players Attending */}
               <div>
-                <MutedText className='uppercase font-extrabold'>
-                  {userRole === 'player'
-                    ? `${players.length} ${players.length === 1 ? 'other player' : 'other players'} attending`
-                    : `Players Attending (${players.length})`
-                  }
-                </MutedText>
-                {players.length > 0 ? (
-                  <TournamentAttendeesTable
-                    attendees={players.map(p => ({
-                      id: p.id,
-                      name: `${p.firstName} ${p.lastName}`,
-                      detail: p.highSchool || 'N/A',
-                      profileUrl: `/players/${p.id}`
-                    }))}
-                  />
-                ) : (
-                  <P className='mt-4 pb-8 border-b'>No players attending yet</P>
-                )}
+                {(() => {
+                  // Filter out current user if they're a player
+                  const otherPlayers = userRole === 'player' && currentUserId
+                    ? players.filter(p => p.id !== currentUserId)
+                    : players
+
+                  return (
+                    <>
+                      <MutedText className='uppercase font-extrabold mb-6'>
+                        {userRole === 'player'
+                          ? `${otherPlayers.length} ${otherPlayers.length === 1 ? 'other player' : 'other players'} attending`
+                          : `Players Attending (${otherPlayers.length})`
+                        }
+                      </MutedText>
+                      {otherPlayers.length > 0 ? (
+                        <TournamentAttendeesTable
+                          attendees={otherPlayers.map(p => ({
+                            id: p.id,
+                            name: `${p.firstName} ${p.lastName}`,
+                            detail: p.highSchool || 'N/A',
+                            profileUrl: `/players/${p.id}`
+                          }))}
+                        />
+                      ) : (
+                        <P className='mt-4 pb-8 border-b'>No {players.length === 1 ? 'other ' : ''}players attending yet</P>
+                      )}
+                    </>
+                  )
+                })()}
               </div>
 
               {/* Coaches Attending */}
               {userRole === 'coach' ? (
                 <div>
-                  <MutedText className='uppercase font-extrabold mb-4'>
-                    {coaches.length} {coaches.length === 1 ? 'other coach' : 'other coaches'} attending
-                  </MutedText>
-                  {coaches.length > 0 ? (
-                    <TournamentAttendeesTable
-                      attendees={coaches.map(c => ({
-                        id: c.id,
-                        name: `${c.firstName} ${c.lastName}`,
-                        detail: `${c.collegeName} - ${c.jobTitle}`,
-                        profileUrl: `/programs/${c.collegeId}/coaches/${c.id}`
-                      }))}
-                    />
-                  ) : (
-                    <P className='text-lg leading-relaxed'>No coaches attending yet</P>
-                  )}
+                  {(() => {
+                    // Filter out current user if they're a coach
+                    const otherCoaches = currentUserId
+                      ? coaches.filter(c => c.id !== currentUserId)
+                      : coaches
+
+                    return (
+                      <>
+                        <MutedText className='uppercase font-extrabold mb-4'>
+                          {otherCoaches.length} {otherCoaches.length === 1 ? 'other coach' : 'other coaches'} attending
+                        </MutedText>
+                        {otherCoaches.length > 0 ? (
+                          <TournamentAttendeesTable
+                            attendees={otherCoaches.map(c => ({
+                              id: c.id,
+                              name: `${c.firstName} ${c.lastName}`,
+                              detail: `${c.collegeName} - ${c.jobTitle}`,
+                              profileUrl: `/programs/${c.collegeId}/coaches/${c.id}`
+                            }))}
+                          />
+                        ) : (
+                          <P className='text-lg leading-relaxed'>No coaches attending yet</P>
+                        )}
+                      </>
+                    )
+                  })()}
                 </div>
               ) : (
                 <div className='flex items-center gap-2'>

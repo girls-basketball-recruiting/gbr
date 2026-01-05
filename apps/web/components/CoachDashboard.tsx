@@ -16,10 +16,10 @@ export default async function CoachDashboard() {
   }
 
   return (
-    <div className='container mx-auto px-4'>
+    <div className='container mx-auto px-5'>
       <div className='max-w-4xl mx-auto'>
         {/* Coach Profile Header */}
-        <div className='mb-8 rounded-lg'>
+        <div className='mb-8'>
           <div className='flex items-center gap-6'>
             {coachProfile.profileImageUrl && (
               <div className='w-24 h-24 rounded-full overflow-hidden relative shrink-0'>

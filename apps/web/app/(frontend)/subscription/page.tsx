@@ -50,11 +50,11 @@ export default async function SubscriptionPage() {
     : null
 
   return (
-    <div className='max-w-lg p-8'>
+    <div className='max-w-lg px-10 mx-auto'>
       <div className='max-w-4xl mx-auto'>
-        <div className='mb-8'>
+        <div className='mb-8 text-center'>
           <H1>Subscription</H1>
-          <P>Manage your subscription and billing details</P>
+          <P className='mt-6 text-lg'>Manage your subscription and billing details</P>
         </div>
 
         {hasActiveSubscription ? (

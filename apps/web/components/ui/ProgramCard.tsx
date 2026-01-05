@@ -36,13 +36,13 @@ export function ProgramCard({ program, isSaved = false, isPlayer = false }: Prog
             : ''
         }`}
       >
-        <div className='px-6 py-4 space-y-2'>
-          <H4 className='truncate'>
+        <div className='px-6 py-4'>
+          <H4 className='truncate mb-2'>
             {program.school}
           </H4>
 
           {program.conference && (
-            <P className='truncate'>
+            <P className='truncate mb-2'>
               <Small>{program.conference}</Small>
             </P>
           )}
@@ -68,7 +68,7 @@ export function ProgramCard({ program, isSaved = false, isPlayer = false }: Prog
           </div>
 
           {isPlayer && (
-            <div className='absolute top-0 right-0'>
+            <div className='absolute right-4 bottom-4'>
               <SaveProgramButton
                 collegeId={program.id}
                 collegeName={program.school}
@@ -79,7 +79,7 @@ export function ProgramCard({ program, isSaved = false, isPlayer = false }: Prog
             </div>
           )}
           {coachCount > 0 && (
-            <Badge className='absolute right-6 bottom-6'>
+            <Badge className={`h-6 absolute ${isPlayer ? 'right-17' : 'right-5'} bottom-5`}>
               <BadgeCheck className='w-4 h-4' />
               <Small className='text-xs'>
                 {program.coachCount} {program.coachCount === 1 ? 'Coach' : 'Coaches'}

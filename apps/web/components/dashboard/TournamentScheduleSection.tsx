@@ -1,30 +1,32 @@
-import { Button } from '@workspace/ui/components/button'
-import Link from 'next/link'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { findById } from '@/lib/payload-helpers'
+import { findById, countDocs } from '@/lib/payload-helpers'
 import type { Tournament } from '@/payload-types'
-import { Calendar, ExternalLink, MapPin } from 'lucide-react'
+import { Briefcase, Calendar, ExternalLink, Users } from 'lucide-react'
 import { ButtonLink } from '../ui/ButtonLink'
+import { formatDateLocationRange } from '@/lib/format-date-location'
+import { H4, P } from '../ui/typography'
 
 interface TournamentScheduleSectionProps {
   playerId: number
 }
 
-// Helper to format date range
-const formatDateRange = (start: string, end: string) => {
-  const startDate = new Date(start)
-  const endDate = new Date(end)
+type TournamentWithCounts = {
+  tournament: Tournament
+  playersCount: number
+  coachesCount: number
+}
 
-  const monthDay: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
+// Helper to get attendee counts for a tournament
+async function getTournamentAttendeeCounts(tournamentId: number) {
+  const playersCount = await countDocs('players', {
+    tournamentSchedule: { contains: tournamentId }
+  })
 
-  if (startDate.toDateString() === endDate.toDateString()) {
-    return startDate.toLocaleDateString('en-US', monthDay)
-  }
+  const coachesCount = await countDocs('coaches', {
+    tournamentSchedule: { contains: tournamentId }
+  })
 
-  const startFormatted = startDate.toLocaleDateString('en-US', monthDay)
-  const endDay = endDate.getDate()
-
-  return `${startFormatted} - ${endDay}`
+  return { playersCount, coachesCount }
 }
 
 // Helper to format day of week
@@ -34,7 +36,7 @@ const formatDayOfWeek = (dateStr: string) => {
 }
 
 // Group tournaments by time period
-function groupTournaments(tournaments: Tournament[]) {
+function groupTournaments(tournamentsWithCounts: TournamentWithCounts[]) {
   const now = new Date()
   now.setHours(0, 0, 0, 0)
 
@@ -45,27 +47,27 @@ function groupTournaments(tournaments: Tournament[]) {
   const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0)
 
   const groups = {
-    thisWeek: [] as Tournament[],
-    thisMonth: [] as Tournament[],
-    nextMonth: [] as Tournament[],
-    later: [] as Tournament[],
+    thisWeek: [] as TournamentWithCounts[],
+    thisMonth: [] as TournamentWithCounts[],
+    nextMonth: [] as TournamentWithCounts[],
+    later: [] as TournamentWithCounts[],
   }
 
-  tournaments.forEach((tournament) => {
-    const startDate = new Date(tournament.startDate)
+  tournamentsWithCounts.forEach((item) => {
+    const startDate = new Date(item.tournament.startDate)
     startDate.setHours(0, 0, 0, 0)
 
     if (startDate < now) {
       // Skip past tournaments
       return
     } else if (startDate <= oneWeek) {
-      groups.thisWeek.push(tournament)
+      groups.thisWeek.push(item)
     } else if (startDate <= endOfMonth) {
-      groups.thisMonth.push(tournament)
+      groups.thisMonth.push(item)
     } else if (startDate <= endOfNextMonth) {
-      groups.nextMonth.push(tournament)
+      groups.nextMonth.push(item)
     } else {
-      groups.later.push(tournament)
+      groups.later.push(item)
     }
   })
 
@@ -73,73 +75,83 @@ function groupTournaments(tournaments: Tournament[]) {
 }
 
 // Tournament card component
-function TournamentCard({ tournament }: { tournament: Tournament }) {
+function TournamentCard({
+  tournament,
+  playersCount,
+  coachesCount
+}: TournamentWithCounts) {
   return (
-    <div className="group relative border rounded-xl p-4 transition-all duration-300 shadow hover:shadow-lg">
-      <div className="flex gap-4">
+    <div className='group relative bg-accent rounded-xl p-4'>
+      <div className='flex gap-4'>
         {/* Date Badge */}
-        <div className="flex-shrink-0 w-16 h-16 rounded-lg flex flex-col items-center justify-center shadow-lg">
-          <div className="text-[10px] font-bold uppercase tracking-wider opacity-90">
+        <div className='shrink-0 w-16 h-16 rounded-lg flex flex-col items-center justify-center shadow-lg'>
+          <div className='text-[10px] font-bold uppercase tracking-wider opacity-90'>
             {formatDayOfWeek(tournament.startDate)}
           </div>
-          <div className="text-xl font-black leading-none">
+          <div className='text-xl font-black leading-none'>
             {new Date(tournament.startDate).getDate()}
           </div>
-          <div className="text-[10px] font-bold uppercase tracking-wider opacity-90">
+          <div className='text-[10px] font-bold uppercase tracking-wider opacity-90'>
             {new Date(tournament.startDate).toLocaleDateString('en-US', { month: 'short' })}
           </div>
         </div>
 
         {/* Tournament Info */}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-bold text-base mb-1 truncate transition-colors">
+        <div className='flex-1 min-w-0'>
+          <H4 className='mb-1 truncate'>
             {tournament.name}
-          </h4>
-          <div className="flex items-center gap-1.5 text-sm mb-1">
-            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="truncate">
-              {tournament.city}, {tournament.state}
-            </span>
+          </H4>
+          <div className='flex items-center gap-2 mb-2'>
+            <Calendar className='w-5 h-5' />
+            <P>{formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}</P>
           </div>
-          <div className="text-xs font-medium">
-            {formatDateRange(tournament.startDate, tournament.endDate)}
+
+          {/* Attendee Counts */}
+          <div className='flex items-center gap-4 text-sm mb-4 opacity-80'>
+            <div className='flex items-center gap-1.5'>
+              <Users className='w-4 h-4' />
+              <span>{playersCount} {playersCount === 1 ? 'player' : 'players'}</span>
+            </div>
+            <span>•</span>
+            <div className='flex items-center gap-1.5'>
+              <Briefcase className='w-4 h-4' />
+              <span>{coachesCount} {coachesCount === 1 ? 'coach' : 'coaches'}</span>
+            </div>
+          </div>
+
+          <div className='flex gap-3'>
+            <ButtonLink variant='purple' size='sm' href={`/tournaments/${tournament.id}`}>
+              View Tournament Details
+            </ButtonLink>
+            {tournament.website && (
+              <ButtonLink variant='outline' size='sm' href={tournament.website} isExternal>
+                <ExternalLink className='w-4 h-4 mr-2' />
+                Tournament Website
+              </ButtonLink>
+            )}
           </div>
         </div>
-
-        {/* Website Link */}
-        {tournament.website && (
-          <a
-            href={tournament.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-shrink-0 self-start opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors">
-              <ExternalLink className="w-4 h-4" />
-            </div>
-          </a>
-        )}
       </div>
     </div>
   )
 }
 
 // Time period section
-function PeriodSection({ title, tournaments }: { title: string; tournaments: Tournament[] }) {
+function PeriodSection({ title, tournaments }: { title: string; tournaments: TournamentWithCounts[] }) {
   if (tournaments.length === 0) return null
 
   return (
-    <div className="mb-8 last:mb-0">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="h-px flex-1" />
-        <h3 className="text-sm font-black uppercase tracking-wider">
+    <div className='mb-8 last:mb-0'>
+      <div className='flex items-center gap-3 mb-4'>
+        <div className='h-px flex-1' />
+        <h3 className='text-sm font-black uppercase tracking-wider'>
           {title}
         </h3>
-        <div className="h-px flex-1" />
+        <div className='h-px flex-1' />
       </div>
-      <div className="space-y-3">
-        {tournaments.map((tournament) => (
-          <TournamentCard key={tournament.id} tournament={tournament} />
+      <div className='space-y-3'>
+        {tournaments.map((item) => (
+          <TournamentCard key={item.tournament.id} {...item} />
         ))}
       </div>
     </div>
@@ -153,9 +165,9 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
   if (!player) {
     return (
       <EmptyState
-        icon={<Calendar className="w-8 h-8" />}
-        title="Player Not Found"
-        description="Unable to load tournament schedule"
+        icon={<Calendar className='w-8 h-8' />}
+        title='Player Not Found'
+        description='Unable to load tournament schedule'
       />
     )
   }
@@ -178,11 +190,11 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
   if (upcomingTournaments.length === 0) {
     return (
       <EmptyState
-        icon={<Calendar className="w-8 h-8" />}
-        title="No Tournaments Scheduled Yet"
+        icon={<Calendar className='w-8 h-8' />}
+        title='No Tournaments Scheduled Yet'
         description="Mark tournaments you're planning to attend to keep track of your schedule"
         action={
-          <ButtonLink href="/tournaments" className='mt-4'>
+          <ButtonLink href='/tournaments' className='mt-4'>
             Browse All Tournaments
           </ButtonLink>
         }
@@ -190,22 +202,28 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
     )
   }
 
+  // Fetch attendee counts for all tournaments in parallel
+  const tournamentsWithCounts = await Promise.all(
+    upcomingTournaments.map(async (tournament) => {
+      try {
+        const counts = await getTournamentAttendeeCounts(tournament.id)
+        return { tournament, ...counts }
+      } catch (error) {
+        console.error(`Failed to fetch counts for tournament ${tournament.id}`, error)
+        return { tournament, playersCount: 0, coachesCount: 0 }
+      }
+    })
+  )
+
   // Group tournaments by time period
-  const groups = groupTournaments(upcomingTournaments)
+  const groups = groupTournaments(tournamentsWithCounts)
 
   return (
     <div>
-      <PeriodSection title="This Week" tournaments={groups.thisWeek} />
-      <PeriodSection title="This Month" tournaments={groups.thisMonth} />
-      <PeriodSection title="Next Month" tournaments={groups.nextMonth} />
-      <PeriodSection title="Later" tournaments={groups.later} />
-
-      {/* View All Link */}
-      <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <ButtonLink href="/tournaments" variant="outline" className='w-full'>
-          View All Tournaments
-        </ButtonLink>
-      </div>
+      <PeriodSection title='This Week' tournaments={groups.thisWeek} />
+      <PeriodSection title='This Month' tournaments={groups.thisMonth} />
+      <PeriodSection title='Next Month' tournaments={groups.nextMonth} />
+      <PeriodSection title='Later' tournaments={groups.later} />
     </div>
   )
 }

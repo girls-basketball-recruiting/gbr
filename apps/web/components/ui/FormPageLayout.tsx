@@ -24,7 +24,7 @@ export function FormPageLayout({
     <div className='p-8'>
       <div>
         <div className='text-center mb-8'>
-          <H1 className='mb-2'>{title}</H1>
+          <H1 className='mb-6'>{title}</H1>
           <P className='text-lg'>{description}</P>
         </div>
         <div className={`${maxWidthClasses[maxWidth]} mx-auto`}>

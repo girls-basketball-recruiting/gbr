@@ -1,31 +1,22 @@
-import Link from 'next/link'
 import Image from 'next/image'
 import { TournamentScheduleSection } from './dashboard/TournamentScheduleSection'
 import { SavedProgramsSection } from './dashboard/SavedProgramsSection'
 import { Suspense } from 'react'
 import { getAuthContext } from '@/lib/auth-context'
-import { hasActiveSubscription } from '@/lib/stripe'
-import { CheckCircle2, AlertCircle } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 import { ButtonLink } from './ui/ButtonLink'
+import { H2, H3, MutedText } from './ui/typography'
 
 export default async function PlayerDashboard() {
-  const { playerProfile, dbUser } = await getAuthContext()
-
-  // Check subscription status
-  let isSubscribed = false
-  let currentPeriodEnd: string | null = null
-  if (dbUser.stripeCustomerId) {
-    isSubscribed = await hasActiveSubscription(dbUser.stripeCustomerId)
-    currentPeriodEnd = dbUser.stripeCurrentPeriodEnd || null
-  }
+  const { playerProfile } = await getAuthContext()
 
   return (
-    <div className='container mx-auto px-4 py-8'>
+    <div className='container mx-auto px-5'>
       <div className='max-w-6xl mx-auto'>
         {playerProfile && (
-          <div className='mb-8 border rounded-lg p-6'>
+          <div className='mb-8'>
             <div className='flex items-center gap-6'>
-              {playerProfile.profileImageUrl ? (
+              {playerProfile.profileImageUrl && (
                 <div className='w-24 h-24 rounded-full overflow-hidden relative shrink-0'>
                   <Image
                     src={playerProfile.profileImageUrl}
@@ -34,49 +25,18 @@ export default async function PlayerDashboard() {
                     className='object-cover'
                   />
                 </div>
-              ) : (
-                <div className='w-24 h-24 rounded-full flex items-center justify-center shrink-0'>
-                  <span className='text-3xl font-bold'>
-                    {playerProfile.firstName?.[0]}
-                    {playerProfile.lastName?.[0]}
-                  </span>
-                </div>
               )}
               <div className='flex-1'>
-                <h2 className='text-2xl font-bold mb-1'>
-                  {playerProfile.firstName} {playerProfile.lastName}
-                </h2>
-                <div className='flex items-center gap-2 mt-2'>
-                  {isSubscribed ? (
-                    <>
-                      <CheckCircle2 className='w-4 h-4' />
-                      <span className='text-sm font-medium'>
-                        Player Pro
-                      </span>
-                      {currentPeriodEnd && (
-                        <span className='text-sm'>
-                          • Renews {new Date(currentPeriodEnd).toLocaleDateString()}
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className='w-4 h-4' />
-                      <span className='text-sm'>
-                        Free Plan
-                      </span>
-                      <Link
-                        href='/subscription'
-                        className='text-sm hover:underline ml-1'
-                      >
-                        Upgrade to Pro
-                      </Link>
-                    </>
-                  )}
+                <div className='flex items-center gap-6'>
+                  <H2>{playerProfile.firstName} {playerProfile.lastName}</H2>
+                  <div className='flex items-center gap-2'>
+                    <CheckCircle2 className='w-4 h-4 text-green-500' />
+                    <MutedText>Player Pro</MutedText>
+                  </div>
                 </div>
               </div>
-              <div className='flex-col gap-2'>
-                <ButtonLink href='/profile' variant='ghost' className='block mb-4'>
+              <div>
+                <ButtonLink href='/profile' variant='ghost' className='mr-2'>
                   View Profile
                 </ButtonLink>
                 <ButtonLink href='/profile/edit' variant='outline'>
@@ -89,10 +49,10 @@ export default async function PlayerDashboard() {
 
         {/* Saved Programs Section */}
         {playerProfile && (
-          <div className='mb-8'>
-            <h3 className='text-2xl font-bold mb-4'>
+          <div className='mt-16'>
+            <H3 className='mb-4'>
               Saved Programs
-            </h3>
+            </H3>
 
             <Suspense>
               <SavedProgramsSection playerId={playerProfile.id} />
@@ -102,10 +62,15 @@ export default async function PlayerDashboard() {
 
         {/* Tournament Schedule Section */}
         {playerProfile && (
-          <div className='mb-8'>
-            <h3 className='text-2xl font-bold mb-4'>
-              Tournament Schedule
-            </h3>
+          <div className='mt-16'>
+            <div className='flex justify-between w-full'>
+              <H3 className='mb-4'>
+                Tournament Schedule
+              </H3>
+              <ButtonLink href="/tournaments" variant="outline" size='sm'>
+                View All Tournaments
+              </ButtonLink>
+            </div>
 
             <Suspense>
               <TournamentScheduleSection playerId={playerProfile.id} />

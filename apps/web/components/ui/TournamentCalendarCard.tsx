@@ -119,7 +119,7 @@ export function TournamentCalendarCard({
             pressed={attending}
             onPressedChange={handleToggle}
             disabled={isLoading}
-            className='w-full'
+            className='w-full mt-4'
             aria-label={attending ? 'Mark as Not Attending' : 'Mark as Attending'}
           >
             <Bookmark className={attending ? 'fill-current' : ''} />
