@@ -193,6 +193,15 @@ export async function POST(req: Request) {
         console.error('❌ Error creating user:', error)
         if (error && typeof error === 'object' && 'data' in error) {
           console.error('Error data:', JSON.stringify(error.data, null, 2))
+
+          // Check if it's a duplicate clerkId error (race condition)
+          const errorData = (error as any).data
+          if (errorData?.errors?.some((e: any) =>
+            e.path === 'clerkId' && e.message?.includes('unique')
+          )) {
+            console.log('⚠️ User already created by another process (race condition), treating as success')
+            return new Response('User already exists', { status: 200 })
+          }
         }
         throw error
       }

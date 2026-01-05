@@ -3,9 +3,8 @@ import { TournamentScheduleSection } from './dashboard/TournamentScheduleSection
 import { SavedProgramsSection } from './dashboard/SavedProgramsSection'
 import { Suspense } from 'react'
 import { getAuthContext } from '@/lib/auth-context'
-import { CheckCircle2 } from 'lucide-react'
 import { ButtonLink } from './ui/ButtonLink'
-import { H2, H3, MutedText } from './ui/typography'
+import { H2, H3 } from './ui/typography'
 
 export default async function PlayerDashboard() {
   const { playerProfile } = await getAuthContext()
@@ -17,7 +16,7 @@ export default async function PlayerDashboard() {
           <div className='mb-8'>
             <div className='flex items-center gap-6'>
               {playerProfile.profileImageUrl && (
-                <div className='w-24 h-24 rounded-full overflow-hidden relative shrink-0'>
+                <div className='w-24 h-24 rounded-xl overflow-hidden relative shrink-0'>
                   <Image
                     src={playerProfile.profileImageUrl}
                     alt={`${playerProfile.firstName} ${playerProfile.lastName} profile image`}
@@ -29,10 +28,6 @@ export default async function PlayerDashboard() {
               <div className='flex-1'>
                 <div className='flex items-center gap-6'>
                   <H2>{playerProfile.firstName} {playerProfile.lastName}</H2>
-                  <div className='flex items-center gap-2'>
-                    <CheckCircle2 className='w-4 h-4 text-green-500' />
-                    <MutedText>Player Pro</MutedText>
-                  </div>
                 </div>
               </div>
               <div>

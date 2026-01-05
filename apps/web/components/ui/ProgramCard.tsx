@@ -2,7 +2,7 @@
 
 import { Badge } from '@workspace/ui/components/badge'
 import { Card } from '@workspace/ui/components/card'
-import { BadgeCheck, MapPin, Building2, GraduationCap } from 'lucide-react'
+import { BadgeCheck, MapPin, Building2, GraduationCap, Bookmark } from 'lucide-react'
 import { divisionLabels } from '@/lib/zod/LevelsOfPlay'
 import { SaveProgramButton } from '../SaveProgramButton'
 import Link from 'next/link'
@@ -67,19 +67,13 @@ export function ProgramCard({ program, isSaved = false, isPlayer = false }: Prog
             </div>
           </div>
 
-          {isPlayer && (
-            <div className='absolute right-4 bottom-4'>
-              <SaveProgramButton
-                collegeId={program.id}
-                collegeName={program.school}
-                initialIsSaved={isSaved}
-                size="sm"
-                variant="outline"
-              />
+          {isSaved && (
+            <div className='absolute right-5 bottom-5'>
+              <Bookmark className='text-primary w-6 h-6' />
             </div>
           )}
           {coachCount > 0 && (
-            <Badge className={`h-6 absolute ${isPlayer ? 'right-17' : 'right-5'} bottom-5`}>
+            <Badge className={`h-6 absolute ${isPlayer ? 'right-15' : 'right-5'} bottom-5`}>
               <BadgeCheck className='w-4 h-4' />
               <Small className='text-xs'>
                 {program.coachCount} {program.coachCount === 1 ? 'Coach' : 'Coaches'}

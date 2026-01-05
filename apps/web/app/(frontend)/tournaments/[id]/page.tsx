@@ -119,7 +119,7 @@ export default async function TournamentDetailPage({
   return (
     <>
       {isLoggedOut && <PublicNav activePage='tournaments' />}
-      <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
+      <div className={isLoggedOut ? 'py-12 px-4' : 'px-8'}>
         <div className='container mx-auto max-w-4xl'>
           {/* Unauthenticated CTA */}
           {isLoggedOut && (

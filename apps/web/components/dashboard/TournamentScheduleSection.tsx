@@ -107,15 +107,14 @@ function TournamentCard({
           </div>
 
           {/* Attendee Counts */}
-          <div className='flex items-center gap-4 text-sm mb-4 opacity-80'>
-            <div className='flex items-center gap-1.5'>
-              <Users className='w-4 h-4' />
-              <span>{playersCount} {playersCount === 1 ? 'player' : 'players'}</span>
+          <div className='flex items-center gap-5 text-sm mb-4 opacity-80'>
+            <div className='flex items-center gap-2'>
+              <Users className='w-4 h-4 text-primary' />
+              <span><strong>{playersCount}</strong> {playersCount === 1 ? 'player' : 'players'}</span>
             </div>
-            <span>•</span>
-            <div className='flex items-center gap-1.5'>
-              <Briefcase className='w-4 h-4' />
-              <span>{coachesCount} {coachesCount === 1 ? 'coach' : 'coaches'}</span>
+            <div className='flex items-center gap-2'>
+              <Briefcase className='w-4 h-4 text-blue-500' />
+              <span><strong>{coachesCount}</strong> {coachesCount === 1 ? 'coach' : 'coaches'}</span>
             </div>
           </div>
 

@@ -11,6 +11,7 @@ import { H2 } from '@/components/ui/typography/H2'
 import { P } from '@/components/ui/typography/P'
 import { MutedText } from '@/components/ui/typography/MutedText'
 import { Small } from '@/components/ui/typography/Small'
+import { DeleteAccountButton } from '@/components/DeleteAccountButton'
 
 export default async function SubscriptionPage() {
   const clerkUser = await currentUser()
@@ -36,7 +37,7 @@ export default async function SubscriptionPage() {
   }
 
   const hasActiveSubscription = !!user.stripeSubscriptionId
-  const role = clerkUser.publicMetadata?.role as string
+  const role = clerkUser.publicMetadata?.role as 'player' | 'coach'
   const isPlayer = role === 'player'
   const price = isPlayer ? 39 : 99
 
@@ -152,6 +153,9 @@ export default async function SubscriptionPage() {
             </ButtonLink>
           </Card>
         )}
+        <div className='mt-6'>
+          <DeleteAccountButton userRole={role} />
+        </div>
       </div>
     </div>
   )

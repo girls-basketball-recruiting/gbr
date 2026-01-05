@@ -50,7 +50,7 @@ export function PlayerProfileView({
         <div className='flex flex-col md:flex-row gap-8 md:gap-12 items-start'>
           {/* Profile Image */}
           {player.profileImageUrl && (
-            <div className='w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 relative shrink-0 shadow-lg'>
+            <div className='w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-700 relative shrink-0 shadow-lg'>
               <Image
                 src={player.profileImageUrl}
                 alt={`${player.firstName} ${player.lastName}`}

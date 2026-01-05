@@ -157,7 +157,6 @@ export async function POST(req: Request) {
       })
 
       console.log(`✅ SUCCESS: User ${user.id} updated with subscription details`)
-      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`)
     }
 
     if (event.type === 'invoice.payment_succeeded') {

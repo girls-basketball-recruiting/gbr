@@ -2,7 +2,7 @@
 
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
-import { Users, Bookmark, Lock, Calendar } from 'lucide-react'
+import { Users, Bookmark, Lock, Calendar, CalendarCheck2Icon, CalendarX2Icon } from 'lucide-react'
 import { useState } from 'react'
 import { Toggle } from '@workspace/ui/components/toggle'
 import Link from 'next/link'
@@ -122,7 +122,7 @@ export function TournamentCalendarCard({
             className='w-full mt-4'
             aria-label={attending ? 'Mark as Not Attending' : 'Mark as Attending'}
           >
-            <Bookmark className={attending ? 'fill-current' : ''} />
+            {attending ? <CalendarCheck2Icon /> : <CalendarX2Icon />}
             <span className='ml-2'>{attending ? 'Attending' : 'Mark as Attending'}</span>
           </Toggle>
         )}

@@ -10,6 +10,9 @@ import { H3 } from '@/components/ui/typography/H3'
 import { P } from '@/components/ui/typography/P'
 import { MutedText } from '@/components/ui/typography/MutedText'
 import { Small } from '@/components/ui/typography/Small'
+import { DeleteAccountButton } from '@/components/DeleteAccountButton'
+import { SignOutButton } from '@clerk/nextjs'
+import { Button } from '@workspace/ui/components/button'
 
 export default async function PaymentPage() {
   const clerkUser = await currentUser()
@@ -30,7 +33,7 @@ export default async function PaymentPage() {
 
   const user = users.docs[0]
   // Check publicMetadata first (after webhook processes), then unsafeMetadata (during race condition)
-  const role = (clerkUser.publicMetadata?.role || clerkUser.unsafeMetadata?.role) as string
+  const role = (clerkUser.publicMetadata?.role || clerkUser.unsafeMetadata?.role) as 'player' | 'coach'
   const promoCode = (clerkUser.publicMetadata?.promoCode || clerkUser.unsafeMetadata?.promoCode) as string | undefined
 
   // If user already has subscription, redirect appropriately
@@ -68,7 +71,7 @@ export default async function PaymentPage() {
     <div className='min-h-screen'>
       <div className='max-w-2xl mx-auto px-4 py-12'>
         <div className='text-center mb-12'>
-          <H1>Complete Your Subscription</H1>
+          <H1 className='mb-6'>Complete Your Subscription</H1>
           <P>{isPlayer ? 'Player Pro' : 'Coach Pro'} - Annual Plan</P>
           {promoCode === 'FIRST_YEAR_FREE' ? (
             <div className='mt-4'>
@@ -145,6 +148,13 @@ export default async function PaymentPage() {
               </div>
             </Card>
           </div>
+        </div>
+
+        <div className='mt-8 flex flex-col items-center gap-4'>
+          <SignOutButton>
+            <Button variant='outline'>Sign out</Button>
+          </SignOutButton>
+          <DeleteAccountButton userRole={role} />
         </div>
       </div>
     </div>

@@ -41,7 +41,7 @@ export async function CoachProfileView({ coach }: CoachProfileViewProps) {
         <div className='flex flex-col md:flex-row gap-8 md:gap-12 items-start'>
           {/* Profile Image */}
           {coach.profileImageUrl && (
-            <div className='w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden relative shrink-0 shadow-lg'>
+            <div className='w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden relative shrink-0 shadow-lg'>
               <Image
                 src={coach.profileImageUrl}
                 alt={`${coach.firstName} ${coach.lastName}`}

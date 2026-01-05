@@ -31,11 +31,33 @@ export const POST = handleApiError(async (req: Request) => {
     // DO NOT hardcode role - this was causing coach users to be corrupted
     const role = (clerkUser.publicMetadata?.role as 'player' | 'coach' | 'admin') || 'player'
 
-    dbUser = await create('users', {
-      clerkId: clerkUser.id,
-      email: clerkUser.emailAddresses[0]?.emailAddress || '',
-      roles: [role],
-    })
+    try {
+      dbUser = await create('users', {
+        clerkId: clerkUser.id,
+        email: clerkUser.emailAddresses[0]?.emailAddress || '',
+        roles: [role],
+      })
+    } catch (error) {
+      // If user was just created by webhook, fetch it
+      if (error && typeof error === 'object' && 'data' in error) {
+        const errorData = (error as any).data
+        if (errorData?.errors?.some((e: any) =>
+          e.path === 'clerkId' && e.message?.includes('unique')
+        )) {
+          console.log('⚠️ User created by webhook during request, fetching...')
+          dbUser = await findOne('users', {
+            clerkId: { equals: clerkUser.id },
+          })
+          if (!dbUser) {
+            throw new Error('User not found after duplicate error')
+          }
+        } else {
+          throw error
+        }
+      } else {
+        throw error
+      }
+    }
   }
 
   // Parse request body to get step and data
@@ -123,6 +145,10 @@ export const POST = handleApiError(async (req: Request) => {
 
     case 2: {
       // Athletic Profile (Position, Height, AAU + Stats & Media)
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+      console.log('🔔 STEP 2: Athletic Profile Data Received')
+      console.log('Raw stepData:', JSON.stringify(stepData, null, 2))
+
       const highlightVideoUrls = stepData.highlightVideoUrls
         ?.filter((url: string) => url.trim())
         .map((url: string) => ({ url: url.trim() }))
@@ -154,8 +180,8 @@ export const POST = handleApiError(async (req: Request) => {
         heightInInches: stepData.heightInInches
           ? parseInt(stepData.heightInInches)
           : undefined,
-        aauProgram: stepData.aauProgram || undefined,
-        aauTeam: stepData.aauTeam || undefined,
+        aauProgramName: stepData.aauProgramName || undefined,
+        aauTeamName: stepData.aauTeamName || undefined,
         aauCircuit: stepData.aauCircuit || undefined,
         aauCoach: stepData.aauCoach || undefined,
         awards: stepData.awards || undefined,
@@ -166,11 +192,18 @@ export const POST = handleApiError(async (req: Request) => {
         ncaaId: stepData.ncaaId || undefined,
         highlightVideoUrls: highlightVideoUrls || undefined,
       }
+
+      console.log('Prepared updateData:', JSON.stringify(updateData, null, 2))
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
       break
     }
 
     case 3: {
       // Academic Profile (Academic + Preferences)
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+      console.log('🔔 STEP 3: Academic Profile Data Received')
+      console.log('Raw stepData:', JSON.stringify(stepData, null, 2))
+
       updateData = {
         unweightedGpa: stepData.unweightedGpa
           ? parseFloat(stepData.unweightedGpa)
@@ -190,6 +223,9 @@ export const POST = handleApiError(async (req: Request) => {
         interestedInAllGirls: stepData.interestedInAllGirls || false,
         interestedInHBCU: stepData.interestedInHBCU || false,
       }
+
+      console.log('Prepared updateData:', JSON.stringify(updateData, null, 2))
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
       break
     }
 
@@ -219,10 +255,21 @@ export const POST = handleApiError(async (req: Request) => {
   // Create or update player profile
   let player
   if (existingPlayer) {
+    console.log(`📝 Updating existing player ${existingPlayer.id} with step ${step} data`)
     player = await updateById('players', existingPlayer.id, updateData)
+    console.log(`✅ Player updated successfully`)
   } else {
+    console.log(`📝 Creating new player with step ${step} data`)
     player = await create('players', updateData)
+    console.log(`✅ Player created successfully with ID: ${player.id}`)
   }
+
+  console.log('Final player data:', JSON.stringify({
+    id: player.id,
+    completedSteps: player.completedSteps,
+    hasAthletic: !!(player.primaryPosition || player.aauProgramName),
+    hasAcademic: !!(player.unweightedGpa || player.potentialAreasOfStudy),
+  }, null, 2))
 
   // Return completedSteps array for frontend
   const updatedCompletedSteps = player.completedSteps?.map((s: any) => s.step) || []
