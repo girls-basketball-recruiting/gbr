@@ -149,9 +149,10 @@ export const POST = handleApiError(async (req: Request) => {
       console.log('🔔 STEP 2: Athletic Profile Data Received')
       console.log('Raw stepData:', JSON.stringify(stepData, null, 2))
 
+      // Frontend sends highlightVideoUrls as array of objects: [{ url: "..." }]
       const highlightVideoUrls = stepData.highlightVideoUrls
-        ?.filter((url: string) => url.trim())
-        .map((url: string) => ({ url: url.trim() }))
+        ?.filter((item: any) => item?.url?.trim())
+        .map((item: any) => ({ url: item.url.trim() }))
 
       // Get position values
       const primaryPosition = stepData.primaryPosition

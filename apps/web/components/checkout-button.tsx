@@ -6,11 +6,25 @@ import { createCheckoutSession } from '@/actions/stripe-actions'
 import { loadStripe } from '@stripe/stripe-js'
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+// Validate Stripe publishable key exists
+const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+if (!stripePublishableKey) {
+  console.error('Missing NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY environment variable')
+}
+
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null
 
 export function CheckoutButton() {
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // Check for missing Stripe key on mount
+  useEffect(() => {
+    if (!stripePublishableKey) {
+      setError('Payment system is not configured. Please contact support.')
+      return
+    }
+  }, [])
 
   useEffect(() => {
     // Fetch the client secret on mount
@@ -31,7 +45,7 @@ export function CheckoutButton() {
     )
   }
 
-  if (!clientSecret) {
+  if (!clientSecret || !stripePromise) {
     return (
       <div className='w-full py-20 flex flex-col items-center justify-center gap-3 rounded-lg border'>
         <Loader2 className='h-8 w-8 animate-spin' />
