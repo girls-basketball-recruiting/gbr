@@ -10,7 +10,7 @@ import { getLevelOfPlayLabel } from '@/lib/zod/LevelsOfPlay'
 import { PlayerTournamentSchedule } from './player-tournament-schedule'
 import { PlayerHighlightVideos } from './player-highlight-videos'
 import { CopyableText } from './copyable-text'
-import { MailIcon, Phone, PhoneIcon } from 'lucide-react'
+import { MailIcon, PhoneIcon } from 'lucide-react'
 import { X as XIcon } from 'lucide-react'
 import { Instagram } from 'lucide-react'
 import { H1, H2, H3, P, Small } from '../ui/typography'
@@ -64,7 +64,7 @@ export function PlayerProfileView({
 
           {/* Name & Key Info */}
           <div className='flex-1 pt-2'>
-            <H1 className='mb-2'>
+            <H1 className='text-left mb-2'>
               {player.firstName} {player.lastName}
             </H1>
             <div className='flex flex-wrap items-center gap-3 text-lg mb-6'>

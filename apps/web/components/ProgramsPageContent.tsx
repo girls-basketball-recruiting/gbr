@@ -56,7 +56,6 @@ export function ProgramsPageContent({
               key={program.id}
               program={program}
               isSaved={savedIds.includes(program.id)}
-              isPlayer={isPlayer}
             />
           ))}
         </div>

@@ -30,7 +30,7 @@ export async function SavedProgramsSection({ playerId }: { playerId: number }) {
       ) : (
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {validPrograms.map((savedProgram) => (
-            <ProgramCard key={savedProgram.id} program={savedProgram.college as College} isSaved isPlayer />
+            <ProgramCard key={savedProgram.id} program={savedProgram.college as College} isSaved />
           ))}
         </div>
       )}

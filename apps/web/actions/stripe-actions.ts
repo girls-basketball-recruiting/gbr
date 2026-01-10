@@ -3,10 +3,7 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { stripe, getOrCreateStripeCustomer, STRIPE_PRICES } from '@/lib/stripe'
 
-const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-  'http://localhost:3000'
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 export async function createCheckoutSession() {
   const user = await currentUser()

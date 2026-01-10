@@ -21,10 +21,9 @@ interface Program {
 interface ProgramCardProps {
   program: Program
   isSaved?: boolean
-  isPlayer?: boolean
 }
 
-export function ProgramCard({ program, isSaved = false, isPlayer = false }: ProgramCardProps) {
+export function ProgramCard({ program, isSaved = false }: ProgramCardProps) {
   const coachCount = program.coachCount ?? 0
   return (
     <Link href={`/programs/${program.id}`}>
