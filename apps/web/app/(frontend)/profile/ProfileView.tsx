@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 import { CoachProfileView } from '@/components/profile/coach-profile-view'
-import { hasActiveSubscription } from '@/lib/stripe'
 import { ProfileLayout } from '@/components/profile/profile-layout'
 import { PlayerProfileView } from '@/components/profile/player-profile-view'
 import { getAuthContext } from '@/lib/auth-context'
@@ -12,12 +11,6 @@ import { P } from '@/components/ui/typography'
 export async function ProfileView() {
   const { clerkUser, dbUser } = await getAuthContext()
 
-  // Check subscription status
-  let isSubscribed = false
-  if (dbUser.stripeCustomerId) {
-    isSubscribed = await hasActiveSubscription(dbUser.stripeCustomerId)
-  }
-
   // Get role from Clerk publicMetadata (single source of truth)
   const role = clerkUser.publicMetadata?.role as string | undefined
   const isPlayer = role === 'player'
@@ -27,7 +20,7 @@ export async function ProfileView() {
     return (
       <div className='p-8'>
         <div className='max-w-3xl mx-auto text-center'>
-          <P>No profile found. Please contact support.</P>
+          <P>No profile found.</P>
         </div>
       </div>
     )

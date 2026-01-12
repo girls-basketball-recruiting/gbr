@@ -8,6 +8,23 @@ import type { Tournament } from '@/payload-types'
 
 type FilterTab = 'all' | 'upcoming' | 'past'
 
+const isUpcoming = (endDate: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const end = new Date(endDate)
+  return end >= today
+}
+
+const filterTournaments = <T extends { endDate: string }>(
+  tournaments: T[],
+  filter: FilterTab
+): T[] => {
+  if (filter === 'all') return tournaments
+  if (filter === 'upcoming') return tournaments.filter((t) => isUpcoming(t.endDate))
+  if (filter === 'past') return tournaments.filter((t) => !isUpcoming(t.endDate))
+  return tournaments
+}
+
 interface TournamentsPageContentProps {
   tournaments: (Tournament & { attendeeCount?: number })[]
   attendingIds: number[]
@@ -61,10 +78,11 @@ export function TournamentsPageContent({
         setAttendingIds(attendingIds.filter((id) => id !== tournamentId))
       }
 
-      // Refresh tournaments to update attendee counts
+      // Refresh tournaments to update attendee counts, keeping the current filter
       const tournamentsRes = await fetch('/api/tournaments/list')
       const tournamentsData = await tournamentsRes.json()
-      setLocalTournaments(tournamentsData.tournaments || [])
+      const allTournaments = tournamentsData.tournaments || []
+      setLocalTournaments(filterTournaments(allTournaments, activeFilter))
     } catch (error) {
       console.error('Error toggling attendance:', error)
     }

@@ -67,7 +67,7 @@ export function ProgramsSection() {
               Explore College Programs
             </H2>
             <P className='text-lg mb-6'>
-              Search through hundreds of college basketball programs across all
+              Search through 1,700+ college basketball programs across all
               divisions. View detailed program information, coaching staff, conference
               affiliations, and academic requirements to find the right fit for your
               basketball journey.
