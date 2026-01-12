@@ -55,7 +55,7 @@ pnpm import        # Imports JSON data into Payload CMS
 After importing, you can verify the data:
 
 ### Via Payload Admin UI:
-1. Go to `http://localhost:3000/admin` (or your deployed URL)
+1. Go to `http://localhost:3000/ops` (or your deployed URL)
 2. Navigate to Collections > Colleges
 3. You should see all imported colleges
 
@@ -110,7 +110,7 @@ Returns aggregated statistics:
 
 You can manually add/edit/delete colleges through the Payload admin UI:
 
-1. Go to `/admin`
+1. Go to `/ops`
 2. Navigate to Collections > Colleges
 3. Add/Edit/Delete colleges as needed
 4. Changes are immediately available to the frontend

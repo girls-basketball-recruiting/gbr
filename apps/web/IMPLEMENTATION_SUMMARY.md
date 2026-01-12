@@ -23,7 +23,7 @@ A complete user authentication and synchronization system that integrates Clerk 
 - Protects routes using Clerk authentication
 - Public routes: `/`, `/sign-in`, `/sign-up`, `/api/webhooks/*`
 - Protected routes: All other routes require auth
-- Admin routes: `/admin/*` requires admin role
+- Admin routes: `/ops/*` requires admin role
 - Redirects non-admins away from admin panel
 
 ### 3. Documentation
@@ -118,7 +118,7 @@ A complete user authentication and synchronization system that integrates Clerk 
 ### Three Roles
 
 1. **`admin`** - Full system access
-   - Access PayloadCMS admin panel (`/admin`)
+   - Access PayloadCMS admin panel (`/ops`)
    - Manage all users and players
    - Create/read/update/delete all data
 
@@ -205,8 +205,8 @@ PAYLOAD_SECRET=your_secret_here
 - [ ] User signup creates user in PayloadCMS
 - [ ] User data syncs (email, name, roles)
 - [ ] Roles update when changed in Clerk
-- [ ] Admin can access `/admin`
-- [ ] Non-admin redirected from `/admin`
+- [ ] Admin can access `/ops`
+- [ ] Non-admin redirected from `/ops`
 - [ ] UserInfo component shows correct data
 - [ ] Webhook logs show successful syncs
 

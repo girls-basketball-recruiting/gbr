@@ -29,6 +29,9 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  routes: {
+    admin: '/ops',
+  },
   collections: [
     Users,
     // Media,

@@ -129,4 +129,4 @@ pnpm payload:generate-types
 ```
 
 ### View Archived Records (Admin):
-Access PayloadCMS admin at `/admin` to see all records including archived ones.
+Access PayloadCMS operations panel at `/ops` to see all records including archived ones.

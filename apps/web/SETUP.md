@@ -118,14 +118,14 @@ Visit http://localhost:3000
    ```
 7. Click **Save**
 8. Webhook will automatically sync to PayloadCMS
-9. You can now access `/admin` with admin privileges
+9. You can now access `/ops` with admin privileges
 
 ## Step 8: Test the Integration
 
 1. **Create a test user**: Sign up with a new email
 2. **Check sync**: User should appear in PayloadCMS admin → Users
 3. **Check roles**: Default role should be "player"
-4. **Test admin access**: Login with admin user, visit `/admin`
+4. **Test admin access**: Login with admin user, visit `/ops`
 
 ## Project Structure
 
@@ -162,7 +162,7 @@ apps/web/
 
 ### Admin Routes
 
-- `/admin` - PayloadCMS admin panel (admin role required)
+- `/ops` - PayloadCMS admin panel (admin role required)
 
 ## User Roles
 
@@ -252,7 +252,7 @@ pnpm lint
 - Check PayloadCMS admin → Users
 - Try signing out and back in
 
-### Can't access /admin?
+### Can't access /ops?
 
 - Verify user has `admin` role in Clerk metadata
 - Check proxy.ts is protecting the route

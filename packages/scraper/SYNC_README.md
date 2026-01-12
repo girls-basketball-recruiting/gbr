@@ -46,7 +46,7 @@ That's it! The frontend automatically fetches from Payload CMS.
 
 You can also manually update colleges through the Payload admin UI:
 
-1. Go to `https://your-domain.com/admin`
+1. Go to your operations panel URL
 2. Navigate to Collections > Colleges
 3. Add/Edit/Delete colleges as needed
 4. Changes are immediately available to the frontend (users will see updates on next page load)

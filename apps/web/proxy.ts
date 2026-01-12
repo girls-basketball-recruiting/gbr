@@ -9,10 +9,10 @@ const isProtectedRoute = createRouteMatcher([
   '/subscription',     // Subscription management
 ])
 
-// PayloadCMS admin routes - completely separate from frontend app
+// PayloadCMS operations panel routes - completely separate from frontend app
 // These use PayloadCMS's own authentication system
 const isPayloadAdminRoute = createRouteMatcher([
-  '/admin(.*)', // PayloadCMS admin UI
+  '/ops(.*)', // PayloadCMS operations panel
 ])
 
 // Public routes that don't require Clerk authentication

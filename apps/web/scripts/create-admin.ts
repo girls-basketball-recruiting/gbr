@@ -67,7 +67,7 @@ async function createAdmin() {
     console.log('✅ Admin user created successfully!', admin)
     console.log(`Email: ${email}`)
     console.log(`Password: ${password}`)
-    console.log('\nYou can now log in to /admin with these credentials.')
+    console.log('\nYou can now log in to /ops with these credentials.')
     console.log('\n⚠️ IMPORTANT: Change this password after first login!')
 
     process.exit(0)

@@ -241,9 +241,9 @@ pnpm --filter web db:migrate
 4. Verify subscription is created
 5. Check Stripe webhook received (Stripe Dashboard > Webhooks)
 
-### 4. Test Admin Panel
+### 4. Test Operations Panel
 
-1. Visit `https://your-preview-domain.vercel.app/admin`
+1. Visit the operations panel URL (see internal documentation)
 2. Create an admin user (first user becomes admin)
 3. Verify you can access collections
 
@@ -326,7 +326,7 @@ Before considering the preview environment complete, verify:
 - [ ] Database migrations ran successfully
 - [ ] User registration works (Player + Coach)
 - [ ] Payment flow works with test cards
-- [ ] Admin panel accessible
+- [ ] Operations panel accessible
 - [ ] File uploads work (profile images)
 - [ ] Webhooks receiving events (Clerk + Stripe)
 

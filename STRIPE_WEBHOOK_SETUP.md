@@ -122,7 +122,7 @@ After a successful payment:
    - Metadata should include `clerkUserId`
 
 2. **Check PayloadCMS:**
-   - Go to PayloadCMS admin (`/admin`)
+   - Go to PayloadCMS operations panel (`/ops`)
    - Find the user
    - Should see:
      - `stripeCustomerId`: starts with `cus_`
