@@ -1,274 +1,282 @@
-# Girls Basketball Recruiting Platform
+# Girls Basketball Recruiting (GBR) Platform
 
-A modern web platform connecting high school AAU girls basketball players with university basketball program coaches. Built with a focus on performance, scalability, and user experience.
+A modern web platform connecting high school AAU girls basketball players with university basketball program coaches. Built with Next.js 16, Payload CMS, and a focus on performance, security, and user experience.
 
-## 🏀 Overview
+## Overview
 
-This platform facilitates meaningful connections between talented student-athletes and collegiate basketball programs by providing:
+GBR facilitates meaningful connections between talented student-athletes and collegiate basketball programs by providing:
 
-- **Player Profiles**: Comprehensive athletic portfolios with stats, highlights, and academic information
-- **Coach Dashboard**: Advanced search and filtering tools for discovering talent
+- **Player Profiles**: Comprehensive athletic portfolios with stats, highlights, academic info, and college preferences
+- **Coach Dashboard**: Advanced player search, prospect tracking, evaluation notes, and contact history management
+- **Tournament Directory**: Browse AAU tournaments and mark attendance for networking
+- **College Program Directory**: Browse 1,700+ college basketball programs with filtering by division, state, and more
 
-## 📁 Repository Structure
-
-This is a [Turborepo](https://turbo.build/repo) monorepo. See [TURBOREPO.md](./TURBOREPO.md) for detailed information about the monorepo architecture and tooling.
-
-**apps/** - Application packages
-
-- **web/** - Next.js player-facing application
-- **coach-portal/** - Next.js coach dashboard (TODO)
-- **api/** - Backend API service (TODO)
-
-**packages/** - Shared packages
-
-- **ui/** - Shared React component library
-- **database/** - Prisma schema and database utilities (TODO)
-- **typescript-config/** - Shared TypeScript configurations
-- **eslint-config/** - Shared ESLint configurations
-- **auth/** - Authentication utilities (TODO)
-- **utils/** - Shared utility functions
-
-## 🚀 Tech Stack
+## Tech Stack
 
 ### Frontend
-
-- **Framework**: Next.js 14+ (App Router)
-- **UI Library**: React 18+
-- **Styling**: Tailwind CSS
-- **Component Library**: Custom components built on Radix UI primitives
-- **State Management**: React Server Components + Zustand (TODO)
+- **Framework**: Next.js 16 (App Router with Server Components)
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS 4 + shadcn/ui component library
 - **Forms**: React Hook Form + Zod validation
+- **State Management**: React Query (TanStack Query) for server state
 
-### Backend (TODO)
-
-- **Runtime**: Node.js
-- **Framework**: Nest.js or Express (TBD)
-- **Database**: PostgreSQL
-- **ORM**: Prisma
-- **Authentication**: BetterAuth or Clerk (TBD)
-- **File Storage**: AWS S3 or Cloudflare R2 for video content
+### Backend
+- **CMS/API**: Payload CMS 3.68
+- **Database**: PostgreSQL (Vercel Postgres)
+- **Authentication**: Clerk (OAuth, email/password)
+- **Payments**: Stripe (annual subscriptions)
+- **File Storage**: Vercel Blob Storage
 
 ### Infrastructure
+- **Hosting**: Vercel
+- **Analytics**: Vercel Analytics
+- **Webhooks**: Clerk → PayloadCMS sync, Stripe → subscription management
 
-- **Hosting**: Vercel (frontend) + Railway/Fly.io (backend - TBD)
-- **CI/CD**: GitHub Actions
-- **Monitoring and Analytics**: PostHog
+## Monorepo Structure
 
-## 🛠️ Getting Started
+This is a [Turborepo](https://turbo.build/repo) monorepo.
+
+```
+├── apps/
+│   └── web/              # Main Next.js application
+├── packages/
+│   ├── ui/               # Shared React component library (shadcn-based)
+│   ├── scraper/          # College data scraper utility
+│   ├── eslint-config/    # Shared ESLint configuration
+│   └── typescript-config/# Shared TypeScript config
+```
+
+## User Roles
+
+### Players (Student-Athletes)
+- Create comprehensive profiles with athletic stats, academics, and video highlights
+- Browse and save college programs with personal notes
+- Mark tournament attendance to show where they'll be playing
+- Annual subscription: $39/year
+
+### Coaches (College Staff)
+- Search and filter player profiles with advanced criteria
+- Save players to recruiting boards
+- Create detailed evaluation notes with contact history tracking
+- Track "prospects" (unregistered players) with manual entry
+- Import prospects via CSV upload
+- Mark tournament attendance to show where they'll be recruiting
+- Annual subscription: $99/year
+
+### Admin
+- Manage colleges and tournaments database
+- Create promotional invitation tokens
+- Access PayloadCMS admin panel at `/admin`
+
+## Key Features
+
+### For Players
+- Multi-step onboarding with progress tracking
+- Profile fields: bio, position, stats (PPG/RPG/APG), height/weight, GPA, awards
+- AAU/Club team information
+- Up to 10 highlight video URLs
+- College preferences (divisions, geography, school types)
+- NCAA ID tracking
+- Profile image upload
+
+### For Coaches
+- Advanced player search with filters:
+  - Graduation year, position, location
+  - GPA range, height/weight range
+- Player evaluation notes:
+  - General notes and observations
+  - Contact history (email, phone, text, in-person, video calls, game/campus visits)
+  - Interest level tracking (High/Medium/Low/Watching/Not Interested)
+  - Custom tags for organization
+  - Follow-up reminders
+- Prospects management:
+  - Add unregistered players manually
+  - CSV bulk import with validation
+  - Link to registered players when they join
+- Saved players board
+
+### Public Access
+- Browse player profiles (limited view with sign-up CTA)
+- Browse college programs directory
+- Browse AAU tournaments
+
+## Database Schema
+
+| Collection | Description |
+|------------|-------------|
+| `users` | User accounts with Clerk sync and Stripe subscription data |
+| `players` | Player profiles with athletic/academic info |
+| `coaches` | Coach profiles with college affiliation |
+| `colleges` | 1,700+ college basketball programs |
+| `tournaments` | AAU tournament listings |
+| `player-saved-programs` | Player's saved college programs |
+| `coach-saved-players` | Coach's saved player list |
+| `coach-player-notes` | Coach's evaluation notes on players |
+| `coach-prospects` | Coach's manually tracked unregistered players |
+| `invitations` | Promotional tokens for first-year-free offers |
+
+## Getting Started
 
 ### Prerequisites
-
 - Node.js 18+
 - pnpm 8+ (required for workspace management)
-- PostgreSQL 14+ (for local development - TODO)
+- PostgreSQL 14+ (via Vercel Postgres or local)
 
 ### Installation
 
-Clone the repository and install dependencies:
+```bash
+# Clone the repository
+git clone <repository-url>
+cd gbr
 
-    git clone <repository-url>
-    cd basketball-recruiting-platform
-    pnpm install
+# Install dependencies
+pnpm install
 
-Set up environment variables:
+# Copy environment file
+cp apps/web/.env.example apps/web/.env.local
 
-    cp .env.example .env.local
+# Edit .env.local with your configuration (see Environment Variables below)
 
-Edit .env.local with your configuration, then run database migrations (TODO):
+# Run database migrations
+pnpm --filter web db:migrate
 
-    pnpm db:migrate
+# Start development server
+pnpm dev
+```
 
-Start development servers:
+The app will be available at http://localhost:3000
 
-    pnpm dev
+### Environment Variables
 
-This will start:
+Required variables for `apps/web/.env.local`:
 
-- Player web app: http://localhost:3000
-- Coach portal: http://localhost:3001 (TODO)
-- API server: http://localhost:4000 (TODO)
+```bash
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+CLERK_WEBHOOK_SECRET=whsec_...
 
-## 📦 Available Scripts
+# Database (Vercel Postgres)
+DATABASE_URL=postgresql://...
+POSTGRES_URL=postgresql://...
 
-**Development**
+# PayloadCMS
+PAYLOAD_SECRET=<32+ character random string>
 
+# Vercel Blob Storage
+BLOB_READ_WRITE_TOKEN=vercel_blob_...
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PLAYER_PRO_YEARLY_PRICE_ID=price_...
+NEXT_PUBLIC_STRIPE_COACH_PRO_YEARLY_PRICE_ID=price_...
+
+# App URL (for callbacks and links)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+## Available Scripts
+
+### Development
 - `pnpm dev` - Start all apps in development mode
-- `pnpm dev:web` - Start only the player web app
-- `pnpm dev:coach` - Start only the coach portal (TODO)
+- `pnpm dev:web` - Start only the web app
 
-**Building**
-
+### Building
 - `pnpm build` - Build all apps and packages
-- `pnpm build:web` - Build specific app
+- `pnpm build:web` - Build the web app only
 
-**Testing**
-
-- `pnpm test` - Run all tests (TODO)
-- `pnpm test:unit` - Run unit tests (TODO)
-- `pnpm test:e2e` - Run end-to-end tests (TODO)
-
-**Code Quality**
-
+### Code Quality
 - `pnpm lint` - Lint all packages
 - `pnpm format` - Format code with Prettier
 - `pnpm type-check` - Run TypeScript compiler checks
 
-**Database (TODO)**
+### Database
+- `pnpm --filter web db:migrate` - Run database migrations
+- `pnpm --filter web generate:types` - Generate Payload types
 
-- `pnpm db:migrate` - Run database migrations
-- `pnpm db:seed` - Seed database with test data
-- `pnpm db:studio` - Open Prisma Studio
+## API Routes
 
-## 🏗️ Architecture
+### Authentication
+- `POST /api/webhooks/clerk` - Clerk webhook for user sync
 
-### Design Principles
+### Players
+- `GET /api/players/list` - List all players (with filters)
+- `GET /api/players/me` - Get current player profile
+- `GET /api/players/[id]/details` - Get player details
+- `POST /api/players/partial` - Update player profile
 
-1. **Mobile-first**: Responsive design optimized for mobile recruiting
-2. **Performance**: Server-side rendering, image optimization, lazy loading
-3. **Accessibility**: WCAG 2.1 AA compliance target
-4. **Type Safety**: End-to-end TypeScript with strict mode
-5. **Modularity**: Shared packages for reusability across apps
+### Coaches
+- `GET /api/coaches/list` - List all coaches
+- `GET /api/coaches/[id]/details` - Get coach details
 
-### Key Features (Planned)
+### Programs (Colleges)
+- `GET /api/programs` - List programs (with filters)
+- `GET /api/programs/[id]` - Get program details
+- `GET /api/programs/conferences` - List conferences
 
-#### For Players
+### Prospects (Coach feature)
+- `GET /api/prospects` - Get coach's prospects
+- `POST /api/prospects` - Create prospect
+- `POST /api/prospects/import-csv` - Bulk import from CSV
+- `GET /api/prospects/[id]` - Get prospect details
+- `PUT /api/prospects/[id]` - Update prospect
 
-- Profile creation with stats, bio, and academic info
-- Video highlight upload and management
-- University program discovery and search
-- Message inbox for coach communications
-- Recruitment timeline tracking
-- Mobile-responsive design
+### Notes & Saved Items
+- `GET/POST /api/coach-notes/[coachId]/[playerId]` - Coach player notes
+- `GET/POST/DELETE /api/saved-players` - Coach saved players
+- `GET/POST/DELETE /api/player-saved-programs` - Player saved programs
 
-#### For Coaches
+### Tournaments
+- `GET /api/tournaments/list` - List tournaments
+- `POST /api/tournaments/[id]/toggle-attendance` - Toggle attendance
 
-- Advanced player search with filters (position, class year, location, stats)
-- Saved player lists and boards
-- Bulk messaging capabilities
-- Compliance tools for NCAA/NAIA regulations
-- Analytics dashboard
-- Team collaboration features
+### Payments
+- `POST /api/webhooks/stripe` - Stripe webhook for subscriptions
 
-#### Admin (Future)
+## Deployment
 
-- User management
-- Content moderation
-- Platform analytics
-- Feature flags
+### Vercel (Production)
 
-## 🔐 Authentication & Authorization (TODO)
+1. Connect repository to Vercel
+2. Set all environment variables in Vercel dashboard
+3. Configure webhooks:
+   - Clerk: `https://girlsbasketballrecruiting.com/api/webhooks/clerk`
+   - Stripe: `https://girlsbasketballrecruiting.com/api/webhooks/stripe`
 
-- **Player Accounts**: Email/password + OAuth (Google)
-- **Coach Accounts**: Email verification + university affiliation verification
-- **Role-based Access Control**: Player, Coach, Admin roles
-- **Session Management**: JWT tokens with refresh mechanism
+### Preview Environment
 
-## 📊 Database Schema (TODO)
+Create a `preview` branch and configure:
+1. Separate Vercel project or preview deployment settings
+2. Separate Stripe test environment
+3. Separate Clerk development instance
+4. Separate Vercel Postgres database
 
-Key entities:
+## Architecture Notes
 
-- Users (players, coaches, admins)
-- Player Profiles
-- Coach Profiles
-- Universities/Programs
-- Videos
-- Messages
-- Recruitment Activities
+### Authentication Flow
+1. User signs up via Clerk (email/password or Google OAuth)
+2. Clerk webhook syncs user to PayloadCMS
+3. User redirected to payment page
+4. Stripe checkout completes subscription
+5. Stripe webhook updates user subscription data
+6. User proceeds to onboarding form
 
-See `packages/database/schema.prisma` for complete schema.
+### Access Control
+- Row-level security enforced at PayloadCMS collection level
+- API helpers (`withPlayer()`, `withCoach()`) enforce role requirements
+- Users can only read/modify their own data
+- Coaches can view all players but only their own notes/prospects
 
-## 🎨 Design System
+### Soft Deletes
+- Players and Coaches use `deletedAt` field for soft deletion
+- Preserves historical data and relationships
 
-The shared UI package provides a consistent design system across all applications:
-
-- Typography scale
-- Color palette (brand colors, semantic colors)
-- Spacing system
-- Component library
-- Icon set
-
-See `packages/ui/README.md` for component documentation.
-
-## Usage
-
-```bash
-pnpm dlx shadcn@latest init
-```
-
-## Adding components
-
-To add components to your app, run the following command at the root of your `web` app:
-
-```bash
-pnpm dlx shadcn@latest add button -c apps/web
-```
-
-This will place the ui components in the `packages/ui/src/components` directory.
-
-## Tailwind
-
-Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
-
-## Using components
-
-To use the components in your app, import them from the `ui` package.
-
-```tsx
-import { Button } from "@workspace/ui/components/button";
-```
-
-## 🚢 Deployment
-
-### TODO
-
-## 🤝 Contributing
-
-This is currently a private project. Contributing guidelines will be added when the project opens for collaboration.
-
-## 📝 License
+## License
 
 [License TBD]
 
-## 🗺️ Roadmap
+## Support
 
-### Phase 1: MVP (Current)
-
-- [x] Project setup and monorepo architecture
-- [x] Design system and UI component library
-- [x] Player profile creation
-- [x] Basic search functionality
-- [ ] Video upload integration
-- [x] Authentication system
-
-### Phase 2: Core Features
-
-- [x] Advanced search and filtering
-- [x] Coach dashboard
-
-### Phase 3: Growth Features
-
-- [ ] Analytics and insights
-- [ ] Recruitment tracking
-- [ ] Team collaboration tools
-- [ ] Premium features/subscriptions
-
-### Phase 4: Scale
-
-- [ ] API for third-party integrations
-- [ ] Webhooks and event system
-- [ ] Advanced analytics
-- [ ] Multi-sport expansion
-
-## 📞 Support
-
-For questions or issues:
-
-- Create an issue in this repository
-- Contact: [contact email TBD]
-
-## 🔗 Related Documentation
-
-- [Turborepo Setup](./TURBOREPO.md) - Monorepo architecture and configuration
-- [Design System](./packages/ui/README.md) - Component library documentation
-
----
+For questions or issues, create an issue in this repository.

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { getCoachPositionLabel } from '@/lib/zod/CoachPositions'
 import { SavedPlayersSection } from './dashboard/SavedPlayersSection'
 import { ProspectsSection } from './dashboard/ProspectsSection'
+import { ProspectsActions } from './dashboard/ProspectsActions'
 import { getAuthContext } from '@/lib/auth-context'
 import { redirect } from 'next/navigation'
 import { ButtonLink } from './ui/ButtonLink'
@@ -76,9 +77,7 @@ export default async function CoachDashboard() {
                 (Manual Entries)
               </span>
             </h3>
-            <ButtonLink href='/prospects/create' variant='ghost'>
-              + Add Prospect
-            </ButtonLink>
+            <ProspectsActions />
           </div>
 
           <Suspense>
