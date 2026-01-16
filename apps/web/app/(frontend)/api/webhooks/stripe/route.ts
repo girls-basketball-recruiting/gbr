@@ -4,6 +4,7 @@ import { stripe } from '@/lib/stripe'
 import Stripe from 'stripe'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { clerkClient } from '@clerk/nextjs/server'
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -157,6 +158,20 @@ export async function POST(req: Request) {
       })
 
       console.log(`✅ SUCCESS: User ${user.id} updated with subscription details`)
+
+      // Sync subscription status to Clerk metadata for middleware access
+      try {
+        const client = await clerkClient()
+        await client.users.updateUserMetadata(clerkUserId, {
+          publicMetadata: {
+            hasActiveSubscription: true,
+          },
+        })
+        console.log(`✅ Clerk metadata updated with hasActiveSubscription: true`)
+      } catch (clerkError) {
+        console.error(`❌ Failed to update Clerk metadata:`, clerkError)
+        // Don't fail the webhook, PayloadCMS is the source of truth
+      }
     }
 
     if (event.type === 'invoice.payment_succeeded') {
@@ -224,6 +239,7 @@ export async function POST(req: Request) {
       console.log(
         `🔄 Processing customer.subscription.updated for subscription ${subscription.id}`,
       )
+      console.log(`📊 Status: ${subscription.status}`)
 
       const users = await payload.find({
         collection: 'users',
@@ -253,6 +269,23 @@ export async function POST(req: Request) {
           console.log(`✅ Updated user ${user.id} subscription details`)
         } else {
           console.error(`❌ No current_period_end in subscription item update`)
+        }
+
+        // Sync subscription status to Clerk metadata
+        // Only 'active' and 'trialing' statuses grant access
+        const isActive = subscription.status === 'active' || subscription.status === 'trialing'
+        if (user.clerkId) {
+          try {
+            const client = await clerkClient()
+            await client.users.updateUserMetadata(user.clerkId, {
+              publicMetadata: {
+                hasActiveSubscription: isActive,
+              },
+            })
+            console.log(`✅ Clerk metadata updated with hasActiveSubscription: ${isActive}`)
+          } catch (clerkError) {
+            console.error(`❌ Failed to update Clerk metadata:`, clerkError)
+          }
         }
       } else {
         console.error(
@@ -290,6 +323,21 @@ export async function POST(req: Request) {
           },
         })
         console.log(`✅ Cleared subscription data for user ${user.id}`)
+
+        // Sync subscription status to Clerk metadata
+        if (user.clerkId) {
+          try {
+            const client = await clerkClient()
+            await client.users.updateUserMetadata(user.clerkId, {
+              publicMetadata: {
+                hasActiveSubscription: false,
+              },
+            })
+            console.log(`✅ Clerk metadata updated with hasActiveSubscription: false`)
+          } catch (clerkError) {
+            console.error(`❌ Failed to update Clerk metadata:`, clerkError)
+          }
+        }
       } else {
         console.log(
           `⭕️ User with subscription ${subscription.id} not found (expected)`,

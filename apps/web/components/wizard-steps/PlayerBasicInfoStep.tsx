@@ -13,6 +13,7 @@ import { FormTextField } from '@/components/form/FormTextField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { ProfileImageUpload } from '@/components/form/ProfileImageUpload'
 import type { Player } from '@/payload-types'
+import { H2, P } from '../ui/typography'
 
 interface PlayerBasicInfoStepProps {
   onSave: (data: any) => Promise<void>
@@ -69,12 +70,12 @@ export function PlayerBasicInfoStep({
   return (
     <form onSubmit={form.handleSubmit} className='space-y-6'>
       <div>
-        <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
+        <H2>
           Let&apos;s start with the basics
-        </h2>
-        <p className='text-slate-600 dark:text-slate-400'>
+        </H2>
+        <P>
           Tell us about yourself so coaches can find you
-        </p>
+        </P>
       </div>
 
         {(error || form.error) && (
@@ -134,7 +135,7 @@ export function PlayerBasicInfoStep({
         </div>
 
       {/* Navigation */}
-      <div className='flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700'>
+      <div className='flex justify-end gap-3 pt-6 border-t'>
         <Button
           type='submit'
           disabled={isLoading}

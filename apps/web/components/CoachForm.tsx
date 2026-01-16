@@ -7,7 +7,6 @@ import {
   Field,
   FieldLabel,
   FieldSet,
-  FieldLegend,
   FieldGroup,
   FieldError,
 } from '@workspace/ui/components/field'

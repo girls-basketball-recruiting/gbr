@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
 import { CoachNotesSection } from '@/components/CoachNotesSection'
 import { SavePlayerButton } from '@/components/SavePlayerButton'
-import { PlayerProfileView } from '@/components/profile/player-profile-view'
+import { ProfileView } from '@/components/profile/ProfileView'
 import type { Metadata } from 'next'
 import { getPositionLabel } from '@/lib/zod/Positions'
 import { formatHeight } from '@/lib/formatters'
@@ -212,8 +212,8 @@ export default async function PlayerProfilePage({
           </div>
         )}
 
-        {/* Player Profile View - Using same component as /profile */}
-        <PlayerProfileView player={player} tournamentSchedule={tournamentSchedule} />
+        {/* Player Profile View */}
+        <ProfileView profile={player} variant='player' tournamentSchedule={tournamentSchedule} />
 
         {/* Coach Notes Section - Only visible to coaches */}
         {isCoach && coachProfile && (

@@ -6,14 +6,14 @@ import { put, del, list } from '@vercel/blob'
  *
  * @param file - The file to upload
  * @param userId - The user ID (used for organizing blobs)
- * @param userType - The user type ("player" or "coach")
+ * @param userType - The user type ("player", "coach", or "prospect")
  * @param oldImageUrl - The existing image URL to delete (if any)
  * @returns The new blob URL
  */
 export async function uploadProfileImage(
   file: File,
   userId: string | number,
-  userType: 'player' | 'coach',
+  userType: 'player' | 'coach' | 'prospect',
   oldImageUrl?: string | null
 ): Promise<string> {
   // Delete old image if it exists
@@ -24,7 +24,12 @@ export async function uploadProfileImage(
   // Generate a unique filename with timestamp to prevent caching issues
   const timestamp = Date.now()
   const extension = file.name.split('.').pop() || 'jpg'
-  const dir = userType === 'player' ? 'players' : 'coaches'
+  const dirMap: Record<typeof userType, string> = {
+    player: 'players',
+    coach: 'coaches',
+    prospect: 'prospects',
+  }
+  const dir = dirMap[userType]
   const filename = `${dir}/${userId}/profile-${timestamp}.${extension}`
 
   // Upload to Vercel Blob

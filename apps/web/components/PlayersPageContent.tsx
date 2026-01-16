@@ -2,7 +2,7 @@
 
 import { ListPageToolbar } from './ListPageToolbar'
 import { SortByDropdown } from './SortByDropdown'
-import { PlayerCard } from './ui/PlayerCard'
+import { ProfileCard } from './ui/ProfileCard'
 import { PlayersTable } from './PlayersTable'
 import { SavePlayerButton } from './SavePlayerButton'
 import { EmptyState } from './ui/EmptyState'
@@ -55,11 +55,12 @@ export function PlayersPageContent({
           currentPlayerId={currentPlayerId}
         />
       ) : (
-        <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
           {players.map((player) => (
-            <PlayerCard
+            <ProfileCard
               key={player.id}
-              player={player}
+              profile={player}
+              variant='player'
               isOwnCard={currentPlayerId === player.id}
               action={
                 isCoach ? (
@@ -67,7 +68,6 @@ export function PlayersPageContent({
                     playerId={player.id}
                     initialIsSaved={savedPlayerIds.includes(player.id)}
                     variant='outline'
-                    className='border-slate-600 text-white hover:bg-slate-800'
                   />
                 ) : undefined
               }

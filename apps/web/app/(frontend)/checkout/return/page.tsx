@@ -1,7 +1,5 @@
 import { redirect } from 'next/navigation'
-import { currentUser } from '@clerk/nextjs/server'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { currentUser, clerkClient } from '@clerk/nextjs/server'
 import { stripe } from '@/lib/stripe'
 
 interface CheckoutReturnPageProps {
@@ -35,47 +33,22 @@ export default async function CheckoutReturnPage({ searchParams }: CheckoutRetur
     redirect('/payment')
   }
 
-  // Payment successful, check user's profile status
-  const payload = await getPayload({ config })
-  const users = await payload.find({
-    collection: 'users',
-    where: {
-      clerkId: { equals: clerkUser.id },
-    },
-    limit: 1,
-  })
+  // Payment successful - update Clerk metadata immediately
+  // (webhook will also do this, but we do it here for faster UX)
+  if (!clerkUser.publicMetadata?.hasActiveSubscription) {
+    try {
+      const client = await clerkClient()
+      await client.users.updateUserMetadata(clerkUser.id, {
+        publicMetadata: {
+          hasActiveSubscription: true,
+        },
+      })
+    } catch (error) {
+      console.error('Failed to update subscription status:', error)
+    }
+  }
 
-  const user = users.docs[0]
-  // Check publicMetadata first (after webhook processes), then unsafeMetadata (during race condition)
+  // Redirect to onboarding - it will handle profile creation
   const role = (clerkUser.publicMetadata?.role || clerkUser.unsafeMetadata?.role) as string
-
-  if (!user) {
-    // User doesn't exist yet (should be created by webhook)
-    // Redirect to onboarding and let it handle the waiting
-    redirect(`/onboarding/${role}`)
-  }
-
-  // Check if they've completed onboarding
-  if (role === 'player') {
-    const players = await payload.find({
-      collection: 'players',
-      where: { user: { equals: user.id } },
-      limit: 1,
-    })
-    if (players.docs[0]) {
-      redirect('/') // Has profile, go to dashboard
-    }
-  } else if (role === 'coach') {
-    const coaches = await payload.find({
-      collection: 'coaches',
-      where: { user: { equals: user.id } },
-      limit: 1,
-    })
-    if (coaches.docs[0]) {
-      redirect('/') // Has profile, go to dashboard
-    }
-  }
-
-  // Has subscription but no profile yet, go to onboarding
   redirect(`/onboarding/${role}`)
 }

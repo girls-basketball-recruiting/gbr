@@ -40,7 +40,12 @@ export function CollegeCombobox({
 }: CollegeComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
-  const { colleges, isLoading, searchColleges } = useColleges()
+  const { colleges, isLoading, searchColleges, enableFetch } = useColleges()
+
+  // Trigger lazy fetch when this component mounts
+  React.useEffect(() => {
+    enableFetch()
+  }, [enableFetch])
 
   // Debounced search query (300ms)
   const [debouncedQuery, setDebouncedQuery] = React.useState('')
