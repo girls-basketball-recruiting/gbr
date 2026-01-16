@@ -3,7 +3,6 @@
 import { Button } from '@workspace/ui/components/button'
 import { Alert, AlertDescription } from '@workspace/ui/components/alert'
 import { AlertCircle, X } from 'lucide-react'
-import { Input } from '@workspace/ui/components/input'
 import { Field, FieldLabel, FieldDescription } from '@workspace/ui/components/field'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AREAS_OF_STUDY } from '@/lib/zod/AreasOfStudy'
@@ -15,6 +14,35 @@ import { useSchemaForm } from '@/hooks/useSchemaForm'
 import { FormTextField } from '@/components/form/FormTextField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import type { Player } from '@/payload-types'
+import { H2, H3, P, Small } from '../ui/typography'
+
+const SpecialButton = ({ children, onClick, isMaxSelected, isSelected, isDisabled }: {
+  children: React.ReactNode
+  onClick: () => void
+  isSelected: boolean
+  isMaxSelected: boolean
+  isDisabled: boolean
+}) => {
+  return (
+    <button
+      type='button'
+      onClick={onClick}
+      disabled={isDisabled}
+      className={`text-left px-4 py-3 rounded-lg border transition-all ${
+        isSelected
+          ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-600 text-blue-900 dark:text-blue-100'
+          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white hover:border-blue-400 dark:hover:border-blue-500'
+      } ${!isSelected && isMaxSelected ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+      <div className='flex items-center justify-between'>
+        <span className='font-medium text-sm'>{children}</span>
+        {isSelected && (
+          <X className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+        )}
+      </div>
+    </button>
+  )
+}
 
 interface PlayerAcademicProfileStepProps {
   onSave: (data: any) => Promise<void>
@@ -89,12 +117,12 @@ export function PlayerAcademicProfileStep({ onSave, error, isLastStep, profile }
   return (
     <form onSubmit={form.handleSubmit} className='space-y-6'>
       <div>
-        <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
+        <H2>
           Academic Profile
-        </h2>
-        <p className='text-slate-600 dark:text-slate-400'>
+        </H2>
+        <P>
           Share your academic achievements and college preferences
-        </p>
+        </P>
       </div>
 
       {(error || form.error) && (
@@ -106,9 +134,9 @@ export function PlayerAcademicProfileStep({ onSave, error, isLastStep, profile }
 
       {/* Academic Section */}
       <div className='space-y-5'>
-        <h3 className='text-lg font-semibold text-slate-900 dark:text-white'>
+        <H3>
           Academic Information
-        </h3>
+        </H3>
 
         <div className='grid grid-cols-2 md:grid-cols-3 gap-5'>
           <FormTextField
@@ -134,38 +162,26 @@ export function PlayerAcademicProfileStep({ onSave, error, isLastStep, profile }
               const isMaxSelected = potentialAreasOfStudy.length >= 3
 
               return (
-                <button
+                <SpecialButton
                   key={area.value}
-                  type='button'
                   onClick={() => handleAreaToggle(area.value)}
-                  disabled={!isSelected && isMaxSelected}
-                  className={`text-left px-4 py-3 rounded-lg border transition-all ${
-                    isSelected
-                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-600 text-blue-900 dark:text-blue-100'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white hover:border-blue-400 dark:hover:border-blue-500'
-                  } ${!isSelected && isMaxSelected ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span className='font-medium text-sm'>{area.label}</span>
-                    {isSelected && (
-                      <X className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                    )}
-                  </div>
-                </button>
+                  isSelected={isSelected}
+                  isDisabled={!isSelected && isMaxSelected}
+                  isMaxSelected={isMaxSelected}
+                  children={area.label}
+                />
               )
             })}
           </div>
-          <div className='text-sm text-slate-600 dark:text-slate-400 mt-2'>
+          <Small className='mt-2'>
             {potentialAreasOfStudy.length} of 3 selected
-          </div>
+          </Small>
         </Field>
       </div>
 
       {/* College Preferences Section */}
-      <div className='space-y-5 pt-6 border-t border-slate-200 dark:border-slate-700'>
-        <h3 className='text-lg font-semibold text-slate-900 dark:text-white'>
-          College Preferences
-        </h3>
+      <div className='space-y-5 pt-6 border-t'>
+        <H3>College Preferences</H3>
 
         <Field className='gap-1'>
           <FieldLabel>Desired Levels of Play</FieldLabel>
@@ -176,30 +192,20 @@ export function PlayerAcademicProfileStep({ onSave, error, isLastStep, profile }
               const isMaxSelected = desiredLevelsOfPlay.length >= 4
 
               return (
-                <button
+                <SpecialButton
                   key={level.value}
-                  type='button'
                   onClick={() => handleLevelToggle(level.value)}
-                  disabled={!isSelected && isMaxSelected}
-                  className={`text-left px-4 py-3 rounded-lg border transition-all ${
-                    isSelected
-                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-600 text-blue-900 dark:text-blue-100'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white hover:border-blue-400 dark:hover:border-blue-500'
-                  } ${!isSelected && isMaxSelected ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span className='font-medium text-sm'>{level.label}</span>
-                    {isSelected && (
-                      <X className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                    )}
-                  </div>
-                </button>
+                  isSelected={isSelected}
+                  isDisabled={!isSelected && isMaxSelected}
+                  isMaxSelected={isMaxSelected}
+                  children={level.label}
+                />
               )
             })}
           </div>
-          <div className='text-sm text-slate-600 dark:text-slate-400 mt-2'>
+          <Small className='mt-2'>
             {desiredLevelsOfPlay.length} of 4 selected
-          </div>
+          </Small>
         </Field>
 
         <Field className='gap-1'>
@@ -211,30 +217,20 @@ export function PlayerAcademicProfileStep({ onSave, error, isLastStep, profile }
               const isMaxSelected = desiredGeographicAreas.length >= 3
 
               return (
-                <button
+                <SpecialButton
                   key={area.value}
-                  type='button'
                   onClick={() => handleGeographicToggle(area.value)}
-                  disabled={!isSelected && isMaxSelected}
-                  className={`text-left px-4 py-3 rounded-lg border transition-all ${
-                    isSelected
-                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-600 text-blue-900 dark:text-blue-100'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white hover:border-blue-400 dark:hover:border-blue-500'
-                  } ${!isSelected && isMaxSelected ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span className='font-medium text-sm'>{area.label}</span>
-                    {isSelected && (
-                      <X className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                    )}
-                  </div>
-                </button>
+                  isSelected={isSelected}
+                  isDisabled={!isSelected && isMaxSelected}
+                  isMaxSelected={isMaxSelected}
+                  children={area.label}
+                />
               )
             })}
           </div>
-          <div className='text-sm text-slate-600 dark:text-slate-400 mt-2'>
+          <Small className='mt-2'>
             {desiredGeographicAreas.length} of 3 selected
-          </div>
+          </Small>
         </Field>
 
         <FormSelectField
@@ -332,8 +328,8 @@ export function PlayerAcademicProfileStep({ onSave, error, isLastStep, profile }
       </div>
 
       {/* Navigation */}
-      <div className='flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700'>
-        <Button type='submit' disabled={isLoading} className='bg-blue-600 hover:bg-blue-700'>
+      <div className='flex justify-end gap-3 pt-6 border-t'>
+        <Button type='submit' disabled={isLoading}>
           {isLoading ? 'Saving...' : isLastStep ? 'Complete Profile' : 'Save & Continue'}
         </Button>
       </div>

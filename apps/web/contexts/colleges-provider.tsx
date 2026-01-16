@@ -10,6 +10,7 @@ interface CollegesContextValue {
   isLoading: boolean
   error: Error | null
   searchColleges: (query: string) => College[]
+  enableFetch: () => void
 }
 
 const CollegesContext = React.createContext<CollegesContextValue | undefined>(
@@ -28,7 +29,14 @@ async function fetchColleges(): Promise<College[]> {
 }
 
 export function CollegesProvider({ children }: { children: React.ReactNode }) {
-  // Fetch colleges with React Query
+  // Only fetch when a component actually needs the data
+  const [fetchEnabled, setFetchEnabled] = React.useState(false)
+
+  const enableFetch = React.useCallback(() => {
+    setFetchEnabled(true)
+  }, [])
+
+  // Fetch colleges with React Query - only when enabled
   const { data: colleges = [], isLoading, error } = useQuery({
     queryKey: ['colleges'],
     queryFn: fetchColleges,
@@ -36,6 +44,7 @@ export function CollegesProvider({ children }: { children: React.ReactNode }) {
     gcTime: 1000 * 60 * 60 * 24, // 24 hours (formerly cacheTime)
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    enabled: fetchEnabled,
   })
 
   // Memoize the colleges hash for deep equality comparison
@@ -67,10 +76,11 @@ export function CollegesProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       error: error as Error | null,
       searchColleges,
+      enableFetch,
     }),
     // Using collegesHash for deep equality check
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [collegesHash, colleges, isLoading, error, searchColleges]
+    [collegesHash, colleges, isLoading, error, searchColleges, enableFetch]
   )
 
   return (

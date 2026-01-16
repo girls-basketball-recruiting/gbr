@@ -1,13 +1,20 @@
 import type { CollectionConfig } from 'payload'
+import { getPositionOptions } from '@/lib/zod/Positions'
+import { AAU_CIRCUITS } from '@/lib/zod/AauCircuits'
+import { AREAS_OF_STUDY } from '@/lib/zod/AreasOfStudy'
+import { LEVELS_OF_PLAY } from '@/lib/zod/LevelsOfPlay'
+import { GEOGRAPHIC_AREAS } from '@/lib/zod/GeographicAreas'
+import { DISTANCE_FROM_HOME_OPTIONS } from '@/lib/zod/DistanceFromHome'
 
 export const CoachProspects: CollectionConfig = {
   slug: 'coach-prospects',
   admin: {
     useAsTitle: 'lastName',
-    defaultColumns: ['name', 'graduationYear', 'highSchool', 'coach'],
+    defaultColumns: ['firstName', 'lastName', 'graduationYear', 'highSchool', 'coach'],
     hidden: true, // Hidden from sidebar - accessed via Coach tabs
   },
   fields: [
+    // Ownership
     {
       name: 'coach',
       type: 'relationship',
@@ -18,6 +25,7 @@ export const CoachProspects: CollectionConfig = {
         description: 'The coach who created this prospect entry',
       },
     },
+    // Required Fields (only name is required)
     {
       name: 'firstName',
       type: 'text',
@@ -34,19 +42,58 @@ export const CoachProspects: CollectionConfig = {
         description: 'Last name of the prospect',
       },
     },
+    // Profile Image
     {
-      name: 'uniformNumber',
+      name: 'profileImageUrl',
       type: 'text',
       admin: {
-        description: 'Jersey/uniform number',
+        description: 'URL to profile image (uploaded via blob storage)',
       },
     },
+    // Basic Info
     {
       name: 'graduationYear',
       type: 'number',
-      required: true,
       admin: {
         description: 'High school graduation year (Class of)',
+      },
+    },
+    {
+      name: 'city',
+      type: 'text',
+      admin: {
+        description: 'City',
+      },
+    },
+    {
+      name: 'state',
+      type: 'text',
+      admin: {
+        description: 'State',
+      },
+    },
+    {
+      name: 'highSchool',
+      type: 'text',
+      admin: {
+        description: 'High school name',
+      },
+    },
+    // Athletic Profile
+    {
+      name: 'primaryPosition',
+      type: 'select',
+      options: getPositionOptions(),
+      admin: {
+        description: 'Primary playing position',
+      },
+    },
+    {
+      name: 'secondaryPosition',
+      type: 'select',
+      options: getPositionOptions(),
+      admin: {
+        description: 'Secondary playing position',
       },
     },
     {
@@ -64,19 +111,140 @@ export const CoachProspects: CollectionConfig = {
       },
     },
     {
-      name: 'highSchool',
+      name: 'bio',
+      type: 'textarea',
+      admin: {
+        description: 'Bio/description of the prospect',
+      },
+    },
+    // AAU Info
+    {
+      name: 'aauProgramName',
       type: 'text',
       admin: {
-        description: 'High school name',
+        description: 'AAU Program name',
       },
     },
     {
-      name: 'aauProgram',
+      name: 'aauTeamName',
       type: 'text',
       admin: {
-        description: 'AAU program/club team',
+        description: 'AAU Team name',
       },
     },
+    {
+      name: 'aauCircuit',
+      type: 'select',
+      options: AAU_CIRCUITS,
+      admin: {
+        description: 'AAU Circuit/League',
+      },
+    },
+    {
+      name: 'aauCoach',
+      type: 'text',
+      admin: {
+        description: 'AAU Coach name',
+      },
+    },
+    // Stats
+    {
+      name: 'ppg',
+      type: 'number',
+      admin: {
+        description: 'Points per game',
+      },
+    },
+    {
+      name: 'rpg',
+      type: 'number',
+      admin: {
+        description: 'Rebounds per game',
+      },
+    },
+    {
+      name: 'apg',
+      type: 'number',
+      admin: {
+        description: 'Assists per game',
+      },
+    },
+    // Academic
+    {
+      name: 'unweightedGpa',
+      type: 'number',
+      admin: {
+        description: 'Unweighted GPA',
+      },
+    },
+    {
+      name: 'weightedGpa',
+      type: 'number',
+      admin: {
+        description: 'Weighted GPA',
+      },
+    },
+    {
+      name: 'potentialAreasOfStudy',
+      type: 'select',
+      hasMany: true,
+      options: AREAS_OF_STUDY,
+      admin: {
+        description: 'Potential areas of study',
+      },
+    },
+    {
+      name: 'ncaaId',
+      type: 'text',
+      admin: {
+        description: 'NCAA Eligibility Center ID',
+      },
+    },
+    // Awards
+    {
+      name: 'awards',
+      type: 'array',
+      maxRows: 10,
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'year',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          admin: {
+            description: 'Additional details (optional)',
+          },
+        },
+      ],
+      admin: {
+        description: 'Add up to 10 awards, honors, and achievements',
+      },
+    },
+    // Highlight Videos
+    {
+      name: 'highlightVideoUrls',
+      type: 'array',
+      maxRows: 10,
+      fields: [
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+      ],
+      admin: {
+        description: 'Add up to 10 highlight video URLs (YouTube, Hudl, etc.)',
+      },
+    },
+    // Tournament Schedule
     {
       name: 'tournamentSchedule',
       type: 'relationship',
@@ -86,13 +254,69 @@ export const CoachProspects: CollectionConfig = {
         description: 'Tournaments this prospect will be attending',
       },
     },
+    // College Preferences
     {
-      name: 'twitterHandle',
-      type: 'text',
+      name: 'desiredLevelsOfPlay',
+      type: 'select',
+      hasMany: true,
+      options: LEVELS_OF_PLAY,
       admin: {
-        description: 'Twitter/X handle (e.g., @username)',
+        description: 'Desired levels of collegiate play',
       },
     },
+    {
+      name: 'desiredGeographicAreas',
+      type: 'select',
+      hasMany: true,
+      options: GEOGRAPHIC_AREAS,
+      admin: {
+        description: 'Desired geographic areas',
+      },
+    },
+    {
+      name: 'desiredDistanceFromHome',
+      type: 'select',
+      options: DISTANCE_FROM_HOME_OPTIONS,
+      admin: {
+        description: 'Desired distance from home',
+      },
+    },
+    {
+      name: 'interestedInMilitaryAcademies',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in Military Academies',
+      },
+    },
+    {
+      name: 'interestedInUltraHighAcademics',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in Ultra High Academics',
+      },
+    },
+    {
+      name: 'interestedInFaithBased',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in Faith-Based institutions',
+      },
+    },
+    {
+      name: 'interestedInAllGirls',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in All Girls schools',
+      },
+    },
+    {
+      name: 'interestedInHBCU',
+      type: 'checkbox',
+      admin: {
+        description: 'Interested in HBCUs',
+      },
+    },
+    // Contact Info
     {
       name: 'phoneNumber',
       type: 'text',
@@ -101,10 +325,32 @@ export const CoachProspects: CollectionConfig = {
       },
     },
     {
+      name: 'xHandle',
+      type: 'text',
+      admin: {
+        description: 'X/Twitter handle',
+      },
+    },
+    {
+      name: 'instaHandle',
+      type: 'text',
+      admin: {
+        description: 'Instagram handle',
+      },
+    },
+    {
+      name: 'tiktokHandle',
+      type: 'text',
+      admin: {
+        description: 'TikTok handle',
+      },
+    },
+    // Coach-specific fields
+    {
       name: 'notes',
       type: 'textarea',
       admin: {
-        description: 'Private notes about this prospect',
+        description: 'Private notes about this prospect (only visible to you)',
       },
     },
     {

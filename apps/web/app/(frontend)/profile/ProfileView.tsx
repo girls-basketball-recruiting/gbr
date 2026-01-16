@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { CoachProfileView } from '@/components/profile/coach-profile-view'
 import { ProfileLayout } from '@/components/profile/profile-layout'
-import { PlayerProfileView } from '@/components/profile/player-profile-view'
+import { ProfileView as SharedProfileView } from '@/components/profile/ProfileView'
 import { getAuthContext } from '@/lib/auth-context'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -56,7 +56,7 @@ export async function ProfileView() {
     // Render player profile view
     return (
       <ProfileLayout role='player'>
-        <PlayerProfileView player={player} tournamentSchedule={tournamentSchedule} />
+        <SharedProfileView profile={player} variant='player' tournamentSchedule={tournamentSchedule} />
       </ProfileLayout>
     )
   }

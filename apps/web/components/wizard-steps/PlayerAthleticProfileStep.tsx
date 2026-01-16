@@ -17,6 +17,7 @@ import { Input } from '@workspace/ui/components/input'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { Field, FieldLabel, FieldDescription } from '@workspace/ui/components/field'
 import type { Player } from '@/payload-types'
+import { H2, H3, P, Small } from '../ui/typography'
 
 interface PlayerAthleticProfileStepProps {
   onSave: (data: any) => Promise<void>
@@ -116,12 +117,12 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
   return (
     <form onSubmit={form.handleSubmit} className='space-y-6'>
       <div>
-        <h2 className='text-2xl font-bold text-slate-900 dark:text-white mb-2'>
+        <H2>
           Athletic Profile
-        </h2>
-        <p className='text-slate-600 dark:text-slate-400'>
+        </H2>
+        <P>
           Share your team information, achievements, and performance highlights
-        </p>
+        </P>
       </div>
 
       {(error || form.error) && (
@@ -133,9 +134,7 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
 
       {/* Position & Physical Section */}
       <div className='space-y-5'>
-        <h3 className='text-lg font-semibold text-slate-900 dark:text-white'>
-          Position & Physical
-        </h3>
+        <H3>Position & Physical</H3>
 
         <div className='grid grid-cols-2 gap-5'>
           <FormSelectField
@@ -178,10 +177,10 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
       </div>
 
       {/* AAU Section */}
-      <div className='space-y-5 pt-6 border-t border-slate-200 dark:border-slate-700'>
-        <h3 className='text-lg font-semibold text-slate-900 dark:text-white'>
+      <div className='space-y-5 pt-6 border-t'>
+        <H3>
           AAU & Team Information
-        </h3>
+        </H3>
 
         <div className='grid grid-cols-2 gap-5'>
           <FormTextField
@@ -219,10 +218,10 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
       </div>
 
       {/* Bio & Achievements Section */}
-      <div className='space-y-5 pt-6 border-t border-slate-200 dark:border-slate-700'>
-        <h3 className='text-lg font-semibold text-slate-900 dark:text-white'>
+      <div className='space-y-5 pt-6 border-t'>
+        <H3>
           Bio & Achievements
-        </h3>
+        </H3>
 
         <Controller
           control={form.control}
@@ -252,9 +251,9 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
           {fields.length > 0 && (
             <div className='space-y-5 mt-2'>
               {fields.map((field, index) => (
-                <div key={field.id} className='border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3'>
+                <div key={field.id} className='border rounded-lg p-4 space-y-3'>
                   <div className='flex items-center justify-between mb-2'>
-                    <span className='text-sm font-medium text-slate-900 dark:text-white'>Award #{index + 1}</span>
+                    <Small>Award #{index + 1}</Small>
                     <Button
                       type='button'
                       variant='outline'
@@ -390,10 +389,8 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
       </div>
 
       {/* Stats Section */}
-      <div className='space-y-5 pt-6 border-t border-slate-200 dark:border-slate-700'>
-        <h3 className='text-lg font-semibold text-slate-900 dark:text-white'>
-          Statistics & Performance
-        </h3>
+      <div className='space-y-5 pt-6 border-t'>
+        <H3>Statistics & Performance</H3>
 
         <div className='grid grid-cols-3 gap-5'>
           <Controller
@@ -488,8 +485,8 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
       </div>
 
       {/* Navigation */}
-      <div className='flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700'>
-        <Button type='submit' disabled={isLoading} className='bg-blue-600 hover:bg-blue-700'>
+      <div className='flex justify-end gap-3 pt-6 border-t'>
+        <Button type='submit' disabled={isLoading}>
           {isLoading ? 'Saving...' : isLastStep ? 'Complete Profile' : 'Save & Continue'}
         </Button>
       </div>

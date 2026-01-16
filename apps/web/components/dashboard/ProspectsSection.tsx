@@ -1,7 +1,6 @@
 import { EmptyState } from '@/components/ui/EmptyState'
-import { ProspectCard } from '@/components/ui/ProspectCard'
+import { ProfileCard } from '@/components/ui/ProfileCard'
 import { findAll } from '@/lib/payload-helpers'
-import { ButtonLink } from '../ui/ButtonLink'
 import { ProspectsEmptyActions } from './ProspectsEmptyActions'
 
 export async function ProspectsSection({ coachId }: { coachId: number }) {
@@ -22,7 +21,11 @@ export async function ProspectsSection({ coachId }: { coachId: number }) {
       ) : (
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {prospects.map((prospect: any) => (
-            <ProspectCard key={prospect.id} prospect={prospect} />
+            <ProfileCard
+              key={prospect.id}
+              profile={prospect}
+              variant='prospect'
+            />
           ))}
         </div>
       )}

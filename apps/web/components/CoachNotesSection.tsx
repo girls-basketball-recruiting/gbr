@@ -5,7 +5,6 @@ import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { Label } from '@workspace/ui/components/label'
-import { Input } from '@workspace/ui/components/input'
 import {
   Select,
   SelectContent,
@@ -337,7 +336,7 @@ export function CoachNotesSection({
         <div className='space-y-4'>
           {notesData.contactRecords.length === 0 ? (
             <p className='text-slate-600 dark:text-slate-400 text-center py-8'>
-              No contact records yet. Click "Add Contact" to log your first
+              No contact records yet. Click &quot;Add Contact&quot; to log your first
               interaction.
             </p>
           ) : (

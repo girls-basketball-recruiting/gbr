@@ -1,5 +1,5 @@
 import { EmptyState } from '@/components/ui/EmptyState'
-import { PlayerCard } from '@/components/ui/PlayerCard'
+import { ProfileCard } from '@/components/ui/ProfileCard'
 import { findAll } from '@/lib/payload-helpers'
 import type { Player } from '@/payload-types'
 import { ButtonLink } from '../ui/ButtonLink'
@@ -28,11 +28,17 @@ export async function SavedPlayersSection({ coachId }: { coachId: number }) {
           }
         />
       ) : (
-        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
           {validPlayers.map((savedPlayer) => {
             const player = typeof savedPlayer.player === 'object' ? savedPlayer.player : null
             if (!player) return null
-            return <PlayerCard key={savedPlayer.id} player={player as Player} />
+            return (
+              <ProfileCard
+                key={savedPlayer.id}
+                profile={player as Player}
+                variant='player'
+              />
+            )
           })}
         </div>
       )}

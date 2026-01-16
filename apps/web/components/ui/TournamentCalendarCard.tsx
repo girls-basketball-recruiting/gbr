@@ -1,11 +1,10 @@
 'use client'
 
 import { Card } from '@workspace/ui/components/card'
-import { Button } from '@workspace/ui/components/button'
-import { Users, Bookmark, Lock, Calendar, CalendarCheck2Icon, CalendarX2Icon } from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { Users, Lock, Calendar, CalendarCheck2Icon, Trophy, CalendarPlus2Icon } from 'lucide-react'
 import { useState } from 'react'
 import { Toggle } from '@workspace/ui/components/toggle'
-import Link from 'next/link'
 import type { Tournament } from '@/payload-types'
 import { formatDateLocationRange } from '@/lib/format-date-location'
 import { ButtonLink } from './ButtonLink'
@@ -57,75 +56,102 @@ export function TournamentCalendarCard({
   const upcoming = isUpcoming()
 
   return (
-    <Card
-      className={`py-0 group relative rounded-xl p-6 transition-colors ${
-        !upcoming ? 'opacity-75' : ''
-      }`}
-    >
-      <div className='flex gap-4'>
-        {/* Date Badge */}
-        <div className='shrink-0 w-20 h-20 border-2 rounded-xl flex flex-col items-center justify-center'>
-          <div className='text-xs font-bold uppercase tracking-wider'>
-            {formatDayOfWeek(tournament.startDate)}
-          </div>
-          <div className='text-2xl font-black leading-none my-0.5'>
-            {new Date(tournament.startDate).getDate()}
-          </div>
-          <div className='text-xs font-bold uppercase tracking-wider'>
-            {new Date(tournament.startDate).toLocaleDateString('en-US', { month: 'short' })}
+    <Card className={`overflow-hidden p-0 flex flex-col h-full transition-all ${
+      !upcoming ? 'opacity-60' : 'hover:shadow-xl hover:-translate-y-1'
+    }`}>
+      {/* Header Area - Purple theme for tournaments */}
+      <div className='relative aspect-[16/9] bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 rounded-b-3xl overflow-hidden'>
+        <div className='absolute inset-0 flex items-center justify-center'>
+          <div className='w-20 h-20 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30'>
+            <Trophy className='w-10 h-10 text-white/80' />
           </div>
         </div>
 
-        {/* Tournament Info */}
-        <div className='flex-1 min-w-0'>
-          <h3 className='font-bold text-xl mb-2'>
-            {tournament.name}
-          </h3>
-          <div className='flex items-center gap-2'>
-            <Calendar className='w-5 h-5' />
-            <span className='text-sm'>{formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}</span>
+        {/* Date Badge - Top Right */}
+        <div className='absolute top-3 right-3'>
+          <div className='bg-black/60 backdrop-blur-sm rounded-xl px-3 py-2 text-center min-w-[70px]'>
+            <div className='text-[10px] font-bold uppercase tracking-wider text-white/80'>
+              {formatDayOfWeek(tournament.startDate)}
+            </div>
+            <div className='text-xl font-black leading-none text-white my-0.5'>
+              {new Date(tournament.startDate).getDate()}
+            </div>
+            <div className='text-[10px] font-bold uppercase tracking-wider text-white/80'>
+              {new Date(tournament.startDate).toLocaleDateString('en-US', { month: 'short' })}
+            </div>
           </div>
         </div>
+
+        {/* Attending Badge - Top Left */}
+        {attending && (
+          <div className='absolute top-3 left-3 bg-green-600 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1.5'>
+            <CalendarCheck2Icon className='w-3 h-3' />
+            <span>Attending</span>
+          </div>
+        )}
+
+        {/* Past Event Indicator */}
+        {!upcoming && (
+          <div className='absolute bottom-3 right-3'>
+            <Badge className='bg-black/60 border-0 text-white/80 text-xs'>
+              Past Event
+            </Badge>
+          </div>
+        )}
       </div>
 
-      {/* Footer */}
-      <div className='border-t pt-4'>
-        <div className='flex items-center justify-between'>
+      {/* Content Section */}
+      <div className='p-5 pt-0 flex flex-col flex-1'>
+        {/* Tournament Name */}
+        <div className='mb-4'>
+          <h3 className='text-lg font-bold tracking-tight line-clamp-2'>
+            {tournament.name}
+          </h3>
+          <div className='flex items-center gap-2 mt-2 text-sm text-muted-foreground'>
+            <Calendar className='w-4 h-4 text-purple-500' />
+            <span>{formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}</span>
+          </div>
+        </div>
+
+        {/* Attendee Info */}
+        <div className='mb-4 p-3 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800'>
           {isAuthenticated ? (
             <div className='flex items-center gap-2 text-sm'>
-              <Users className='w-4 h-4' />
-              <span>
+              <Users className='w-4 h-4 text-purple-600 dark:text-purple-400' />
+              <span className='text-purple-700 dark:text-purple-300 font-medium'>
                 {tournament.attendeeCount ?? 0}{' '}
                 {tournament.attendeeCount === 1 ? 'player' : 'players'} attending
               </span>
             </div>
           ) : (
             <div className='flex items-center gap-2 text-sm'>
-              <Lock className='w-4 h-4' />
-              <span>Sign in for tournament stats</span>
+              <Lock className='w-4 h-4 text-purple-600 dark:text-purple-400' />
+              <span className='text-purple-700 dark:text-purple-300 font-medium'>Sign in for tournament stats</span>
             </div>
           )}
-
-          {/* View Details Button */}
-          <ButtonLink href={`/tournaments/${tournament.id}`} size='sm' variant='outline'>
-            View Details
-          </ButtonLink>
         </div>
 
-        {/* Attendance toggle */}
-        {isAuthenticated && onToggleAttendance && (
-          <Toggle
-            variant='outline'
-            pressed={attending}
-            onPressedChange={handleToggle}
-            disabled={isLoading}
-            className='w-full mt-4'
-            aria-label={attending ? 'Mark as Not Attending' : 'Mark as Attending'}
-          >
-            {attending ? <CalendarCheck2Icon /> : <CalendarX2Icon />}
-            <span className='ml-2'>{attending ? 'Attending' : 'Mark as Attending'}</span>
-          </Toggle>
-        )}
+        {/* Actions - pushed to bottom */}
+        <div className='mt-auto pt-4 border-t space-y-3'>
+          <ButtonLink href={`/tournaments/${tournament.id}`} variant='secondary' className='w-full'>
+            View Details
+          </ButtonLink>
+
+          {/* Attendance toggle */}
+          {isAuthenticated && onToggleAttendance && (
+            <Toggle
+              variant='outline'
+              pressed={attending}
+              onPressedChange={handleToggle}
+              disabled={isLoading}
+              className='w-full justify-center mt-4'
+              aria-label={attending ? 'Mark as Not Attending' : 'Mark as Attending'}
+            >
+              {attending ? <CalendarCheck2Icon className='w-4 h-4' /> : <CalendarPlus2Icon className='w-4 h-4' />}
+              <span className='ml-2'>{attending ? 'Attending' : 'Mark as Attending'}</span>
+            </Toggle>
+          )}
+        </div>
       </div>
     </Card>
   )

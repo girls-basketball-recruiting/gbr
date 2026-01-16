@@ -623,13 +623,33 @@ export interface CoachProspect {
    */
   lastName: string;
   /**
-   * Jersey/uniform number
+   * URL to profile image (uploaded via blob storage)
    */
-  uniformNumber?: string | null;
+  profileImageUrl?: string | null;
   /**
    * High school graduation year (Class of)
    */
-  graduationYear: number;
+  graduationYear?: number | null;
+  /**
+   * City
+   */
+  city?: string | null;
+  /**
+   * State
+   */
+  state?: string | null;
+  /**
+   * High school name
+   */
+  highSchool?: string | null;
+  /**
+   * Primary playing position
+   */
+  primaryPosition?: ('point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post') | null;
+  /**
+   * Secondary playing position
+   */
+  secondaryPosition?: ('point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post') | null;
   /**
    * Height in total inches
    */
@@ -639,27 +659,177 @@ export interface CoachProspect {
    */
   weight?: number | null;
   /**
-   * High school name
+   * Bio/description of the prospect
    */
-  highSchool?: string | null;
+  bio?: string | null;
   /**
-   * AAU program/club team
+   * AAU Program name
    */
-  aauProgram?: string | null;
+  aauProgramName?: string | null;
+  /**
+   * AAU Team name
+   */
+  aauTeamName?: string | null;
+  /**
+   * AAU Circuit/League
+   */
+  aauCircuit?:
+    | (
+        | 'adidas-3ssb'
+        | 'adidas-gold'
+        | 'crossroads'
+        | 'elite-40'
+        | 'hoop-group'
+        | 'hype-her-hoops'
+        | 'insider-exposure'
+        | 'new-balance-lady-e32'
+        | 'new-balance-lady-p32'
+        | 'nike-ecyl'
+        | 'nike-eybl'
+        | 'power24'
+        | 'prep-girls-hoops'
+        | 'puma-nxt-league'
+        | 'puma-nxtpro-16'
+        | 'select-40'
+        | 'ua-rise'
+        | 'uaa'
+        | 'independent'
+        | 'other'
+      )
+    | null;
+  /**
+   * AAU Coach name
+   */
+  aauCoach?: string | null;
+  /**
+   * Points per game
+   */
+  ppg?: number | null;
+  /**
+   * Rebounds per game
+   */
+  rpg?: number | null;
+  /**
+   * Assists per game
+   */
+  apg?: number | null;
+  /**
+   * Unweighted GPA
+   */
+  unweightedGpa?: number | null;
+  /**
+   * Weighted GPA
+   */
+  weightedGpa?: number | null;
+  /**
+   * Potential areas of study
+   */
+  potentialAreasOfStudy?:
+    | (
+        | 'undecided'
+        | 'stem'
+        | 'business-professional'
+        | 'arts-humanities'
+        | 'social-science-education'
+        | 'health-medicine'
+        | 'public-service-law'
+        | 'other'
+      )[]
+    | null;
+  /**
+   * NCAA Eligibility Center ID
+   */
+  ncaaId?: string | null;
+  /**
+   * Add up to 10 awards, honors, and achievements
+   */
+  awards?:
+    | {
+        title: string;
+        year: string;
+        /**
+         * Additional details (optional)
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Add up to 10 highlight video URLs (YouTube, Hudl, etc.)
+   */
+  highlightVideoUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Tournaments this prospect will be attending
    */
   tournamentSchedule?: (number | Tournament)[] | null;
   /**
-   * Twitter/X handle (e.g., @username)
+   * Desired levels of collegiate play
    */
-  twitterHandle?: string | null;
+  desiredLevelsOfPlay?: ('any' | 'ncaa-d1' | 'ncaa-d2' | 'ncaa-d3' | 'naia' | 'uscaa' | 'nccaa' | 'juco')[] | null;
+  /**
+   * Desired geographic areas
+   */
+  desiredGeographicAreas?:
+    | (
+        | 'anywhere'
+        | 'northeast'
+        | 'mid-atlantic'
+        | 'deep-south'
+        | 'midwest'
+        | 'south'
+        | 'rocky-mountain'
+        | 'west-coast'
+        | 'pacific-northwest'
+        | 'other'
+      )[]
+    | null;
+  /**
+   * Desired distance from home
+   */
+  desiredDistanceFromHome?: ('anywhere' | 'less-than-2' | 'less-than-4' | 'less-than-8') | null;
+  /**
+   * Interested in Military Academies
+   */
+  interestedInMilitaryAcademies?: boolean | null;
+  /**
+   * Interested in Ultra High Academics
+   */
+  interestedInUltraHighAcademics?: boolean | null;
+  /**
+   * Interested in Faith-Based institutions
+   */
+  interestedInFaithBased?: boolean | null;
+  /**
+   * Interested in All Girls schools
+   */
+  interestedInAllGirls?: boolean | null;
+  /**
+   * Interested in HBCUs
+   */
+  interestedInHBCU?: boolean | null;
   /**
    * Phone number for contact
    */
   phoneNumber?: string | null;
   /**
-   * Private notes about this prospect
+   * X/Twitter handle
+   */
+  xHandle?: string | null;
+  /**
+   * Instagram handle
+   */
+  instaHandle?: string | null;
+  /**
+   * TikTok handle
+   */
+  tiktokHandle?: string | null;
+  /**
+   * Private notes about this prospect (only visible to you)
    */
   notes?: string | null;
   /**
@@ -1042,15 +1212,54 @@ export interface CoachProspectsSelect<T extends boolean = true> {
   coach?: T;
   firstName?: T;
   lastName?: T;
-  uniformNumber?: T;
+  profileImageUrl?: T;
   graduationYear?: T;
+  city?: T;
+  state?: T;
+  highSchool?: T;
+  primaryPosition?: T;
+  secondaryPosition?: T;
   heightInInches?: T;
   weight?: T;
-  highSchool?: T;
-  aauProgram?: T;
+  bio?: T;
+  aauProgramName?: T;
+  aauTeamName?: T;
+  aauCircuit?: T;
+  aauCoach?: T;
+  ppg?: T;
+  rpg?: T;
+  apg?: T;
+  unweightedGpa?: T;
+  weightedGpa?: T;
+  potentialAreasOfStudy?: T;
+  ncaaId?: T;
+  awards?:
+    | T
+    | {
+        title?: T;
+        year?: T;
+        description?: T;
+        id?: T;
+      };
+  highlightVideoUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   tournamentSchedule?: T;
-  twitterHandle?: T;
+  desiredLevelsOfPlay?: T;
+  desiredGeographicAreas?: T;
+  desiredDistanceFromHome?: T;
+  interestedInMilitaryAcademies?: T;
+  interestedInUltraHighAcademics?: T;
+  interestedInFaithBased?: T;
+  interestedInAllGirls?: T;
+  interestedInHBCU?: T;
   phoneNumber?: T;
+  xHandle?: T;
+  instaHandle?: T;
+  tiktokHandle?: T;
   notes?: T;
   linkedPlayer?: T;
   updatedAt?: T;
