@@ -25,3 +25,18 @@ export function parseHeightToInches(heightStr: string | null | undefined): numbe
   
   return null
 }
+
+// Format phone number as (XXX) XXX-XXXX
+export function formatPhoneNumber(value: string): string {
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, '')
+
+  // Format based on length
+  if (digits.length <= 3) {
+    return digits
+  } else if (digits.length <= 6) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
+  } else {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
+  }
+}

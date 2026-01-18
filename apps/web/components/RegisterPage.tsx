@@ -57,7 +57,7 @@ export default function RegisterPage({ role }: { role: 'Player' | 'Coach' }) {
   return (
     <AuthPageLayout>
       <div className='text-center mb-8'>
-        <H1 className='md:text-5xl'>
+        <H1 className='md:text-5xl mb-4'>
           {role} Registration
         </H1>
         <P>

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Controller, Control, FieldValues, Path } from 'react-hook-form'
 import { Input } from '@workspace/ui/components/input'
 import { FormFieldWrapper } from '@/components/form/FormFieldWrapper'
+import { formatPhoneNumber } from '@/lib/formatters'
 
 export interface PhoneInputProps<T extends FieldValues> {
   control: Control<T>
@@ -10,21 +11,6 @@ export interface PhoneInputProps<T extends FieldValues> {
   required?: boolean
   placeholder?: string
   description?: string
-}
-
-// Format phone number as (XXX) XXX-XXXX
-function formatPhoneNumber(value: string): string {
-  // Remove all non-digit characters
-  const digits = value.replace(/\D/g, '')
-
-  // Format based on length
-  if (digits.length <= 3) {
-    return digits
-  } else if (digits.length <= 6) {
-    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
-  } else {
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
-  }
 }
 
 // Extract just the digits from formatted phone

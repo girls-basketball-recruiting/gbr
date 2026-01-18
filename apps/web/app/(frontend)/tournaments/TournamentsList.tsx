@@ -5,7 +5,7 @@ import { Tournament, Player } from '@/payload-types'
 
 interface TournamentsListProps {
   searchParams: {
-    filter?: 'all' | 'upcoming' | 'past'
+    filter?: 'upcoming' | 'past'
   }
 }
 
@@ -33,20 +33,51 @@ export async function TournamentsList({ searchParams }: TournamentsListProps) {
     }),
   )
 
-  // Filter tournaments based on the filter parameter
-  const isUpcoming = (endDate: string) => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+  // Helper functions for tournament status
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const isInProgress = (startDate: string, endDate: string) => {
+    const start = new Date(startDate)
+    start.setHours(0, 0, 0, 0)
     const end = new Date(endDate)
-    return end >= today
+    end.setHours(23, 59, 59, 999)
+    return today >= start && today <= end
   }
 
+  const isUpcoming = (startDate: string) => {
+    const start = new Date(startDate)
+    start.setHours(0, 0, 0, 0)
+    return start > today
+  }
+
+  const isPast = (endDate: string) => {
+    const end = new Date(endDate)
+    end.setHours(23, 59, 59, 999)
+    return today > end
+  }
+
+  // Separate in-progress tournaments (for hero section)
+  const inProgressTournaments = tournamentsWithCounts.filter((t) =>
+    isInProgress(t.startDate, t.endDate)
+  )
+
+  // Filter tournaments based on the filter parameter (excluding in-progress from main list)
   const filteredTournaments = tournamentsWithCounts.filter((tournament) => {
-    if (filter === 'all') return true
-    if (filter === 'upcoming') return isUpcoming(tournament.endDate)
-    if (filter === 'past') return !isUpcoming(tournament.endDate)
-    return true
+    // In-progress tournaments go to the hero section, not the main list
+    if (isInProgress(tournament.startDate, tournament.endDate)) return false
+
+    if (filter === 'upcoming') return isUpcoming(tournament.startDate)
+    if (filter === 'past') return isPast(tournament.endDate)
+    return false
   })
+
+  // Sort past tournaments newest to oldest (by startDate descending)
+  if (filter === 'past') {
+    filteredTournaments.sort((a, b) =>
+      new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+    )
+  }
 
   // Get player's attending tournaments if they're a player
   let attendingIds: number[] = []
@@ -70,6 +101,7 @@ export async function TournamentsList({ searchParams }: TournamentsListProps) {
   return (
     <TournamentsPageContent
       tournaments={filteredTournaments as any}
+      inProgressTournaments={inProgressTournaments as any}
       attendingIds={attendingIds}
       isPlayer={isPlayer}
       isAuthenticated={isAuthenticated}

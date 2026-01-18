@@ -35,14 +35,14 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
     : `/prospects/${profile.id}`
 
   return (
-    <Card className={`overflow-hidden p-0 flex flex-col h-full transition-all ${
+    <Card className={`overflow-hidden p-0 flex flex-col h-full min-w-[340px] transition-all ${
       isArchived ? 'opacity-60' : 'hover:shadow-xl hover:-translate-y-1'
     }`}>
-      {/* Header Area - Orange for players, Purple for prospects */}
+      {/* Header Area - Subtle accent background */}
       <div className={`relative aspect-[4/3] rounded-b-3xl overflow-hidden ${
         variant === 'player'
-          ? 'bg-gradient-to-br from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700'
-          : 'bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700'
+          ? 'bg-orange-50 dark:bg-orange-950/40 border-b-2 border-orange-200 dark:border-orange-800'
+          : 'bg-purple-50 dark:bg-purple-950/40 border-b-2 border-purple-200 dark:border-purple-800'
       }`}>
         {profileImageUrl ? (
           <Image
@@ -55,23 +55,31 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
           />
         ) : (
           <div className='absolute inset-0 flex items-center justify-center'>
-            <div className='w-20 h-20 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30'>
-              <User className='w-10 h-10 text-white/80' />
+            <div className={`w-20 h-20 rounded-xl flex items-center justify-center border ${
+              variant === 'player'
+                ? 'bg-orange-100 dark:bg-orange-900/50 border-orange-200 dark:border-orange-700'
+                : 'bg-purple-100 dark:bg-purple-900/50 border-purple-200 dark:border-purple-700'
+            }`}>
+              <User className={`w-10 h-10 ${
+                variant === 'player'
+                  ? 'text-orange-400 dark:text-orange-500'
+                  : 'text-purple-400 dark:text-purple-500'
+              }`} />
             </div>
           </div>
         )}
 
         {/* Own Profile Badge - Top Left (players only) */}
         {isOwnCard && variant === 'player' && (
-          <div className='absolute top-3 left-3 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white flex items-center gap-1.5'>
-            <span className='text-amber-400'>★</span>
+          <div className='absolute top-3 left-3 bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white flex items-center gap-1.5'>
+            <span className='text-amber-200'>★</span>
             <span>YOU</span>
           </div>
         )}
 
         {/* Prospect Badge - Top Left */}
         {variant === 'prospect' && (
-          <div className='absolute top-3 left-3 bg-purple-900/80 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white'>
+          <div className='absolute top-3 left-3 bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white'>
             PROSPECT
           </div>
         )}
@@ -79,7 +87,11 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
         {/* Graduation Year Badge - Top Right */}
         {gradYear && (
           <div className='absolute top-3 right-3'>
-            <Badge className='bg-black/60 backdrop-blur-sm border-0 text-white text-sm px-3 py-1 font-bold'>
+            <Badge className={`border-0 text-white text-sm px-3 py-1 font-bold shadow-lg ${
+              variant === 'player'
+                ? 'bg-gradient-to-br from-orange-500 to-orange-600'
+                : 'bg-gradient-to-br from-purple-500 to-purple-600'
+            }`}>
               &apos;{String(gradYear).slice(-2)}
             </Badge>
           </div>
@@ -227,7 +239,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
         </div>
 
         {/* Actions - pushed to bottom */}
-        <div className='mt-auto pt-4 flex gap-2 border-t'>
+        <div className='mt-auto pt-4 flex gap-4 border-t justify-between'>
           {isArchived ? (
             <button
               className='flex-1 px-4 py-2 rounded-lg bg-muted text-muted-foreground text-sm font-medium cursor-not-allowed'
@@ -236,7 +248,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
               Unavailable
             </button>
           ) : (
-            <ButtonLink href={profileLink} variant='secondary' className='flex-1'>
+            <ButtonLink href={profileLink} variant='secondary'>
               View Profile
             </ButtonLink>
           )}

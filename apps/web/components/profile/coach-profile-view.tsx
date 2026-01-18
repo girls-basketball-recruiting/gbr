@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { ButtonLink } from '../ui/ButtonLink'
 import { currentUser } from '@clerk/nextjs/server'
 import { findOne } from '@/lib/payload-helpers'
+import { formatPhoneNumber } from '@/lib/formatters'
 
 interface CoachProfileViewProps {
   coach: Coach
@@ -58,13 +59,6 @@ export async function CoachProfileView({ coach }: CoachProfileViewProps) {
               <H1 className='text-left'>
                 {coach.firstName} {coach.lastName}
               </H1>
-              {isOwnProfile && (
-                <div className='flex justify-end'>
-                  <ButtonLink href='/profile/edit' size='lg' variant='outline'>
-                    Edit Profile
-                  </ButtonLink>
-                </div>
-              )}
             </div>
             <div className='flex flex-wrap items-center gap-3 mt-4'>
               {coach.jobTitle && (
@@ -97,7 +91,7 @@ export async function CoachProfileView({ coach }: CoachProfileViewProps) {
               <div className='mt-2'>
                 <CopyableText
                   icon={<PhoneIcon className='w-4 h-4' />}
-                  text={coach.phone}
+                  text={formatPhoneNumber(coach.phone)}
                   successMsg='Phone number copied to clipboard!'
                   errorMsg='Failed to copy phone number'
                 />
@@ -116,6 +110,13 @@ export async function CoachProfileView({ coach }: CoachProfileViewProps) {
           <P className='mt-4 text-accent-foreground'>
             {coach.bio}
           </P>
+        </div>
+      )}
+      {isOwnProfile && (
+        <div>
+          <ButtonLink href='/profile/edit' size='sm' variant='outline'>
+            Edit Profile
+          </ButtonLink>
         </div>
       )}
     </div>

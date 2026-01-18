@@ -38,7 +38,8 @@
       "Bash(pnpm run:*)",
       "Bash(pnpm eslint:*)",
       "Bash(pnpm --filter web typecheck:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(npx next build:*)"
     ],
     "deny": [],
     "ask": []

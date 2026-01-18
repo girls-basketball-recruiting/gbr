@@ -8,7 +8,7 @@ import { H1, MutedText } from '@/components/ui/typography'
 
 interface TournamentsPageProps {
   searchParams: Promise<{
-    filter?: 'all' | 'upcoming' | 'past'
+    filter?: 'upcoming' | 'past'
   }>
 }
 

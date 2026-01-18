@@ -68,6 +68,8 @@ export function PlayersPageContent({
                     playerId={player.id}
                     initialIsSaved={savedPlayerIds.includes(player.id)}
                     variant='outline'
+                    size='default'
+                    className='flex-1'
                   />
                 ) : undefined
               }

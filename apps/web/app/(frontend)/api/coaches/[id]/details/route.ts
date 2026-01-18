@@ -63,11 +63,11 @@ export const PUT = handleApiError(async (
 
   // Handle profile image upload if provided
   let profileImageUrl: string | undefined
-  const profileImage = formData.get('profileImage') as File | null
+  const profileImageFile = formData.get('profileImageUrl') as File | null
 
-  if (profileImage && profileImage.size > 0 && profileImage.name) {
+  if (profileImageFile && profileImageFile.size > 0 && profileImageFile.name) {
     profileImageUrl = await uploadProfileImage(
-      profileImage,
+      profileImageFile,
       auth.dbUser.id,
       'coach',
       auth.coachProfile.profileImageUrl

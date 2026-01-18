@@ -59,17 +59,17 @@ export function TournamentCalendarCard({
     <Card className={`overflow-hidden p-0 flex flex-col h-full transition-all ${
       !upcoming ? 'opacity-60' : 'hover:shadow-xl hover:-translate-y-1'
     }`}>
-      {/* Header Area - Purple theme for tournaments */}
-      <div className='relative aspect-[16/9] bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 rounded-b-3xl overflow-hidden'>
+      {/* Header Area - Subtle accent background */}
+      <div className='relative aspect-[16/9] bg-purple-50 dark:bg-purple-950/40 border-b-2 border-purple-200 dark:border-purple-800 rounded-b-3xl overflow-hidden'>
         <div className='absolute inset-0 flex items-center justify-center'>
-          <div className='w-20 h-20 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30'>
-            <Trophy className='w-10 h-10 text-white/80' />
+          <div className='w-20 h-20 rounded-xl bg-purple-100 dark:bg-purple-900/50 border border-purple-200 dark:border-purple-700 flex items-center justify-center'>
+            <Trophy className='w-10 h-10 text-purple-400 dark:text-purple-500' />
           </div>
         </div>
 
         {/* Date Badge - Top Right */}
         <div className='absolute top-3 right-3'>
-          <div className='bg-black/60 backdrop-blur-sm rounded-xl px-3 py-2 text-center min-w-[70px]'>
+          <div className='bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg rounded-xl px-3 py-2 text-center min-w-[70px]'>
             <div className='text-[10px] font-bold uppercase tracking-wider text-white/80'>
               {formatDayOfWeek(tournament.startDate)}
             </div>
@@ -84,7 +84,7 @@ export function TournamentCalendarCard({
 
         {/* Attending Badge - Top Left */}
         {attending && (
-          <div className='absolute top-3 left-3 bg-green-600 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1.5'>
+          <div className='absolute top-3 left-3 bg-gradient-to-br from-green-500 to-green-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1.5'>
             <CalendarCheck2Icon className='w-3 h-3' />
             <span>Attending</span>
           </div>
@@ -93,7 +93,7 @@ export function TournamentCalendarCard({
         {/* Past Event Indicator */}
         {!upcoming && (
           <div className='absolute bottom-3 right-3'>
-            <Badge className='bg-black/60 border-0 text-white/80 text-xs'>
+            <Badge className='bg-gradient-to-br from-gray-500 to-gray-600 shadow-lg border-0 text-white/90 text-xs'>
               Past Event
             </Badge>
           </div>

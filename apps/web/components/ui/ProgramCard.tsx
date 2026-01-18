@@ -30,32 +30,32 @@ export function ProgramCard({ program, isSaved = false }: ProgramCardProps) {
       <Card className={`overflow-hidden p-0 flex flex-col h-full transition-all hover:shadow-xl hover:-translate-y-1 ${
         coachCount > 0 ? 'ring-2 ring-blue-500/50' : ''
       }`}>
-        {/* Header Area - Blue theme for programs */}
-        <div className='relative aspect-[16/9] bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-b-3xl overflow-hidden'>
+        {/* Header Area - Subtle accent background */}
+        <div className='relative aspect-[16/9] bg-blue-50 dark:bg-blue-950/40 border-b-2 border-blue-200 dark:border-blue-800 rounded-b-3xl overflow-hidden'>
           <div className='absolute inset-0 flex items-center justify-center'>
-            <div className='w-20 h-20 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30'>
-              <School className='w-10 h-10 text-white/80' />
+            <div className='w-20 h-20 rounded-xl bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700 flex items-center justify-center'>
+              <School className='w-10 h-10 text-blue-400 dark:text-blue-500' />
             </div>
           </div>
 
           {/* Division Badge - Top Right */}
           <div className='absolute top-3 right-3'>
-            <Badge className='bg-black/60 backdrop-blur-sm border-0 text-white text-sm px-3 py-1 font-bold'>
+            <Badge className='bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg border-0 text-white text-sm px-3 py-1 font-bold'>
               {divisionLabels[program.division] || program.division}
             </Badge>
           </div>
 
           {/* Saved Indicator - Top Left */}
           {isSaved && (
-            <div className='absolute top-3 left-3 bg-black/60 backdrop-blur-sm p-2 rounded-full'>
-              <Bookmark className='w-4 h-4 text-blue-400 fill-blue-400' />
+            <div className='absolute top-3 left-3 bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg p-2 rounded-full'>
+              <Bookmark className='w-4 h-4 text-white fill-white' />
             </div>
           )}
 
           {/* Coach Count Badge */}
           {coachCount > 0 && (
             <div className='absolute bottom-3 right-3'>
-              <Badge className='bg-blue-700 border-0 text-white text-xs px-2 py-1'>
+              <Badge className='bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg border-0 text-white text-xs px-2 py-1'>
                 {coachCount} {coachCount === 1 ? 'Coach' : 'Coaches'} on Platform
               </Badge>
             </div>

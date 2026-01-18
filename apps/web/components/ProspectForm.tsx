@@ -146,12 +146,7 @@ export function ProspectForm({ coachId, prospect, mode = 'create' }: ProspectFor
       awards: existingAwards,
     },
     schema: ProspectSchema,
-    fileFields: profileImageFile ? {
-      profileImage: {
-        file: profileImageFile,
-        existingUrl: prospect?.profileImageUrl || undefined,
-      },
-    } : undefined,
+    // Don't use fileFields - we handle FormData building ourselves to include extra fields
     onSubmit: async (data) => {
       // Filter out empty video URLs and convert to objects
       const filteredUrls = videoUrls
@@ -163,10 +158,10 @@ export function ProspectForm({ coachId, prospect, mode = 'create' }: ProspectFor
         (award: any) => award.title?.trim() || award.year?.trim() || award.description?.trim()
       ) || []
 
-      // Build the request
+      // Build the request FormData
       const formData = new FormData()
 
-      // Add all form fields
+      // Add all form fields from the validated data object
       Object.entries(data as any).forEach(([key, value]) => {
         if (key === 'awards' || key === 'highlightVideoUrls') return // Handle separately
         if (value === null || value === undefined || value === '') return
@@ -206,7 +201,7 @@ export function ProspectForm({ coachId, prospect, mode = 'create' }: ProspectFor
       if (mode === 'edit') {
         router.push(`/prospects/${prospect?.id}`)
       } else {
-        router.push('/dashboard')
+        router.push('/')
       }
       router.refresh()
     },

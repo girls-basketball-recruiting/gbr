@@ -23,14 +23,14 @@ export default async function EditProspectPage({
   const user = await findOne('users', { clerkId: { equals: clerkUser.id } })
 
   if (!user || !user.roles?.includes('coach')) {
-    redirect('/dashboard')
+    redirect('/')
   }
 
   // Find the coach profile
   const coachProfile = await findOne('coaches', { user: { equals: user.id } })
 
   if (!coachProfile) {
-    redirect('/dashboard')
+    redirect('/')
   }
 
   // Fetch the prospect

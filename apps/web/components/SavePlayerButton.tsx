@@ -81,16 +81,12 @@ export function SavePlayerButton({
       pressed={isSaved}
       onPressedChange={handleToggleSave}
       disabled={isLoading || isPending}
-      className={`${className} ${
-        isSaved
-          ? 'bg-blue-600 hover:bg-blue-700 text-white'
-          : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-      }`}
+      className={className}
       aria-label={isSaved ? 'Unsave player' : 'Save player'}
     >
       <Bookmark className={isSaved ? 'fill-current' : ''} />
       {size !== 'sm' && (
-        <span className='ml-2'>{isSaved ? 'Saved' : 'Save'}</span>
+        <span className='ml-2'>{isSaved ? 'Saved' : 'Save Player'}</span>
       )}
     </Toggle>
   )

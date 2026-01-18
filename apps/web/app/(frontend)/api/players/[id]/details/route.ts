@@ -7,7 +7,10 @@ import {
   handleApiError,
 } from '@/lib/api-helpers'
 import { findById, updateById } from '@/lib/payload-helpers'
-import { uploadProfileImage } from '@/lib/blob-storage'
+import {
+  extractProfileDataFromFormData,
+  handleProfileImageUpload,
+} from '@/lib/profile-form-helpers'
 
 /**
  * Get player by ID (public)
@@ -53,115 +56,20 @@ export const PUT = handleApiError(async (
   if (formError) return formError
 
   // Handle profile image upload if provided
-  let profileImageUrl: string | undefined
-  const profileImage = formData.get('profileImage') as File | null
+  const profileImageUrl = await handleProfileImageUpload(
+    formData,
+    auth.dbUser.id,
+    'player',
+    player.profileImageUrl
+  )
 
-  if (profileImage && profileImage.size > 0 && profileImage.name) {
-    profileImageUrl = await uploadProfileImage(
-      profileImage,
-      auth.dbUser.id,
-      'player',
-      player.profileImageUrl
-    )
+  // Extract all profile fields from FormData using shared helper
+  const updateData = extractProfileDataFromFormData(formData)
+
+  // Add profile image URL if uploaded
+  if (profileImageUrl) {
+    updateData.profileImageUrl = profileImageUrl
   }
-
-  // Helper to parse JSON fields from FormData
-  const parseJsonField = (fieldName: string) => {
-    const value = formData.get(fieldName)
-    if (!value) return undefined
-    try {
-      return JSON.parse(value as string)
-    } catch {
-      return undefined
-    }
-  }
-
-  // Parse highlight video URLs
-  const highlightVideos = parseJsonField('highlightVideoUrls')
-  let parsedHighlightVideoUrls: Array<{ url: string; id?: string }> | undefined
-  if (highlightVideos && Array.isArray(highlightVideos)) {
-    parsedHighlightVideoUrls = highlightVideos
-      .filter((vid: { url: string }) => vid.url.trim())
-      .map((vid: { url: string }) => ({ url: vid.url.trim() }))
-  }
-
-  // Parse other JSON fields
-  const desiredLevelsOfPlay = parseJsonField('desiredLevelsOfPlay')
-  const desiredGeographicAreas = parseJsonField('desiredGeographicAreas')
-  const potentialAreasOfStudy = parseJsonField('potentialAreasOfStudy')
-  const awards = parseJsonField('awards')
-
-  // Build update data
-  const updateData: any = {}
-
-  // Basic text fields
-  const textFields = [
-    'firstName',
-    'lastName',
-    'graduationYear',
-    'highSchool',
-    'city',
-    'state',
-    'primaryPosition',
-    'secondaryPosition',
-    'phoneNumber',
-    'email',
-    'xHandle',
-    'instaHandle',
-    'tiktokHandle',
-    'ncaaId',
-    'bio',
-    'desiredDistanceFromHome',
-    'aauProgramName',
-    'aauTeamName',
-    'aauCircuit',
-    'aauCoach',
-  ]
-
-  textFields.forEach((field) => {
-    const value = formData.get(field)
-    if (value) updateData[field] = value as string
-  })
-
-  // Number fields
-  const numberFields = ['heightInInches', 'weight', 'ppg', 'rpg', 'apg']
-  numberFields.forEach((field) => {
-    const value = formData.get(field)
-    if (value) updateData[field] = field.includes('Gpa')
-      ? parseFloat(value as string)
-      : parseInt(value as string)
-  })
-
-  // GPA fields (float)
-  const gpaFields = ['unweightedGpa', 'weightedGpa']
-  gpaFields.forEach((field) => {
-    const value = formData.get(field)
-    if (value) updateData[field] = parseFloat(value as string)
-  })
-
-  // Boolean fields (checkboxes)
-  const booleanFields = [
-    'interestedInMilitaryAcademies',
-    'interestedInUltraHighAcademics',
-    'interestedInFaithBased',
-    'interestedInAllGirls',
-    'interestedInHBCU',
-  ]
-  booleanFields.forEach((field) => {
-    const value = formData.get(field)
-    if (value !== null && value !== undefined) {
-      // Convert string 'true'/'false' to boolean
-      updateData[field] = value === 'true'
-    }
-  })
-
-  // JSON fields
-  if (awards) updateData.awards = awards
-  if (desiredLevelsOfPlay) updateData.desiredLevelsOfPlay = desiredLevelsOfPlay
-  if (desiredGeographicAreas) updateData.desiredGeographicAreas = desiredGeographicAreas
-  if (potentialAreasOfStudy) updateData.potentialAreasOfStudy = potentialAreasOfStudy
-  if (parsedHighlightVideoUrls) updateData.highlightVideoUrls = parsedHighlightVideoUrls
-  if (profileImageUrl) updateData.profileImageUrl = profileImageUrl
 
   // Update the player profile
   const updated = await updateById('players', parseInt(id), updateData)

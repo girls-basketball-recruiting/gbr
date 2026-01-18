@@ -24,14 +24,14 @@ export default async function ProspectDetailPage({
   const user = await findOne('users', { clerkId: { equals: clerkUser.id } })
 
   if (!user || !user.roles?.includes('coach')) {
-    redirect('/dashboard')
+    redirect('/')
   }
 
   // Find the coach profile
   const coachProfile = await findOne('coaches', { user: { equals: user.id } })
 
   if (!coachProfile) {
-    redirect('/dashboard')
+    redirect('/')
   }
 
   // Fetch the prospect
@@ -56,7 +56,7 @@ export default async function ProspectDetailPage({
         {/* Header with navigation and actions */}
         <div className='flex items-center justify-between'>
           <Link
-            href='/dashboard'
+            href='/'
             className='inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors'
           >
             <ArrowLeft className='w-4 h-4' />

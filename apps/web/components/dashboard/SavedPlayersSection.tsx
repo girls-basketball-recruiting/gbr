@@ -3,6 +3,7 @@ import { ProfileCard } from '@/components/ui/ProfileCard'
 import { findAll } from '@/lib/payload-helpers'
 import type { Player } from '@/payload-types'
 import { ButtonLink } from '../ui/ButtonLink'
+import { SavePlayerButton } from '../SavePlayerButton'
 
 export async function SavedPlayersSection({ coachId }: { coachId: number }) {
   const savedPlayers = await findAll('coach-saved-players', {
@@ -37,6 +38,15 @@ export async function SavedPlayersSection({ coachId }: { coachId: number }) {
                 key={savedPlayer.id}
                 profile={player as Player}
                 variant='player'
+                action={
+                  <SavePlayerButton
+                    playerId={player.id}
+                    initialIsSaved
+                    variant='outline'
+                    size='default'
+                    className='flex-1'
+                  />
+                }
               />
             )
           })}

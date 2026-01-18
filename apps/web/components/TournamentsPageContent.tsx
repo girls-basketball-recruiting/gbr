@@ -2,31 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { TournamentCalendarCard } from '@/components/ui/TournamentCalendarCard'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { Calendar, Users, ChevronRight, Zap } from 'lucide-react'
+import { formatDateLocationRange } from '@/lib/format-date-location'
 import type { Tournament } from '@/payload-types'
 
-type FilterTab = 'all' | 'upcoming' | 'past'
-
-const isUpcoming = (endDate: string) => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const end = new Date(endDate)
-  return end >= today
-}
-
-const filterTournaments = <T extends { endDate: string }>(
-  tournaments: T[],
-  filter: FilterTab
-): T[] => {
-  if (filter === 'all') return tournaments
-  if (filter === 'upcoming') return tournaments.filter((t) => isUpcoming(t.endDate))
-  if (filter === 'past') return tournaments.filter((t) => !isUpcoming(t.endDate))
-  return tournaments
-}
+type FilterTab = 'upcoming' | 'past'
 
 interface TournamentsPageContentProps {
   tournaments: (Tournament & { attendeeCount?: number })[]
+  inProgressTournaments: (Tournament & { attendeeCount?: number })[]
   attendingIds: number[]
   isPlayer: boolean
   isAuthenticated: boolean
@@ -34,6 +21,7 @@ interface TournamentsPageContentProps {
 
 export function TournamentsPageContent({
   tournaments,
+  inProgressTournaments,
   attendingIds: initialAttendingIds,
   isPlayer,
   isAuthenticated,
@@ -44,11 +32,16 @@ export function TournamentsPageContent({
 
   const [attendingIds, setAttendingIds] = useState(initialAttendingIds)
   const [localTournaments, setLocalTournaments] = useState(tournaments)
+  const [localInProgress, setLocalInProgress] = useState(inProgressTournaments)
 
   // Sync local tournaments when server-side filtered tournaments change
   useEffect(() => {
     setLocalTournaments(tournaments)
   }, [tournaments])
+
+  useEffect(() => {
+    setLocalInProgress(inProgressTournaments)
+  }, [inProgressTournaments])
 
   const handleFilterChange = (filter: FilterTab) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -78,11 +71,8 @@ export function TournamentsPageContent({
         setAttendingIds(attendingIds.filter((id) => id !== tournamentId))
       }
 
-      // Refresh tournaments to update attendee counts, keeping the current filter
-      const tournamentsRes = await fetch('/api/tournaments/list')
-      const tournamentsData = await tournamentsRes.json()
-      const allTournaments = tournamentsData.tournaments || []
-      setLocalTournaments(filterTournaments(allTournaments, activeFilter))
+      // Refresh the page to get updated data
+      router.refresh()
     } catch (error) {
       console.error('Error toggling attendance:', error)
     }
@@ -90,6 +80,73 @@ export function TournamentsPageContent({
 
   return (
     <>
+      {/* Happening Now - Hero Section */}
+      {localInProgress.length > 0 && (
+        <div className='mb-10'>
+          <div className='flex items-center gap-3 mb-6'>
+            <div className='flex items-center justify-center w-10 h-10 rounded-full bg-linear-to-br from-green-500 to-emerald-600 shadow-lg'>
+              <Zap className='w-5 h-5 text-white' />
+            </div>
+            <h2 className='text-2xl font-bold tracking-tight'>Happening Now</h2>
+            <span className='relative flex h-3 w-3'>
+              <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span>
+              <span className='relative inline-flex rounded-full h-3 w-3 bg-green-500'></span>
+            </span>
+          </div>
+
+          <div className='space-y-3'>
+            {localInProgress.map((tournament) => (
+              <Link
+                key={tournament.id}
+                href={`/tournaments/${tournament.id}`}
+                className='group block'
+              >
+                <div className='relative overflow-hidden rounded-2xl bg-linear-to-r from-green-500/10 via-emerald-500/10 to-teal-500/10 dark:from-green-500/20 dark:via-emerald-500/20 dark:to-teal-500/20 border border-green-200 dark:border-green-800 p-5 transition-all hover:border-green-300 dark:hover:border-green-700'>
+                  {/* Animated background accent */}
+                  <div className='absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-green-400/20 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2' />
+
+                  <div className='relative flex items-center justify-between gap-4'>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center gap-3 mb-2'>
+                        <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-linear-to-r from-green-500 to-emerald-600 text-white shadow-sm'>
+                          <span className='relative flex h-2 w-2'>
+                            <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75'></span>
+                            <span className='relative inline-flex rounded-full h-2 w-2 bg-white'></span>
+                          </span>
+                          Live
+                        </span>
+                        <h3 className='text-xl font-bold truncate group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors'>
+                          {tournament.name}
+                        </h3>
+                      </div>
+
+                      <div className='flex flex-wrap items-center gap-4 text-sm text-muted-foreground'>
+                        <div className='flex items-center gap-1.5'>
+                          <Calendar className='w-4 h-4 text-green-600 dark:text-green-400' />
+                          <span>{formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}</span>
+                        </div>
+                        {isAuthenticated && (
+                          <div className='flex items-center gap-1.5'>
+                            <Users className='w-4 h-4 text-green-600 dark:text-green-400' />
+                            <span className='font-medium'>{tournament.attendeeCount ?? 0} players attending</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className='shrink-0'>
+                      <div className='w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800/50 transition-colors'>
+                        <ChevronRight className='w-5 h-5 text-green-600 dark:text-green-400' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Filter Tabs */}
       <div className='mb-6 flex gap-2 border-b'>
         <button
@@ -112,21 +169,11 @@ export function TournamentsPageContent({
         >
           Past
         </button>
-        <button
-          onClick={() => handleFilterChange('all')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 ${
-            activeFilter === 'all'
-              ? 'border-current'
-              : 'border-transparent'
-          }`}
-        >
-          All
-        </button>
       </div>
 
       {/* Results count */}
       <div className='mb-6'>
-        <p>
+        <p className='text-muted-foreground'>
           {localTournaments.length}{' '}
           {localTournaments.length === 1 ? 'tournament' : 'tournaments'}
         </p>
@@ -139,9 +186,7 @@ export function TournamentsPageContent({
           description={
             activeFilter === 'upcoming'
               ? 'There are no upcoming tournaments at this time.'
-              : activeFilter === 'past'
-                ? 'No past tournaments to display.'
-                : 'No tournaments available.'
+              : 'No past tournaments to display.'
           }
         />
       ) : (

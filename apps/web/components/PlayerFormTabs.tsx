@@ -187,7 +187,7 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
 
   if (isLoading && !isEditMode) {
     return (
-      <Card className='p-8'>
+      <Card className='p-8 max-w-lg mx-auto'>
         <p className='text-center'>
           Loading your progress...
         </p>
