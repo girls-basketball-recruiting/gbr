@@ -4,7 +4,12 @@ import { useState, useEffect } from 'react'
 import { Card } from '@workspace/ui/components/card'
 import { Button } from '@workspace/ui/components/button'
 import { Textarea } from '@workspace/ui/components/textarea'
-import { Label } from '@workspace/ui/components/label'
+import {
+  Field,
+  FieldLabel,
+  FieldError,
+  FieldGroup,
+} from '@workspace/ui/components/field'
 import {
   Select,
   SelectContent,
@@ -13,6 +18,8 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 import { DatePicker } from '@workspace/ui/components/date-picker'
+import { Alert, AlertDescription } from '@workspace/ui/components/alert'
+import { AlertCircle } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface ContactRecord {
@@ -149,15 +156,16 @@ export function CoachNotesSection({
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-6 max-w-2xl'>
       {/* General Notes */}
-      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+      <Card className='p-6'>
         <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-2xl font-bold text-slate-900 dark:text-white'>Your Notes</h2>
+          <h2 className='text-xl font-semibold'>Your Notes</h2>
           {!isEditing && (
             <Button
               onClick={() => setIsEditing(true)}
-              className='bg-blue-600 hover:bg-blue-700'
+              variant='secondary'
+              size='sm'
             >
               Edit Notes
             </Button>
@@ -165,17 +173,16 @@ export function CoachNotesSection({
         </div>
 
         {error && (
-          <div className='bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4'>
-            {error}
-          </div>
+          <Alert variant='destructive' className='mb-4'>
+            <AlertCircle className='h-4 w-4' />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {isEditing ? (
-          <div className='space-y-4'>
-            <div>
-              <Label htmlFor='notes' className='text-slate-700 dark:text-slate-200'>
-                Notes
-              </Label>
+          <FieldGroup>
+            <Field className='gap-1'>
+              <FieldLabel htmlFor='notes'>Notes</FieldLabel>
               <Textarea
                 id='notes'
                 value={notesData.notes}
@@ -184,21 +191,18 @@ export function CoachNotesSection({
                 }
                 rows={6}
                 placeholder='Add your notes and observations about this player...'
-                className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'
               />
-            </div>
+            </Field>
 
-            <div>
-              <Label htmlFor='interestLevel' className='text-slate-700 dark:text-slate-200'>
-                Interest Level
-              </Label>
+            <Field className='gap-1'>
+              <FieldLabel htmlFor='interestLevel'>Interest Level</FieldLabel>
               <Select
                 value={notesData.interestLevel || ''}
                 onValueChange={(value) =>
                   setNotesData({ ...notesData, interestLevel: value })
                 }
               >
-                <SelectTrigger className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'>
+                <SelectTrigger>
                   <SelectValue placeholder='Select interest level' />
                 </SelectTrigger>
                 <SelectContent>
@@ -209,13 +213,12 @@ export function CoachNotesSection({
                   <SelectItem value='not-interested'>Not Interested</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </Field>
 
-            <div className='flex gap-2'>
+            <div className='flex gap-2 pt-2'>
               <Button
                 onClick={handleSaveNotes}
                 disabled={isSaving}
-                className='bg-green-600 hover:bg-green-700'
               >
                 {isSaving ? 'Saving...' : 'Save Notes'}
               </Button>
@@ -226,15 +229,15 @@ export function CoachNotesSection({
                 Cancel
               </Button>
             </div>
-          </div>
+          </FieldGroup>
         ) : (
-          <div className='text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>
+          <div className='text-muted-foreground whitespace-pre-wrap'>
             {notesData.notes ||
               'No notes yet. Click "Edit Notes" to add notes.'}
             {notesData.interestLevel && (
-              <div className='mt-4 pt-4 border-t border-slate-200 dark:border-slate-700'>
-                <span className='text-slate-600 dark:text-slate-400'>Interest Level: </span>
-                <span className='font-medium capitalize'>
+              <div className='mt-4 pt-4 border-t'>
+                <span className='text-muted-foreground'>Interest Level: </span>
+                <span className='font-medium text-foreground capitalize'>
                   {notesData.interestLevel.replace('-', ' ')}
                 </span>
               </div>
@@ -244,13 +247,14 @@ export function CoachNotesSection({
       </Card>
 
       {/* Contact/Outreach Records */}
-      <Card className='bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 p-6'>
+      <Card className='p-6'>
         <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-2xl font-bold text-slate-900 dark:text-white'>Contact History</h2>
+          <h2 className='text-xl font-semibold'>Contact History</h2>
           {!isAddingContact && (
             <Button
               onClick={() => setIsAddingContact(true)}
-              className='bg-orange-600 hover:bg-orange-700'
+              variant='secondary'
+              size='sm'
             >
               Add Contact
             </Button>
@@ -259,83 +263,87 @@ export function CoachNotesSection({
 
         {/* Add Contact Form */}
         {isAddingContact && (
-          <div className='bg-slate-100 dark:bg-slate-900/50 p-4 rounded-lg mb-4 space-y-4'>
-            <div className='grid grid-cols-2 gap-4'>
-              <div>
-                <Label className='text-slate-700 dark:text-slate-200'>Date</Label>
-                <DatePicker
-                  date={newContact.date}
-                  onDateChange={(date) =>
-                    setNewContact({ ...newContact, date: date || new Date() })
+          <div className='bg-muted/50 p-4 rounded-lg mb-4'>
+            <FieldGroup>
+              <div className='grid grid-cols-2 gap-4'>
+                <Field className='gap-1'>
+                  <FieldLabel>Date</FieldLabel>
+                  <DatePicker
+                    date={newContact.date}
+                    onDateChange={(date) =>
+                      setNewContact({ ...newContact, date: date || new Date() })
+                    }
+                  />
+                </Field>
+                <Field className='gap-1'>
+                  <FieldLabel htmlFor='contactType'>Type</FieldLabel>
+                  <Select
+                    value={newContact.contactType}
+                    onValueChange={(value) =>
+                      setNewContact({ ...newContact, contactType: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='email'>Email</SelectItem>
+                      <SelectItem value='phone'>Phone Call</SelectItem>
+                      <SelectItem value='text'>Text Message</SelectItem>
+                      <SelectItem value='in-person'>In-Person Meeting</SelectItem>
+                      <SelectItem value='video'>Video Call</SelectItem>
+                      <SelectItem value='game-visit'>Game Visit</SelectItem>
+                      <SelectItem value='campus-visit'>Campus Visit</SelectItem>
+                      <SelectItem value='other'>Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+
+              <Field className='gap-1'>
+                <FieldLabel htmlFor='contactSummary'>
+                  Summary
+                  <span className='ml-1 text-destructive' aria-label='required'>*</span>
+                </FieldLabel>
+                <Textarea
+                  id='contactSummary'
+                  value={newContact.summary}
+                  onChange={(e) =>
+                    setNewContact({ ...newContact, summary: e.target.value })
                   }
-                  className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'
+                  rows={3}
+                  placeholder='What was discussed or observed...'
                 />
-              </div>
-              <div>
-                <Label htmlFor='contactType' className='text-slate-700 dark:text-slate-200'>
-                  Type
-                </Label>
-                <Select
-                  value={newContact.contactType}
-                  onValueChange={(value) =>
-                    setNewContact({ ...newContact, contactType: value })
-                  }
+                {error && error.includes('summary') && (
+                  <FieldError>{error}</FieldError>
+                )}
+              </Field>
+
+              <div className='flex gap-2'>
+                <Button
+                  onClick={handleAddContact}
+                  disabled={isSaving}
                 >
-                  <SelectTrigger className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='email'>Email</SelectItem>
-                    <SelectItem value='phone'>Phone Call</SelectItem>
-                    <SelectItem value='text'>Text Message</SelectItem>
-                    <SelectItem value='in-person'>In-Person Meeting</SelectItem>
-                    <SelectItem value='video'>Video Call</SelectItem>
-                    <SelectItem value='game-visit'>Game Visit</SelectItem>
-                    <SelectItem value='campus-visit'>Campus Visit</SelectItem>
-                    <SelectItem value='other'>Other</SelectItem>
-                  </SelectContent>
-                </Select>
+                  {isSaving ? 'Saving...' : 'Save Contact'}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setIsAddingContact(false)
+                    setError(null)
+                  }}
+                  variant='outline'
+                >
+                  Cancel
+                </Button>
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor='contactSummary' className='text-slate-700 dark:text-slate-200'>
-                Summary
-              </Label>
-              <Textarea
-                id='contactSummary'
-                value={newContact.summary}
-                onChange={(e) =>
-                  setNewContact({ ...newContact, summary: e.target.value })
-                }
-                rows={3}
-                placeholder='What was discussed or observed...'
-                className='bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white'
-              />
-            </div>
-
-            <div className='flex gap-2'>
-              <Button
-                onClick={handleAddContact}
-                disabled={isSaving}
-                className='bg-green-600 hover:bg-green-700'
-              >
-                {isSaving ? 'Saving...' : 'Save Contact'}
-              </Button>
-              <Button
-                onClick={() => setIsAddingContact(false)}
-                variant='outline'
-              >
-                Cancel
-              </Button>
-            </div>
+            </FieldGroup>
           </div>
         )}
 
         {/* Contact Records List */}
-        <div className='space-y-4'>
+        <div className='space-y-3'>
           {notesData.contactRecords.length === 0 ? (
-            <p className='text-slate-600 dark:text-slate-400 text-center py-8'>
+            <p className='text-muted-foreground text-center py-8'>
               No contact records yet. Click &quot;Add Contact&quot; to log your first
               interaction.
             </p>
@@ -348,19 +356,19 @@ export function CoachNotesSection({
               .map((contact, index) => (
                 <div
                   key={index}
-                  className='bg-slate-100 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700'
+                  className='bg-muted/50 p-4 rounded-lg border'
                 >
                   <div className='flex justify-between items-start mb-2'>
                     <div>
-                      <span className='font-medium text-slate-900 dark:text-white capitalize'>
+                      <span className='font-medium capitalize'>
                         {contact.contactType.replace('-', ' ')}
                       </span>
-                      <span className='text-slate-600 dark:text-slate-400 text-sm ml-2'>
+                      <span className='text-muted-foreground text-sm ml-2'>
                         {new Date(contact.date).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
-                  <p className='text-slate-700 dark:text-slate-300 whitespace-pre-wrap'>
+                  <p className='text-muted-foreground whitespace-pre-wrap'>
                     {contact.summary}
                   </p>
                 </div>

@@ -279,20 +279,22 @@ export default async function PlayerProfilePage({
   return (
     <div className='p-8'>
       <div className='max-w-5xl mx-auto space-y-8'>
-        {/* Save Player Button for Coaches - Fixed at top */}
-        {isCoach && (
-          <div className='flex justify-end'>
-            <SavePlayerButton
-              playerId={player.id}
-              initialIsSaved={isSaved}
-              variant='outline'
-              size='lg'
-            />
-          </div>
-        )}
-
         {/* Player Profile View */}
-        <ProfileView profile={player} variant='player' tournamentSchedule={tournamentSchedule} />
+        <ProfileView
+          profile={player}
+          variant='player'
+          tournamentSchedule={tournamentSchedule}
+          headerAction={
+            isCoach ? (
+              <SavePlayerButton
+                playerId={player.id}
+                initialIsSaved={isSaved}
+                variant='outline'
+                size='default'
+              />
+            ) : undefined
+          }
+        />
 
         {/* Coach Notes Section - Only visible to coaches */}
         {isCoach && coachProfile && (

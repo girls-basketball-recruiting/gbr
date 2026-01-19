@@ -19,6 +19,7 @@ interface ProfileViewProps {
   profile: ProfileData
   variant: 'player' | 'prospect'
   tournamentSchedule: Tournament[]
+  headerAction?: React.ReactNode
 }
 
 function isPlayer(profile: ProfileData): profile is Player {
@@ -82,6 +83,7 @@ export function ProfileView({
   profile,
   variant,
   tournamentSchedule,
+  headerAction,
 }: ProfileViewProps) {
   const email = isPlayer(profile) ? profile.email : null
   const notes = !isPlayer(profile) ? profile.notes : null
@@ -194,6 +196,8 @@ export function ProfileView({
                 )}
               </div>
             )}
+
+            {headerAction}
           </div>
         </div>
       </div>

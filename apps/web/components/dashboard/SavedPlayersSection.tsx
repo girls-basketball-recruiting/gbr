@@ -29,7 +29,7 @@ export async function SavedPlayersSection({ coachId }: { coachId: number }) {
           }
         />
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6'>
           {validPlayers.map((savedPlayer) => {
             const player = typeof savedPlayer.player === 'object' ? savedPlayer.player : null
             if (!player) return null
