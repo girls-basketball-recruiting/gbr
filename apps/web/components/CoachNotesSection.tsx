@@ -156,7 +156,7 @@ export function CoachNotesSection({
   }
 
   return (
-    <div className='space-y-6 max-w-2xl'>
+    <div className='space-y-6'>
       {/* General Notes */}
       <Card className='p-6'>
         <div className='flex justify-between items-center mb-4'>

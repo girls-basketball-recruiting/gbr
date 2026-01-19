@@ -53,7 +53,7 @@ export default async function ProspectDetailPage({
 
   return (
     <div className='p-8'>
-      <div className='max-w-5xl mx-auto space-y-8'>
+      <div className='max-w-6xl mx-auto space-y-8'>
         {/* Header with navigation and actions */}
         <div className='flex items-center justify-between'>
           <Link
@@ -81,6 +81,7 @@ export default async function ProspectDetailPage({
           profile={prospect}
           variant='prospect'
           tournamentSchedule={tournamentSchedule}
+          coachId={coachProfile.id.toString()}
         />
       </div>
     </div>

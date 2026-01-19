@@ -25,8 +25,28 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@workspace/ui/components/sidebar'
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
 import { NavUser } from './NavUser'
-import { P, Small } from './ui/typography'
+
+function BasketballIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M20.3 12A9 9 0 0 1 12 3.5" />
+      <path d="M12 20.5A9 9 0 0 0 3.7 12" />
+      <line x1="5.6" y1="5.6" x2="18.4" y2="18.4" />
+      <line x1="5.6" y1="18.4" x2="18.4" y2="5.6" />
+    </svg>
+  )
+}
 
 // Regex patterns for detecting coach routes
 const NESTED_COACH_ROUTE_PATTERN = /^\/programs\/\d+\/coaches\/\d+/
@@ -130,13 +150,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size='lg' asChild>
               <Link href='/'>
-                <div className='grid flex-1'>
-                  <P className='text-sm font-semibold text-accent-foreground'>
+                <Avatar className='h-8 w-8 rounded-lg'>
+                  <AvatarFallback className='rounded-lg bg-primary text-primary-foreground'>
+                    <BasketballIcon className='h-4 w-4' />
+                  </AvatarFallback>
+                </Avatar>
+                <div className='grid flex-1 text-left text-sm leading-tight'>
+                  <span className='truncate font-semibold'>
                     Girls Basketball Recruiting
-                  </P>
-                  <Small className='text-xs font-bold text-muted-foreground'>
+                  </span>
+                  <span className='truncate text-xs text-muted-foreground'>
                     Database
-                  </Small>
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>

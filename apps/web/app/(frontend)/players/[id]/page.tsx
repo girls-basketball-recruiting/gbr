@@ -9,7 +9,6 @@ import {
   School,
   User,
 } from 'lucide-react'
-import { CoachNotesSection } from '@/components/CoachNotesSection'
 import { SavePlayerButton } from '@/components/SavePlayerButton'
 import { ProfileView } from '@/components/profile/ProfileView'
 import { PublicNav } from '@/components/PublicNav'
@@ -278,12 +277,13 @@ export default async function PlayerProfilePage({
 
   return (
     <div className='p-8'>
-      <div className='max-w-5xl mx-auto space-y-8'>
+      <div className='max-w-6xl mx-auto space-y-8'>
         {/* Player Profile View */}
         <ProfileView
           profile={player}
           variant='player'
           tournamentSchedule={tournamentSchedule}
+          coachId={isCoach && coachProfile ? String(coachProfile.id) : undefined}
           headerAction={
             isCoach ? (
               <SavePlayerButton
@@ -295,11 +295,6 @@ export default async function PlayerProfilePage({
             ) : undefined
           }
         />
-
-        {/* Coach Notes Section - Only visible to coaches */}
-        {isCoach && coachProfile && (
-          <CoachNotesSection playerId={id} coachId={String(coachProfile.id)} />
-        )}
       </div>
     </div>
   )
