@@ -47,6 +47,7 @@ function groupTournaments(tournamentsWithCounts: TournamentWithCounts[]) {
   const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0)
 
   const groups = {
+    happeningNow: [] as TournamentWithCounts[],
     thisWeek: [] as TournamentWithCounts[],
     thisMonth: [] as TournamentWithCounts[],
     nextMonth: [] as TournamentWithCounts[],
@@ -55,10 +56,15 @@ function groupTournaments(tournamentsWithCounts: TournamentWithCounts[]) {
 
   tournamentsWithCounts.forEach((item) => {
     const startDate = new Date(item.tournament.startDate)
+    const endDate = new Date(item.tournament.endDate)
     startDate.setHours(0, 0, 0, 0)
+    endDate.setHours(23, 59, 59, 999)
 
-    if (startDate < now) {
-      // Skip past tournaments
+    // Tournament is in progress (started but not ended)
+    if (startDate <= now && endDate >= now) {
+      groups.happeningNow.push(item)
+    } else if (startDate < now) {
+      // Skip past tournaments (already ended)
       return
     } else if (startDate <= oneWeek) {
       groups.thisWeek.push(item)
@@ -171,10 +177,10 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
     )
   }
 
-  // Extract and filter tournaments
+  // Extract and filter tournaments (check truthiness because typeof null === 'object')
   const tournamentSchedule =
     ((player.tournamentSchedule as unknown as Tournament[])?.filter(
-      (t) => typeof t === 'object',
+      (t) => t && typeof t === 'object',
     ) || []) as Tournament[]
 
   // Filter out past tournaments and sort by date
@@ -219,6 +225,7 @@ export async function TournamentScheduleSection({ playerId }: TournamentSchedule
 
   return (
     <div>
+      <PeriodSection title='Happening Now' tournaments={groups.happeningNow} />
       <PeriodSection title='This Week' tournaments={groups.thisWeek} />
       <PeriodSection title='This Month' tournaments={groups.thisMonth} />
       <PeriodSection title='Next Month' tournaments={groups.nextMonth} />

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuth } from '@clerk/nextjs'
 import { Label } from '@workspace/ui/components/label'
 import { Input } from '@workspace/ui/components/input'
 import { Button } from '@workspace/ui/components/button'
@@ -18,6 +19,8 @@ import { formatHeight } from '@/lib/formatters'
 
 export function PlayerFilters() {
   const router = useRouter()
+  const { isSignedIn } = useAuth()
+  const isPublic = !isSignedIn
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
@@ -256,134 +259,154 @@ export function PlayerFilters() {
           </div>
         </div>
 
-        {/* Preferences */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
-          {/* Desired Levels */}
-          <div className='space-y-0.5'>
-            <Label className='text-sm font-medium'>
-              Desired College Level
-            </Label>
-            <MultiSelect
-              options={LEVELS_OF_PLAY}
-              selected={desiredLevels}
-              onChange={(values) => handleMultiSelectChange('desiredLevels', values)}
-              placeholder='Any Level'
-              searchPlaceholder='Search levels...'
-            />
-          </div>
+        {/* Preferences - Hidden in public view */}
+        {!isPublic && (
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
+            {/* Desired Levels */}
+            <div className='space-y-0.5'>
+              <Label className='text-sm font-medium'>
+                Desired College Level
+              </Label>
+              <MultiSelect
+                options={LEVELS_OF_PLAY}
+                selected={desiredLevels}
+                onChange={(values) => handleMultiSelectChange('desiredLevels', values)}
+                placeholder='Any Level'
+                searchPlaceholder='Search levels...'
+              />
+            </div>
 
-          {/* Desired Distance */}
-          <div className='space-y-0.5'>
-            <Label className='text-sm font-medium'>
-              Distance from Home
-            </Label>
-            <MultiSelect
-              options={DISTANCE_FROM_HOME_OPTIONS}
-              selected={desiredDistances}
-              onChange={(values) => handleMultiSelectChange('desiredDistances', values)}
-              placeholder='Any Distance'
-              searchPlaceholder='Search distance...'
-            />
-          </div>
+            {/* Desired Distance */}
+            <div className='space-y-0.5'>
+              <Label className='text-sm font-medium'>
+                Distance from Home
+              </Label>
+              <MultiSelect
+                options={DISTANCE_FROM_HOME_OPTIONS}
+                selected={desiredDistances}
+                onChange={(values) => handleMultiSelectChange('desiredDistances', values)}
+                placeholder='Any Distance'
+                searchPlaceholder='Search distance...'
+              />
+            </div>
 
-          {/* AAU Circuit */}
-          <div className='space-y-0.5'>
-            <Label className='text-sm font-medium'>
-              AAU Circuit
-            </Label>
-            <MultiSelect
-              options={AAU_CIRCUITS}
-              selected={aauCircuits}
-              onChange={(values) => handleMultiSelectChange('aauCircuits', values)}
-              placeholder='All Circuits'
-              searchPlaceholder='Search circuits...'
-            />
-          </div>
+            {/* AAU Circuit */}
+            <div className='space-y-0.5'>
+              <Label className='text-sm font-medium'>
+                AAU Circuit
+              </Label>
+              <MultiSelect
+                options={AAU_CIRCUITS}
+                selected={aauCircuits}
+                onChange={(values) => handleMultiSelectChange('aauCircuits', values)}
+                placeholder='All Circuits'
+                searchPlaceholder='Search circuits...'
+              />
+            </div>
 
-          {/* Height Range */}
-          <div>
-            <RangeSlider
-              min={48}
-              max={96}
-              step={1}
-              value={heightRange}
-              onValueChange={handleHeightRangeChange}
-              formatValue={formatHeight}
-              label='Height'
-            />
+            {/* Height Range */}
+            <div>
+              <RangeSlider
+                min={48}
+                max={96}
+                step={1}
+                value={heightRange}
+                onValueChange={handleHeightRangeChange}
+                formatValue={formatHeight}
+                label='Height'
+              />
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Stats Filters */}
-        <div className='grid grid-cols-1 sm:grid-cols-4 gap-5'>
-          {/* GPA Range */}
-          <div>
-            <RangeSlider
-              min={0}
-              max={4}
-              step={0.1}
-              value={gpaRange}
-              onValueChange={handleGpaRangeChange}
-              formatValue={(v) => v.toFixed(1)}
-              label='GPA'
-            />
-          </div>
+        {/* Stats Filters - Hidden in public view */}
+        {!isPublic && (
+          <div className='grid grid-cols-1 sm:grid-cols-4 gap-5'>
+            {/* GPA Range */}
+            <div>
+              <RangeSlider
+                min={0}
+                max={4}
+                step={0.1}
+                value={gpaRange}
+                onValueChange={handleGpaRangeChange}
+                formatValue={(v) => v.toFixed(1)}
+                label='GPA'
+              />
+            </div>
 
-          {/* PPG Range */}
-          <div>
-            <RangeSlider
-              min={0}
-              max={50}
-              step={0.5}
-              value={ppgRange}
-              onValueChange={handlePpgRangeChange}
-              formatValue={(v) => `${v.toFixed(1)} ppg`}
-              label='Points Per Game'
-            />
-          </div>
+            {/* PPG Range */}
+            <div>
+              <RangeSlider
+                min={0}
+                max={50}
+                step={0.5}
+                value={ppgRange}
+                onValueChange={handlePpgRangeChange}
+                formatValue={(v) => `${v.toFixed(1)} ppg`}
+                label='Points Per Game'
+              />
+            </div>
 
-          {/* RPG Range */}
-          <div>
-            <RangeSlider
-              min={0}
-              max={50}
-              step={0.5}
-              value={rpgRange}
-              onValueChange={handleRpgRangeChange}
-              formatValue={(v) => `${v.toFixed(1)} rpg`}
-              label='Rebounds Per Game'
-            />
-          </div>
+            {/* RPG Range */}
+            <div>
+              <RangeSlider
+                min={0}
+                max={50}
+                step={0.5}
+                value={rpgRange}
+                onValueChange={handleRpgRangeChange}
+                formatValue={(v) => `${v.toFixed(1)} rpg`}
+                label='Rebounds Per Game'
+              />
+            </div>
 
-          {/* APG Range */}
-          <div>
-            <RangeSlider
-              min={0}
-              max={50}
-              step={0.5}
-              value={apgRange}
-              onValueChange={handleApgRangeChange}
-              formatValue={(v) => `${v.toFixed(1)} apg`}
-              label='Assists Per Game'
-            />
-          </div>
+            {/* APG Range */}
+            <div>
+              <RangeSlider
+                min={0}
+                max={50}
+                step={0.5}
+                value={apgRange}
+                onValueChange={handleApgRangeChange}
+                formatValue={(v) => `${v.toFixed(1)} apg`}
+                label='Assists Per Game'
+              />
+            </div>
 
-          {/* Clear All Button */}
-          <div className='flex items-end'>
-            {activeFilterCount > 0 && (
-              <Button
-                onClick={clearAllFilters}
-                variant='outline'
-                size='default'
-                disabled={isPending}
-                className='h-10 w-full'
-              >
-                <X className='w-4 h-4 mr-2' />
-                Clear {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'}
-              </Button>
-            )}
+            {/* Clear All Button */}
+            <div className='flex items-end'>
+              {activeFilterCount > 0 && (
+                <Button
+                  onClick={clearAllFilters}
+                  variant='outline'
+                  size='default'
+                  disabled={isPending}
+                  className='h-10 w-full'
+                >
+                  <X className='w-4 h-4 mr-2' />
+                  Clear {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'}
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Clear All Button for public view */}
+        {isPublic && activeFilterCount > 0 && (
+          <div className='flex justify-end'>
+            <Button
+              onClick={clearAllFilters}
+              variant='outline'
+              size='default'
+              disabled={isPending}
+              className='h-10'
+            >
+              <X className='w-4 h-4 mr-2' />
+              Clear {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )

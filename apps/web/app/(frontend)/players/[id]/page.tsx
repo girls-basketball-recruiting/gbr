@@ -2,9 +2,18 @@ import { notFound } from 'next/navigation'
 import { Card } from '@workspace/ui/components/card'
 import Image from 'next/image'
 import { currentUser } from '@clerk/nextjs/server'
+import {
+  MapPin,
+  Ruler,
+  Weight,
+  School,
+  User,
+} from 'lucide-react'
 import { CoachNotesSection } from '@/components/CoachNotesSection'
 import { SavePlayerButton } from '@/components/SavePlayerButton'
 import { ProfileView } from '@/components/profile/ProfileView'
+import { PublicNav } from '@/components/PublicNav'
+import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import type { Metadata } from 'next'
 import { getPositionLabel } from '@/lib/zod/Positions'
 import { formatHeight } from '@/lib/formatters'
@@ -76,8 +85,9 @@ export default async function PlayerProfilePage({
   }
 
   // Get tournament schedule from player object (populated by Payload)
-  // Ensure it's treated as an array of Tournaments, filtering out any unresolved IDs if mixed
-  const tournamentSchedule = (player.tournamentSchedule as unknown as Tournament[])?.filter(t => typeof t === 'object') || []
+  // Ensure it's treated as an array of Tournaments, filtering out any unresolved IDs or nulls
+  // Note: typeof null === 'object' in JS, so we must also check truthiness
+  const tournamentSchedule = (player.tournamentSchedule as unknown as Tournament[])?.filter(t => t && typeof t === 'object') || []
 
   // Check if user is authenticated
   const isAuthenticated = !!clerkUser
@@ -112,16 +122,25 @@ export default async function PlayerProfilePage({
   // If not authenticated, show limited public view for SEO
   if (!isAuthenticated) {
     return (
-      <div className='min-h-svh py-12'>
-        <div className='container mx-auto px-4 max-w-3xl'>
+      <>
+        <PublicNav activePage='players' />
+        <div className='py-12 px-4'>
+          <div className='max-w-lg mx-auto'>
+            {/* Unauthenticated CTA */}
+            <div className='mb-8'>
+              <UnauthenticatedCTA
+                title='Connect with Student-Athletes'
+                description='Create an account to view academic profiles, player profiles, highlight videos, and contact information. Coaches can save players and take notes.'
+                variant='premium'
+              />
+            </div>
 
-          {/* Public Player Profile */}
-          <Card className='p-8 mb-8'>
-            <div className='text-center space-y-6'>
-              {/* Profile Image */}
-              {player.profileImageUrl && (
-                <div className='flex justify-center'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden relative'>
+            {/* Player Header */}
+            <Card className='max-w-lg p-8 mb-8'>
+              <div className='flex items-start gap-6 mb-6'>
+                {/* Profile Image */}
+                {player.profileImageUrl ? (
+                  <div className='w-24 h-24 rounded-full overflow-hidden relative shrink-0'>
                     <Image
                       src={player.profileImageUrl}
                       alt={`${player.firstName} ${player.lastName}`}
@@ -129,56 +148,116 @@ export default async function PlayerProfilePage({
                       className='object-cover'
                     />
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className='w-24 h-24 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center shrink-0'>
+                    <User className='w-10 h-10 text-orange-500' />
+                  </div>
+                )}
 
-              {/* Name */}
-              <div>
-                <h1 className='text-4xl font-bold mb-2'>
-                  {player.firstName} {player.lastName}
-                </h1>
-                <p className='text-xl'>
-                  Class of {player.graduationYear}
-                </p>
+                {/* Name & Class */}
+                <div className='flex-1'>
+                  <h1 className='text-3xl font-bold mb-1'>
+                    {player.firstName} {player.lastName}
+                  </h1>
+                  <p className='text-lg text-muted-foreground'>
+                    Class of {player.graduationYear}
+                  </p>
+                </div>
               </div>
 
-              {/* Limited Info */}
-              <div className='space-y-3 max-w-md mx-auto'>
+              <div className='grid grid-cols-2 gap-6'>
+                {/* Position */}
                 {player.primaryPosition && (
-                  <div className='flex items-center justify-center gap-2'>
-                    <span>Position:</span>
-                    <span className='font-medium'>
-                      {getPositionLabel(player.primaryPosition)}
-                    </span>
+                  <div className='flex items-start gap-3'>
+                    <div className='w-6 min-w-6'>
+                      <User className='w-5 h-5' />
+                    </div>
+                    <div>
+                      <h3 className='text-sm font-medium text-muted-foreground mb-1'>
+                        Position
+                      </h3>
+                      <p className='font-medium'>
+                        {getPositionLabel(player.primaryPosition)}
+                      </p>
+                    </div>
                   </div>
                 )}
-                {player.highSchool && (
-                  <div className='flex items-center justify-center gap-2'>
-                    <span>School:</span>
-                    <span className='font-medium'>{player.highSchool}</span>
+
+                {/* Location */}
+                {(player.city || player.state) && (
+                  <div className='flex items-start gap-3'>
+                    <div className='w-6 min-w-6'>
+                      <MapPin className='w-5 h-5' />
+                    </div>
+                    <div>
+                      <h3 className='text-sm font-medium text-muted-foreground mb-1'>
+                        Location
+                      </h3>
+                      <p className='font-medium'>
+                        {player.city}{player.city && player.state && ', '}{player.state}
+                      </p>
+                    </div>
                   </div>
                 )}
+
+                {/* Height */}
                 {player.heightInInches && (
-                  <div className='flex items-center justify-center gap-2'>
-                    <span>Height:</span>
-                    <span className='font-medium'>{formatHeight(player.heightInInches)}</span>
+                  <div className='flex items-start gap-3'>
+                    <div className='w-6 min-w-6'>
+                      <Ruler className='w-5 h-5' />
+                    </div>
+                    <div>
+                      <h3 className='text-sm font-medium text-muted-foreground mb-1'>
+                        Height
+                      </h3>
+                      <p className='font-medium'>
+                        {formatHeight(player.heightInInches)}
+                      </p>
+                    </div>
                   </div>
                 )}
+
+                {/* Weight */}
                 {player.weight && (
-                  <div className='flex items-center justify-center gap-2'>
-                    <span>Weight:</span>
-                    <span className='font-medium'>{player.weight} lbs</span>
+                  <div className='flex items-start gap-3'>
+                    <div className='w-6 min-w-6'>
+                      <Weight className='w-5 h-5' />
+                    </div>
+                    <div>
+                      <h3 className='text-sm font-medium text-muted-foreground mb-1'>
+                        Weight
+                      </h3>
+                      <p className='font-medium'>
+                        {player.weight} lbs
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* School */}
+                {player.highSchool && (
+                  <div className='flex items-start gap-3'>
+                    <div className='w-6 min-w-6'>
+                      <School className='w-5 h-5' />
+                    </div>
+                    <div>
+                      <h3 className='text-sm font-medium text-muted-foreground mb-1'>
+                        School
+                      </h3>
+                      <p className='font-medium'>
+                        {player.highSchool}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* CTA to Sign Up */}
-              <div className='pt-6 border-t'>
-                <p className='mb-4'>
-                  Sign in or register to view full profile including stats, highlight videos, and
-                  contact information
+              <div className='pt-6 mt-6 border-t'>
+                <p className='text-center text-muted-foreground mb-4'>
+                  Sign in or register to view full profile including stats, highlight videos, and contact information
                 </p>
-                <div className='text-center space-x-3'>
+                <div className='flex flex-wrap justify-center gap-3'>
                   <ButtonLink href='/sign-in' variant='outline'>
                     Sign In
                   </ButtonLink>
@@ -190,10 +269,10 @@ export default async function PlayerProfilePage({
                   </ButtonLink>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 

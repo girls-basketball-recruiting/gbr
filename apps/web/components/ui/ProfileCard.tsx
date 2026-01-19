@@ -1,7 +1,10 @@
+'use client'
+
 import { Card } from '@workspace/ui/components/card'
 import { Badge } from '@workspace/ui/components/badge'
 import Image from 'next/image'
 import { ReactNode } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { getPositionLabel } from '@/lib/zod/Positions'
 import { formatHeight } from '@/lib/formatters'
 import type { Player, CoachProspect } from '@/payload-types'
@@ -22,11 +25,14 @@ function isPlayer(profile: ProfileData): profile is Player {
 }
 
 export function ProfileCard({ profile, variant, action, isOwnCard = false }: ProfileCardProps) {
+  const { isSignedIn } = useAuth()
+  const isPublic = !isSignedIn
   if (!profile) return null
 
   const profileImageUrl = profile.profileImageUrl
   const isArchived = isPlayer(profile) && !!profile.deletedAt
-  const hasStats = profile.ppg || profile.rpg || profile.apg
+  // Hide stats in public view
+  const hasStats = !isPublic && (profile.ppg || profile.rpg || profile.apg)
   const gradYear = profile.graduationYear
 
   // Build profile link based on variant
@@ -204,7 +210,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
               <div className='font-semibold'>{profile.weight} lbs</div>
             </div>
           )}
-          {(profile.weightedGpa || profile.unweightedGpa) && (
+          {!isPublic && (profile.weightedGpa || profile.unweightedGpa) && (
             <div>
               <div className='text-[10px] uppercase font-semibold text-muted-foreground tracking-wide'>
                 GPA

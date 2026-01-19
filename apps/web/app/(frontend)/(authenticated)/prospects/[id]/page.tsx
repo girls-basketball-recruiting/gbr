@@ -48,7 +48,8 @@ export default async function ProspectDetailPage({
   }
 
   // Get tournament schedule from prospect object (populated by Payload)
-  const tournamentSchedule = (prospect.tournamentSchedule as unknown as Tournament[])?.filter(t => typeof t === 'object') || []
+  // Note: typeof null === 'object' in JS, so we must also check truthiness
+  const tournamentSchedule = (prospect.tournamentSchedule as unknown as Tournament[])?.filter(t => t && typeof t === 'object') || []
 
   return (
     <div className='p-8'>

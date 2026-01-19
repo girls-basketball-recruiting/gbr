@@ -15,6 +15,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import Link from 'next/link'
+import { useAuth } from '@clerk/nextjs'
 import { SavePlayerButton } from './SavePlayerButton'
 import { getPositionLabel } from '@/lib/zod/Positions'
 import { formatHeight } from '@/lib/formatters'
@@ -32,6 +33,8 @@ export function PlayersTable({
   isCoach = false,
   currentPlayerId,
 }: PlayersTableProps) {
+  const { isSignedIn } = useAuth()
+  const isPublic = !isSignedIn
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: 'firstName',
@@ -110,10 +113,11 @@ export function PlayersTable({
         )
       },
     },
-    {
+    // GPA column - hidden in public view
+    ...(!isPublic ? [{
       accessorKey: 'weightedGpa',
       header: 'GPA',
-      cell: ({ row }) => {
+      cell: ({ row }: { row: any }) => {
         const gpa = row.getValue('weightedGpa') as number
         return gpa ? (
           <span className='text-slate-600 dark:text-slate-400'>
@@ -121,7 +125,7 @@ export function PlayersTable({
           </span>
         ) : null
       },
-    },
+    }] : []),
   ]
 
   // Add action column for coaches
