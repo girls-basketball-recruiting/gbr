@@ -2,10 +2,9 @@ import { notFound, redirect } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs/server'
 import { ProfileView } from '@/components/profile/ProfileView'
 import { ButtonLink } from '@/components/ui/ButtonLink'
-import { Button } from '@workspace/ui/components/button'
 import { findById, findOne } from '@/lib/payload-helpers'
 import type { Tournament, CoachProspect } from '@/payload-types'
-import { Pencil, Trash2, ArrowLeft } from 'lucide-react'
+import { Pencil, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function ProspectDetailPage({

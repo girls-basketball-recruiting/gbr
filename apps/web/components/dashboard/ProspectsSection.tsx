@@ -1,6 +1,7 @@
 import { EmptyState } from '@/components/ui/EmptyState'
-import { ProfileCard } from '@/components/ui/ProfileCard'
+import { ProspectsTable } from './ProspectsTable'
 import { findAll } from '@/lib/payload-helpers'
+import type { CoachProspect } from '@/payload-types'
 import { ProspectsEmptyActions } from './ProspectsEmptyActions'
 
 export async function ProspectsSection({ coachId }: { coachId: number }) {
@@ -10,25 +11,15 @@ export async function ProspectsSection({ coachId }: { coachId: number }) {
     sort: '-createdAt'
   })
 
-  return (
-    <>
-      {prospects.length === 0 ? (
-        <EmptyState
-          title='No Prospects Added Yet'
-          description="Add prospects manually or import from CSV to track players who haven't registered on the platform yet."
-          action={<ProspectsEmptyActions />}
-        />
-      ) : (
-        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {prospects.map((prospect: any) => (
-            <ProfileCard
-              key={prospect.id}
-              profile={prospect}
-              variant='prospect'
-            />
-          ))}
-        </div>
-      )}
-    </>
-  )
+  if (prospects.length === 0) {
+    return (
+      <EmptyState
+        title='No Prospects Added Yet'
+        description="Add prospects manually or import from CSV to track players who haven't registered on the platform yet."
+        action={<ProspectsEmptyActions />}
+      />
+    )
+  }
+
+  return <ProspectsTable prospects={prospects as CoachProspect[]} />
 }

@@ -297,30 +297,37 @@ export function ProfileView({
   const hasSidebar = hasStats || hasPhysical || hasSchool || hasAAU || hasCollegePrefs
   const hasAboutContent = profile.bio || (profile.awards && profile.awards.length > 0) || (profile.highlightVideoUrls && profile.highlightVideoUrls.length > 0)
 
+  // Profile image component (reused in mobile and desktop positions)
+  const ProfileImage = ({ className = '' }: { className?: string }) => (
+    profile.profileImageUrl ? (
+      <div className={`w-full aspect-square max-w-64 rounded-xl overflow-hidden bg-accent relative mx-auto lg:mx-0 ${className}`}>
+        <Image
+          src={profile.profileImageUrl}
+          alt={`${profile.firstName} ${profile.lastName}`}
+          fill
+          className='object-cover'
+          priority
+        />
+      </div>
+    ) : (
+      <div className={`w-full aspect-square max-w-64 rounded-xl flex items-center justify-center mx-auto lg:mx-0 ${className} ${
+        variant === 'player'
+          ? 'bg-gradient-to-br from-orange-500 to-orange-600'
+          : 'bg-gradient-to-br from-purple-500 to-purple-600'
+      }`}>
+        <User className='w-20 h-20 text-white/80' />
+      </div>
+    )
+  )
+
   return (
     <div className='flex flex-col lg:flex-row gap-8 lg:gap-12'>
-      {/* Left Column: Image + Sidebar */}
-      <div className='lg:w-64 shrink-0 space-y-6'>
-        {/* Profile Image */}
-        {profile.profileImageUrl ? (
-          <div className='w-full aspect-square max-w-64 rounded-xl overflow-hidden bg-accent relative mx-auto lg:mx-0'>
-            <Image
-              src={profile.profileImageUrl}
-              alt={`${profile.firstName} ${profile.lastName}`}
-              fill
-              className='object-cover'
-              priority
-            />
-          </div>
-        ) : (
-          <div className={`w-full aspect-square max-w-64 rounded-xl flex items-center justify-center mx-auto lg:mx-0 ${
-            variant === 'player'
-              ? 'bg-gradient-to-br from-orange-500 to-orange-600'
-              : 'bg-gradient-to-br from-purple-500 to-purple-600'
-          }`}>
-            <User className='w-20 h-20 text-white/80' />
-          </div>
-        )}
+      {/* Left Column: Image + Sidebar (Desktop: order-1, Mobile: order-2 for sidebar) */}
+      <div className='lg:w-64 shrink-0 space-y-6 order-2 lg:order-1'>
+        {/* Profile Image - Desktop only */}
+        <div className='hidden lg:block'>
+          <ProfileImage />
+        </div>
 
         {/* Sidebar Info */}
         {hasSidebar && (
@@ -445,8 +452,8 @@ export function ProfileView({
         )}
       </div>
 
-      {/* Right Column: Main Content */}
-      <div className='flex-1 min-w-0 space-y-6'>
+      {/* Right Column: Main Content (Mobile: order-1, Desktop: order-2) */}
+      <div className='flex-1 min-w-0 space-y-6 order-1 lg:order-2'>
         {/* Header */}
         <div>
           <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1'>
@@ -482,6 +489,11 @@ export function ProfileView({
                 Class of {profile.graduationYear}
               </span>
             )}
+          </div>
+
+          {/* Profile Image - Mobile only, shows after name */}
+          <div className='lg:hidden mb-6'>
+            <ProfileImage />
           </div>
 
           {/* Contact Links */}
