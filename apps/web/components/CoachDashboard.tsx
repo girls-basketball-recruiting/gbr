@@ -4,6 +4,7 @@ import { getCoachPositionLabel } from '@/lib/zod/CoachPositions'
 import { SavedPlayersSection } from './dashboard/SavedPlayersSection'
 import { ProspectsSection } from './dashboard/ProspectsSection'
 import { ProspectsActions } from './dashboard/ProspectsActions'
+import { TournamentScheduleSection } from './dashboard/TournamentScheduleSection'
 import { getAuthContext } from '@/lib/auth-context'
 import { redirect } from 'next/navigation'
 import { ButtonLink } from './ui/ButtonLink'
@@ -42,10 +43,10 @@ export default async function CoachDashboard() {
               </p>
             </div>
             <div>
-              <ButtonLink href='/profile' variant='ghost' className='mr-2'>
+              <ButtonLink href='/profile' variant='ghost' className='mr-2' size='sm'>
                 View Profile
               </ButtonLink>
-              <ButtonLink href='/profile/edit' variant='outline'>
+              <ButtonLink href='/profile/edit' variant='outline' size='sm'>
                 Edit Profile
               </ButtonLink>
             </div>
@@ -82,6 +83,22 @@ export default async function CoachDashboard() {
 
           <Suspense>
             <ProspectsSection coachId={coachProfile.id} />
+          </Suspense>
+        </div>
+
+        {/* Tournament Schedule Section */}
+        <div className='mb-8'>
+          <div className='flex items-center justify-between mb-4'>
+            <h3 className='text-2xl font-bold'>
+              Tournament Schedule
+            </h3>
+            <ButtonLink href="/tournaments" variant="outline" size='sm'>
+              View All Tournaments
+            </ButtonLink>
+          </div>
+
+          <Suspense>
+            <TournamentScheduleSection coachId={coachProfile.id} />
           </Suspense>
         </div>
       </div>

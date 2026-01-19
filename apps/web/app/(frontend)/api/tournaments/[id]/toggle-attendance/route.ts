@@ -1,5 +1,5 @@
 import { withPlayer, withCoach, apiSuccess, handleApiError, apiError } from '@/lib/api-helpers'
-import { updateById } from '@/lib/payload-helpers'
+import { updateById, findById } from '@/lib/payload-helpers'
 
 /**
  * Toggle player or coach attendance for a tournament
@@ -10,6 +10,21 @@ export const POST = handleApiError(async (
 ) => {
   const { id: tournamentId } = await params
   const tournamentIdNum = parseInt(tournamentId)
+
+  // Check if tournament is past
+  const tournament = await findById('tournaments', tournamentIdNum)
+  if (!tournament) {
+    return apiError('Tournament not found', 404)
+  }
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const endDate = new Date(tournament.endDate)
+  endDate.setHours(23, 59, 59, 999)
+
+  if (today > endDate) {
+    return apiError('Cannot modify attendance for past tournaments', 400)
+  }
 
   // Try player auth first
   const [playerAuth, playerError] = await withPlayer()

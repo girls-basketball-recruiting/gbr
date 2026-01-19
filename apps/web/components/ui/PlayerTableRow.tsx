@@ -53,25 +53,30 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
       </div>
 
       {/* Content - Two Rows */}
-      <div className='flex-1 min-w-0 flex flex-col justify-center gap-0.5'>
-        {/* Row 1: Name, Position, Badges */}
+      <div className='flex-1 min-w-0 flex flex-col justify-center gap-1'>
+        {/* Row 1: Name / Position / Year + Badges */}
         <div className='flex items-center gap-2 min-w-0'>
-          <span className='font-semibold text-foreground truncate'>
-            {player.firstName} {player.lastName}
-          </span>
-          {player.primaryPosition && (
-            <span className='text-sm text-muted-foreground truncate hidden sm:inline'>
-              · {getPositionLabel(player.primaryPosition)}
+          <div className='flex items-center gap-2 min-w-0 truncate'>
+            <span className='font-semibold text-foreground truncate'>
+              {player.firstName} {player.lastName}
             </span>
+            {player.primaryPosition && (
+              <>
+                <span className='text-muted-foreground/40 hidden sm:inline'>/</span>
+                <span className='text-sm text-muted-foreground truncate hidden sm:inline'>
+                  {getPositionLabel(player.primaryPosition)}
+                </span>
+              </>
+            )}
+          </div>
+          {player.graduationYear && (
+            <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
+              '{String(player.graduationYear).slice(-2)}
+            </Badge>
           )}
           {isOwnProfile && (
             <Badge className='bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700 text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
               YOU
-            </Badge>
-          )}
-          {player.graduationYear && (
-            <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
-              '{String(player.graduationYear).slice(-2)}
             </Badge>
           )}
           {isArchived && (
@@ -81,45 +86,48 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
           )}
         </div>
 
-        {/* Row 2: Stats & Location */}
-        <div className='flex items-center gap-3 text-sm text-muted-foreground'>
+        {/* Row 2: Physical / Stats / Location / School */}
+        <div className='flex items-center gap-2 text-sm text-muted-foreground'>
           {/* Physical */}
           {(player.heightInInches || player.weight) && (
             <span className='truncate'>
               {player.heightInInches && formatHeight(player.heightInInches)}
-              {player.heightInInches && player.weight && ' · '}
+              {player.heightInInches && player.weight && ' / '}
               {player.weight && `${player.weight} lbs`}
             </span>
           )}
 
           {/* Stats */}
           {(player.ppg || player.rpg || player.apg) && (
-            <span className='hidden md:flex items-center gap-1.5 tabular-nums'>
-              {player.ppg !== null && player.ppg !== undefined && (
-                <span><span className='text-orange-600 dark:text-orange-400 font-medium'>{Number(player.ppg).toFixed(1)}</span> PPG</span>
-              )}
-              {player.rpg !== null && player.rpg !== undefined && (
-                <span><span className='text-orange-600 dark:text-orange-400 font-medium'>{Number(player.rpg).toFixed(1)}</span> RPG</span>
-              )}
-              {player.apg !== null && player.apg !== undefined && (
-                <span><span className='text-orange-600 dark:text-orange-400 font-medium'>{Number(player.apg).toFixed(1)}</span> APG</span>
-              )}
-            </span>
+            <>
+              <span className='text-muted-foreground/40 hidden md:inline'>·</span>
+              <span className='hidden md:flex items-center gap-1.5 tabular-nums'>
+                {player.ppg !== null && player.ppg !== undefined && (
+                  <span><span className='text-orange-600 dark:text-orange-400 font-medium'>{Number(player.ppg).toFixed(1)}</span> PPG</span>
+                )}
+                {player.rpg !== null && player.rpg !== undefined && (
+                  <span><span className='text-orange-600 dark:text-orange-400 font-medium'>{Number(player.rpg).toFixed(1)}</span> RPG</span>
+                )}
+                {player.apg !== null && player.apg !== undefined && (
+                  <span><span className='text-orange-600 dark:text-orange-400 font-medium'>{Number(player.apg).toFixed(1)}</span> APG</span>
+                )}
+              </span>
+            </>
           )}
 
-          {/* Location */}
-          {location && (
-            <span className='hidden lg:flex items-center gap-1 truncate'>
-              <MapPin className='w-3 h-3 flex-shrink-0' />
-              <span className='truncate'>{location}</span>
-            </span>
-          )}
-
-          {/* School */}
-          {player.highSchool && (
-            <span className='hidden xl:block truncate max-w-[180px]'>
-              {player.highSchool}
-            </span>
+          {/* Location & School */}
+          {(location || player.highSchool) && (
+            <>
+              <span className='text-muted-foreground/40 hidden lg:inline'>·</span>
+              <span className='hidden lg:flex items-center gap-1.5 truncate'>
+                <MapPin className='w-3 h-3 flex-shrink-0' />
+                <span className='truncate'>
+                  {location}
+                  {location && player.highSchool && ' — '}
+                  {player.highSchool}
+                </span>
+              </span>
+            </>
           )}
         </div>
       </div>

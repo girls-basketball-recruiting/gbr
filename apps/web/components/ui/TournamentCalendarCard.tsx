@@ -82,11 +82,11 @@ export function TournamentCalendarCard({
           </div>
         </div>
 
-        {/* Attending Badge - Top Left */}
+        {/* Attending/Attended Badge - Top Left */}
         {attending && (
           <div className='absolute top-3 left-3 bg-gradient-to-br from-green-500 to-green-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1.5'>
             <CalendarCheck2Icon className='w-3 h-3' />
-            <span>Attending</span>
+            <span>{upcoming ? 'Attending' : 'Attended'}</span>
           </div>
         )}
 
@@ -120,7 +120,7 @@ export function TournamentCalendarCard({
               <Users className='w-4 h-4 text-purple-600 dark:text-purple-400' />
               <span className='text-purple-700 dark:text-purple-300 font-medium'>
                 {tournament.attendeeCount ?? 0}{' '}
-                {tournament.attendeeCount === 1 ? 'player' : 'players'} attending
+                {tournament.attendeeCount === 1 ? 'player' : 'players'} {upcoming ? 'attending' : 'attended'}
               </span>
             </div>
           ) : (
@@ -137,8 +137,8 @@ export function TournamentCalendarCard({
             View Details
           </ButtonLink>
 
-          {/* Attendance toggle */}
-          {isAuthenticated && onToggleAttendance && (
+          {/* Attendance toggle - only show for upcoming tournaments */}
+          {isAuthenticated && onToggleAttendance && upcoming && (
             <Toggle
               variant='outline'
               pressed={attending}

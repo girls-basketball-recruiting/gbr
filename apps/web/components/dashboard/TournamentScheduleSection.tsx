@@ -7,7 +7,8 @@ import { formatDateLocationRange } from '@/lib/format-date-location'
 import { H4, P } from '../ui/typography'
 
 interface TournamentScheduleSectionProps {
-  playerId: number
+  playerId?: number
+  coachId?: number
 }
 
 type TournamentWithCounts = {
@@ -163,25 +164,51 @@ function PeriodSection({ title, tournaments }: { title: string; tournaments: Tou
   )
 }
 
-export async function TournamentScheduleSection({ playerId }: TournamentScheduleSectionProps) {
-  // Fetch player with populated tournament schedule
-  const player = await findById('players', playerId)
+export async function TournamentScheduleSection({ playerId, coachId }: TournamentScheduleSectionProps) {
+  // Fetch player or coach with populated tournament schedule
+  let tournamentSchedule: Tournament[] = []
 
-  if (!player) {
+  if (playerId) {
+    const player = await findById('players', playerId)
+    if (!player) {
+      return (
+        <EmptyState
+          icon={<Calendar className='w-8 h-8' />}
+          title='Player Not Found'
+          description='Unable to load tournament schedule'
+        />
+      )
+    }
+    // Extract and filter tournaments (check truthiness because typeof null === 'object')
+    tournamentSchedule =
+      ((player.tournamentSchedule as unknown as Tournament[])?.filter(
+        (t) => t && typeof t === 'object',
+      ) || []) as Tournament[]
+  } else if (coachId) {
+    const coach = await findById('coaches', coachId)
+    if (!coach) {
+      return (
+        <EmptyState
+          icon={<Calendar className='w-8 h-8' />}
+          title='Coach Not Found'
+          description='Unable to load tournament schedule'
+        />
+      )
+    }
+    // Extract and filter tournaments (check truthiness because typeof null === 'object')
+    tournamentSchedule =
+      ((coach.tournamentSchedule as unknown as Tournament[])?.filter(
+        (t) => t && typeof t === 'object',
+      ) || []) as Tournament[]
+  } else {
     return (
       <EmptyState
         icon={<Calendar className='w-8 h-8' />}
-        title='Player Not Found'
+        title='No Profile Provided'
         description='Unable to load tournament schedule'
       />
     )
   }
-
-  // Extract and filter tournaments (check truthiness because typeof null === 'object')
-  const tournamentSchedule =
-    ((player.tournamentSchedule as unknown as Tournament[])?.filter(
-      (t) => t && typeof t === 'object',
-    ) || []) as Tournament[]
 
   // Filter out past tournaments and sort by date
   const now = new Date()

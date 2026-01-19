@@ -9,12 +9,14 @@ interface AttendanceBadgeProps {
   tournamentId: number
   isAttending: boolean
   size?: 'sm' | 'lg'
+  isPast?: boolean
 }
 
 export function AttendanceBadge({
   tournamentId,
   isAttending: initialIsAttending,
   size = 'sm',
+  isPast = false,
 }: AttendanceBadgeProps) {
   const router = useRouter()
   const [isAttending, setIsAttending] = useState(initialIsAttending)
@@ -43,6 +45,22 @@ export function AttendanceBadge({
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // For past tournaments, show a non-interactive badge
+  if (isPast) {
+    if (!isAttending) return null
+    return (
+      <Button
+        size={size}
+        variant='green'
+        disabled
+        className='cursor-default'
+      >
+        <Check className='w-4 h-4 mr-2' />
+        Attended
+      </Button>
+    )
   }
 
   return (

@@ -1,5 +1,5 @@
 import type { Tournament } from '@/payload-types';
-import { Calendar, MapPin, ExternalLink } from 'lucide-react';
+import { Calendar, MapPin, ExternalLink, CalendarCheck2 } from 'lucide-react';
 
 interface PlayerTournamentScheduleProps {
   tournamentSchedule: Tournament[];
@@ -28,6 +28,14 @@ const formatDateRange = (start: string, end: string) => {
   return `${startFormatted} - ${endFormatted}`;
 };
 
+const isPastTournament = (endDate: string) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(endDate);
+  end.setHours(23, 59, 59, 999);
+  return today > end;
+};
+
 export function PlayerTournamentSchedule({ tournamentSchedule }: PlayerTournamentScheduleProps) {
   if (!tournamentSchedule || tournamentSchedule.length === 0) {
     return null;
@@ -42,16 +50,28 @@ export function PlayerTournamentSchedule({ tournamentSchedule }: PlayerTournamen
         {tournamentSchedule.map((t) => {
           if (!t) return null;
 
+          const isPast = isPastTournament(t.endDate.toString());
+
           return (
             <div
               key={t.id}
-              className='group relative'
+              className={`group relative ${isPast ? 'opacity-70' : ''}`}
             >
               <div className='flex items-start justify-between gap-4'>
                 <div className='flex-1'>
-                  <h3 className='text-lg font-semibold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors'>
-                    {t.name}
-                  </h3>
+                  <div className='flex items-center gap-2 mb-2'>
+                    <h3 className='text-lg font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors'>
+                      {t.name}
+                    </h3>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      isPast
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        : 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400'
+                    }`}>
+                      <CalendarCheck2 className='w-3 h-3' />
+                      {isPast ? 'Attended' : 'Attending'}
+                    </span>
+                  </div>
                   <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-slate-600 dark:text-slate-300'>
                     <div className='flex items-center gap-1.5'>
                       <Calendar className='w-4 h-4 text-slate-400' />

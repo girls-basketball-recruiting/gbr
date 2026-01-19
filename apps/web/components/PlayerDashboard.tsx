@@ -31,10 +31,10 @@ export default async function PlayerDashboard() {
                 </div>
               </div>
               <div>
-                <ButtonLink href='/profile' variant='ghost' className='mr-2'>
+                <ButtonLink href='/profile' variant='ghost' className='mr-2' size='sm'>
                   View Profile
                 </ButtonLink>
-                <ButtonLink href='/profile/edit' variant='outline'>
+                <ButtonLink href='/profile/edit' variant='outline' size='sm'>
                   Edit Profile
                 </ButtonLink>
               </div>

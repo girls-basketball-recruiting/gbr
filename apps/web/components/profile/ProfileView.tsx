@@ -312,8 +312,8 @@ export function ProfileView({
     ) : (
       <div className={`w-full aspect-square max-w-64 rounded-xl flex items-center justify-center mx-auto lg:mx-0 ${className} ${
         variant === 'player'
-          ? 'bg-gradient-to-br from-orange-500 to-orange-600'
-          : 'bg-gradient-to-br from-purple-500 to-purple-600'
+          ? 'bg-linear-to-br from-orange-500 to-orange-600'
+          : 'bg-linear-to-br from-purple-500 to-purple-600'
       }`}>
         <User className='w-20 h-20 text-white/80' />
       </div>

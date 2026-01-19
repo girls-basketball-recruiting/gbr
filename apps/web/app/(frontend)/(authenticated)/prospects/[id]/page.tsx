@@ -51,29 +51,8 @@ export default async function ProspectDetailPage({
   const tournamentSchedule = (prospect.tournamentSchedule as unknown as Tournament[])?.filter(t => t && typeof t === 'object') || []
 
   return (
-    <div className='p-8'>
+    <div>
       <div className='max-w-6xl mx-auto space-y-8'>
-        {/* Header with navigation and actions */}
-        <div className='flex items-center justify-between'>
-          <Link
-            href='/'
-            className='inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors'
-          >
-            <ArrowLeft className='w-4 h-4' />
-            Back to Dashboard
-          </Link>
-
-          <div className='flex items-center gap-3'>
-            <ButtonLink
-              href={`/prospects/${id}/edit`}
-              variant='outline'
-              size='default'
-            >
-              <Pencil className='w-4 h-4 mr-2' />
-              Edit Prospect
-            </ButtonLink>
-          </div>
-        </div>
 
         {/* Prospect Profile View */}
         <ProfileView

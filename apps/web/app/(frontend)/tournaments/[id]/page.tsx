@@ -192,11 +192,12 @@ export default async function TournamentDetailPage({
               </ButtonLink>
             )}
 
-            {currentUserId && userRole && !isPast && (
+            {currentUserId && userRole && (
               <AttendanceBadge
                 tournamentId={parseInt(id)}
                 isAttending={isAttending}
                 size='lg'
+                isPast={isPast}
               />
             )}
           </div>
@@ -228,8 +229,8 @@ export default async function TournamentDetailPage({
                     <>
                       <MutedText className='uppercase font-extrabold mb-6'>
                         {userRole === 'player'
-                          ? `${otherPlayers.length} ${otherPlayers.length === 1 ? 'other player' : 'other players'} attending`
-                          : `Players Attending (${otherPlayers.length})`
+                          ? `${otherPlayers.length} ${otherPlayers.length === 1 ? 'other player' : 'other players'} ${isPast ? 'attended' : 'attending'}`
+                          : `Players ${isPast ? 'Attended' : 'Attending'} (${otherPlayers.length})`
                         }
                       </MutedText>
                       {otherPlayers.length > 0 ? (
@@ -242,7 +243,7 @@ export default async function TournamentDetailPage({
                           }))}
                         />
                       ) : (
-                        <P className='mt-4 pb-8 border-b'>No {players.length === 1 ? 'other ' : ''}players attending yet</P>
+                        <P className='mt-4 pb-8 border-b'>No {players.length === 1 ? 'other ' : ''}players {isPast ? 'attended' : 'attending yet'}</P>
                       )}
                     </>
                   )
@@ -261,7 +262,7 @@ export default async function TournamentDetailPage({
                     return (
                       <>
                         <MutedText className='uppercase font-extrabold mb-4'>
-                          {otherCoaches.length} {otherCoaches.length === 1 ? 'other coach' : 'other coaches'} attending
+                          {otherCoaches.length} {otherCoaches.length === 1 ? 'other coach' : 'other coaches'} {isPast ? 'attended' : 'attending'}
                         </MutedText>
                         {otherCoaches.length > 0 ? (
                           <TournamentAttendeesTable
@@ -273,7 +274,7 @@ export default async function TournamentDetailPage({
                             }))}
                           />
                         ) : (
-                          <P className='text-lg leading-relaxed'>No coaches attending yet</P>
+                          <P className='text-lg leading-relaxed'>No coaches {isPast ? 'attended' : 'attending yet'}</P>
                         )}
                       </>
                     )
@@ -282,7 +283,7 @@ export default async function TournamentDetailPage({
               ) : (
                 <div className='flex items-center gap-2'>
                   <Users className='w-5 h-5' />
-                  <span>{coaches.length} {coaches.length === 1 ? 'coach' : 'coaches'} attending</span>
+                  <span>{coaches.length} {coaches.length === 1 ? 'coach' : 'coaches'} {isPast ? 'attended' : 'attending'}</span>
                 </div>
               )}
             </div>

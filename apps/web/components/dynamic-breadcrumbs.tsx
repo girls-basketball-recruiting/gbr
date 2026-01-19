@@ -88,7 +88,7 @@ export function DynamicBreadcrumbs() {
               }
             }
           }
-        } else if (entityType === 'coach-prospects') {
+        } else if (entityType === 'prospects') {
           const res = await fetch(`/api/prospects/${entityId}`)
           if (!res.ok) {
             console.error('Failed to fetch prospect details for breadcrumbs')
@@ -96,7 +96,9 @@ export function DynamicBreadcrumbs() {
             return
           }
           const data = await res.json()
-          name = data.prospect?.name
+          if (data.prospect) {
+            name = `${data.prospect.firstName || ''} ${data.prospect.lastName || ''}`.trim()
+          }
         } else if (entityType === 'tournaments') {
           const res = await fetch(`/api/tournaments/${entityId}/details`)
           if (!res.ok) {
@@ -154,7 +156,7 @@ export function DynamicBreadcrumbs() {
       const previousSegment = pathParts[index - 1]
       if (previousSegment === 'players') return 'Player Profile'
       if (previousSegment === 'coaches') return 'Coach Profile'
-      if (previousSegment === 'coach-prospects') return 'Prospect Details'
+      if (previousSegment === 'prospects') return 'Prospect Details'
       if (previousSegment === 'tournaments') return 'Tournament Details'
       if (previousSegment === 'programs') return 'College Program Details'
       return 'Details'
@@ -186,6 +188,12 @@ export function DynamicBreadcrumbs() {
     // Skip the 'coaches' segment when it's in a nested coach route
     // This is because /programs/[id]/coaches doesn't exist as a page
     if (isNestedCoachRoute && part === 'coaches' && index === 2) {
+      return // Skip this segment
+    }
+
+    // Skip the 'prospects' segment since /prospects doesn't exist as a page
+    // Prospects are shown on the coach dashboard, not a separate page
+    if (part === 'prospects' && index === 0) {
       return // Skip this segment
     }
 

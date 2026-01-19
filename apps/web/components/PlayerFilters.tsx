@@ -265,7 +265,7 @@ export function PlayerFilters() {
             {/* Desired Levels */}
             <div className='space-y-0.5'>
               <Label className='text-sm font-medium'>
-                Desired College Level
+                Desired Level of Play
               </Label>
               <MultiSelect
                 options={LEVELS_OF_PLAY}

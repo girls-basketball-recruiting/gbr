@@ -164,12 +164,12 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Upload className="w-4 h-4 mr-2" />
+        <Button variant='outline' size='sm'>
+          <Upload className='w-4 h-4 mr-2' />
           Import CSV
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className='sm:max-w-lg'>
         <DialogHeader>
           <DialogTitle>Import Prospects from CSV</DialogTitle>
           <DialogDescription>
@@ -178,22 +178,22 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className='space-y-4 py-4'>
           {/* Download Template Button */}
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={handleDownloadSample}
-            className="w-full"
+            className='w-full'
           >
-            <Download className="w-4 h-4 mr-2" />
+            <Download className='w-4 h-4 mr-2' />
             Download CSV Template
           </Button>
 
           {/* Required Fields Info */}
-          <div className="text-sm text-slate-500 dark:text-slate-400">
-            <p className="font-medium mb-1">Required columns:</p>
-            <ul className="list-disc list-inside space-y-0.5 text-xs">
+          <div className='text-sm text-slate-500 dark:text-slate-400'>
+            <p className='font-medium mb-1'>Required columns:</p>
+            <ul className='list-disc list-inside space-y-0.5 text-xs'>
               <li>{CSV_HEADER_LABELS.firstName}</li>
               <li>{CSV_HEADER_LABELS.lastName}</li>
               <li>{CSV_HEADER_LABELS.graduationYear}</li>
@@ -205,7 +205,7 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
             <FileUploadPrimitive
               maxFiles={1}
               maxSize={1024 * 1024}
-              accept=".csv,text/csv,application/vnd.ms-excel"
+              accept='.csv,text/csv,application/vnd.ms-excel'
               onValueChange={handleFilesChange}
               onFileReject={handleFileReject}
               value={file ? [file] : undefined}
@@ -224,33 +224,33 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
                   'hover:border-slate-400 dark:hover:border-slate-600'
                 )}
               >
-                <div className="flex flex-col items-center gap-2 text-center">
+                <div className='flex flex-col items-center gap-2 text-center'>
                   {file ? (
                     <>
-                      <FileSpreadsheet className="w-10 h-10 text-green-600 dark:text-green-400" />
-                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <FileSpreadsheet className='w-10 h-10 text-green-600 dark:text-green-400' />
+                      <p className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                         {file.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className='text-xs text-slate-500'>
                         {(file.size / 1024).toFixed(1)} KB
                       </p>
                     </>
                   ) : (
                     <>
-                      <FileSpreadsheet className="w-10 h-10 text-slate-400" />
-                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <FileSpreadsheet className='w-10 h-10 text-slate-400' />
+                      <p className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                         Drop your CSV file here
                       </p>
-                      <p className="text-xs text-slate-500">or click to browse</p>
+                      <p className='text-xs text-slate-500'>or click to browse</p>
                     </>
                   )}
                 </div>
               </FileUploadDropzone>
             </FileUploadPrimitive>
           ) : state === 'uploading' ? (
-            <div className="flex flex-col items-center justify-center py-8 gap-3">
-              <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+            <div className='flex flex-col items-center justify-center py-8 gap-3'>
+              <Loader2 className='w-10 h-10 animate-spin text-blue-600' />
+              <p className='text-sm text-slate-600 dark:text-slate-400'>
                 Importing prospects...
               </p>
             </div>
@@ -258,8 +258,8 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
 
           {/* Error Display */}
           {error && !result && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+            <Alert variant='destructive'>
+              <AlertCircle className='h-4 w-4' />
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -269,9 +269,9 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
           {result && (
             <Alert variant={result.success ? 'default' : 'destructive'}>
               {result.success ? (
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <CheckCircle2 className='h-4 w-4 text-green-600' />
               ) : (
-                <XCircle className="h-4 w-4" />
+                <XCircle className='h-4 w-4' />
               )}
               <AlertTitle>
                 {result.success
@@ -279,20 +279,20 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
                   : 'Import Completed with Errors'}
               </AlertTitle>
               <AlertDescription>
-                <div className="mt-2 space-y-1 text-sm">
+                <div className='mt-2 space-y-1 text-sm'>
                   <p>Total rows: {result.totalRows}</p>
-                  <p className="text-green-600 dark:text-green-400">
+                  <p className='text-green-600 dark:text-green-400'>
                     Successfully imported: {result.successCount}
                   </p>
                   {result.errorCount > 0 && (
                     <>
-                      <p className="text-red-600 dark:text-red-400">
+                      <p className='text-red-600 dark:text-red-400'>
                         Errors: {result.errorCount}
                       </p>
-                      <div className="mt-2 max-h-32 overflow-y-auto rounded border border-red-200 dark:border-red-800 p-2 text-xs">
+                      <div className='mt-2 max-h-32 overflow-y-auto rounded border border-red-200 dark:border-red-800 p-2 text-xs'>
                         {result.errors.map((err, i) => (
-                          <div key={i} className="mb-1">
-                            <span className="font-medium">Row {err.rowIndex}:</span>{' '}
+                          <div key={i} className='mb-1'>
+                            <span className='font-medium'>Row {err.rowIndex}:</span>{' '}
                             {err.errors.join(', ')}
                           </div>
                         ))}
@@ -305,15 +305,15 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
           )}
         </div>
 
-        <DialogFooter className="gap-2">
+        <DialogFooter className='gap-2'>
           {state === 'success' ? (
-            <Button onClick={handleClose} className="w-full sm:w-auto">
+            <Button onClick={handleClose} className='w-full sm:w-auto'>
               Done
             </Button>
           ) : (
             <>
               <Button
-                variant="outline"
+                variant='outline'
                 onClick={handleClose}
                 disabled={state === 'uploading'}
               >
@@ -325,12 +325,12 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
               >
                 {state === 'uploading' ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                     Importing...
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4 mr-2" />
+                    <Upload className='w-4 h-4 mr-2' />
                     Import Prospects
                   </>
                 )}
