@@ -5,9 +5,11 @@ import { StateCodeSchema } from './States'
 
 /**
  * Schema for Player Onboarding Step 1: Basic Info
- * Includes: graduationYear, high school, location
+ * Includes: name, graduationYear, high school, location
  */
 export const PlayerBasicInfoSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
   graduationYear: z.coerce.number().pipe(GraduationYearSchema),
   highSchool: z.string().min(1, 'High school is required'),
   city: z.string().min(1, 'City is required'),

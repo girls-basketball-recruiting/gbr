@@ -20,6 +20,9 @@ interface PlayerBasicInfoStepProps {
   error: string | null
   isLastStep: boolean
   profile?: Partial<Player> | null
+  initialFirstName?: string
+  initialLastName?: string
+  initialEmail?: string
 }
 
 export function PlayerBasicInfoStep({
@@ -27,6 +30,9 @@ export function PlayerBasicInfoStep({
   error,
   isLastStep,
   profile,
+  initialFirstName,
+  initialLastName,
+  initialEmail,
 }: PlayerBasicInfoStepProps) {
   const { user } = useUser()
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
@@ -36,6 +42,8 @@ export function PlayerBasicInfoStep({
 
   const form = useSchemaForm({
     defaultValues: {
+      firstName: profile?.firstName || initialFirstName || '',
+      lastName: profile?.lastName || initialLastName || '',
       graduationYear: profile?.graduationYear || '',
       highSchool: profile?.highSchool || '',
       city: profile?.city || '',
@@ -49,12 +57,11 @@ export function PlayerBasicInfoStep({
       },
     },
     onSubmit: async (formData) => {
-      // Add Clerk user info to FormData
+      // Add email (prefer server-provided initialEmail, fallback to client-side Clerk)
       if (formData instanceof FormData) {
-        if (user?.firstName) formData.append('firstName', user.firstName)
-        if (user?.lastName) formData.append('lastName', user.lastName)
-        if (user?.primaryEmailAddress?.emailAddress) {
-          formData.append('email', user.primaryEmailAddress.emailAddress)
+        const email = initialEmail || user?.primaryEmailAddress?.emailAddress
+        if (email) {
+          formData.append('email', email)
         }
       }
       await onSave(formData)
@@ -94,6 +101,23 @@ export function PlayerBasicInfoStep({
         />
 
         <div className='space-y-5'>
+          <div className='grid grid-cols-2 gap-5'>
+            <FormTextField
+              control={form.control}
+              name='firstName'
+              label='First Name'
+              required
+              placeholder='First name'
+            />
+            <FormTextField
+              control={form.control}
+              name='lastName'
+              label='Last Name'
+              required
+              placeholder='Last name'
+            />
+          </div>
+
           <div className='grid grid-cols-2 gap-5'>
             <FormSelectField
               control={form.control}

@@ -167,8 +167,8 @@ export async function POST(req: Request) {
           email,
           clerkId: id,
           roles: [role],
-          firstName: first_name,
-          lastName: last_name,
+          firstName: first_name || 'Unknown',
+          lastName: last_name || 'User',
           password: generateRandomPassword(), // Required by Payload auth, not used by Clerk users
         }
         console.log('📝 Creating user with data:', JSON.stringify(userData, null, 2))
@@ -263,8 +263,8 @@ export async function POST(req: Request) {
           email,
           clerkId: id,
           roles: [role],
-          firstName: first_name,
-          lastName: last_name,
+          firstName: first_name || 'Unknown',
+          lastName: last_name || 'User',
           password: generateRandomPassword(), // Required by Payload auth, not used by Clerk users
         }, {
           overrideAccess: true, // Webhook bypasses access control
@@ -347,6 +347,32 @@ export async function POST(req: Request) {
             await deleteById('player-saved-programs', savedProgram.id)
           }
           console.log(`✅ Deleted saved programs for player: ${player.id}`)
+
+          // Delete all coach_saved_players records that reference this player
+          // (coaches who have saved this player)
+          const savedByCoaches = await findAll('coach-saved-players', {
+            player: { equals: player.id },
+          })
+
+          for (const saved of savedByCoaches) {
+            await deleteById('coach-saved-players', saved.id)
+          }
+          if (savedByCoaches.length > 0) {
+            console.log(`✅ Deleted ${savedByCoaches.length} coach saves referencing player: ${player.id}`)
+          }
+
+          // Delete all coach_player_notes records that reference this player
+          // (notes that coaches have written about this player)
+          const notesAboutPlayer = await findAll('coach-player-notes', {
+            player: { equals: player.id },
+          })
+
+          for (const note of notesAboutPlayer) {
+            await deleteById('coach-player-notes', note.id)
+          }
+          if (notesAboutPlayer.length > 0) {
+            console.log(`✅ Deleted ${notesAboutPlayer.length} coach notes referencing player: ${player.id}`)
+          }
 
           // Delete profile image from Vercel Blob if it exists
           if (player.profileImageUrl) {

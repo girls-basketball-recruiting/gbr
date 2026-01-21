@@ -24,7 +24,11 @@ export default async function PlayerOnboardingPage() {
       description='Complete your player profile to connect with college programs'
       maxWidth='lg'
     >
-      <PlayerFormTabs />
+      <PlayerFormTabs
+        initialFirstName={user.firstName || ''}
+        initialLastName={user.lastName || ''}
+        initialEmail={user.emailAddresses[0]?.emailAddress || ''}
+      />
     </FormPageLayout>
   )
 }

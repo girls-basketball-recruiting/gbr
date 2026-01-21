@@ -23,9 +23,12 @@ type TabState = 'completed' | 'active' | 'unlocked' | 'locked'
 
 interface PlayerFormTabsProps {
   profile?: Player
+  initialFirstName?: string
+  initialLastName?: string
+  initialEmail?: string
 }
 
-export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
+export function PlayerFormTabs({ profile, initialFirstName, initialLastName, initialEmail }: PlayerFormTabsProps) {
   const router = useRouter()
   const isEditMode = !!profile
 
@@ -200,6 +203,9 @@ export function PlayerFormTabs({ profile }: PlayerFormTabsProps) {
     error,
     isLastStep: activeTab === TABS.length - 1,
     profile: playerData,
+    initialFirstName,
+    initialLastName,
+    initialEmail,
   }
 
   return (

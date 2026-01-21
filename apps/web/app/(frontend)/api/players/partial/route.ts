@@ -32,22 +32,62 @@ export const POST = handleApiError(async (req: Request) => {
     const role = (clerkUser.publicMetadata?.role as 'player' | 'coach' | 'admin') || 'player'
 
     try {
+      // Generate random password - required by Payload auth but not used (Clerk handles auth)
+      const randomPassword = Math.random().toString(36).slice(2) +
+                            Math.random().toString(36).slice(2) +
+                            Math.random().toString(36).slice(2)
+
+      const email = clerkUser.emailAddresses[0]?.emailAddress || ''
+      console.log('📝 Creating user with:', {
+        clerkId: clerkUser.id,
+        email,
+        firstName: clerkUser.firstName || 'Unknown',
+        lastName: clerkUser.lastName || 'User',
+        role,
+      })
+
       dbUser = await create('users', {
         clerkId: clerkUser.id,
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
+        email,
+        firstName: clerkUser.firstName || 'Unknown',
+        lastName: clerkUser.lastName || 'User',
         roles: [role],
+        password: randomPassword,
       })
     } catch (error) {
-      // If user was just created by webhook, fetch it
+      // Log full error for debugging
+      console.error('❌ Error creating user:', error)
+      if (error && typeof error === 'object' && 'data' in error) {
+        console.error('Error data:', JSON.stringify((error as any).data, null, 2))
+      }
+
+      // If user was just created by webhook or email already exists, fetch it
       if (error && typeof error === 'object' && 'data' in error) {
         const errorData = (error as any).data
-        if (errorData?.errors?.some((e: any) =>
+        const isDuplicateClerkId = errorData?.errors?.some((e: any) =>
           e.path === 'clerkId' && e.message?.includes('unique')
-        )) {
-          console.log('⚠️ User created by webhook during request, fetching...')
+        )
+        const isDuplicateEmail = errorData?.errors?.some((e: any) =>
+          e.path === 'email'
+        )
+
+        if (isDuplicateClerkId || isDuplicateEmail) {
+          console.log('⚠️ User already exists (duplicate clerkId or email), fetching...')
+          // Try to find by clerkId first, then by email
           dbUser = await findOne('users', {
             clerkId: { equals: clerkUser.id },
           })
+          if (!dbUser && clerkUser.emailAddresses[0]?.emailAddress) {
+            dbUser = await findOne('users', {
+              email: { equals: clerkUser.emailAddresses[0].emailAddress },
+            })
+            // Update the existing user's clerkId if found by email
+            if (dbUser && !dbUser.clerkId) {
+              dbUser = await updateById('users', dbUser.id, {
+                clerkId: clerkUser.id,
+              })
+            }
+          }
           if (!dbUser) {
             throw new Error('User not found after duplicate error')
           }
