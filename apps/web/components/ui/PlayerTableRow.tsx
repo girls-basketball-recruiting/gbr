@@ -27,12 +27,11 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
     : null
 
   return (
-    <Link
-      href={profileLink}
-      className={`group flex items-stretch gap-4 px-4 py-3 transition-colors ${
+    <div
+      className={`group flex items-stretch gap-4 px-4 py-3 ${
         isArchived
-          ? 'opacity-50 cursor-not-allowed pointer-events-none'
-          : 'hover:bg-muted/40'
+          ? 'opacity-50 pointer-events-none'
+          : ''
       }`}
     >
       {/* Avatar */}
@@ -59,9 +58,12 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
         {/* Row 1: Name / Position / Year + Badges */}
         <div className='flex items-center gap-2 min-w-0'>
           <div className='flex items-center gap-2 min-w-0 truncate'>
-            <span className='font-semibold text-foreground truncate'>
+            <Link
+              href={profileLink}
+              className='font-semibold text-orange-600 dark:text-orange-400 hover:underline truncate'
+            >
               {player.firstName} {player.lastName}
-            </span>
+            </Link>
             {player.primaryPosition && (
               <>
                 <span className='text-muted-foreground/40 hidden sm:inline'>/</span>
@@ -181,10 +183,10 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
 
       {/* Action Button */}
       {action && (
-        <div className='shrink-0 self-center' onClick={(e) => e.preventDefault()}>
+        <div className='shrink-0 self-center'>
           {action}
         </div>
       )}
-    </Link>
+    </div>
   )
 }

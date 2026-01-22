@@ -99,6 +99,13 @@ export const Coaches: CollectionConfig = {
               },
             },
             {
+              name: 'boardOrder',
+              type: 'json',
+              admin: {
+                description: 'Ordered array of {type: "prospect" | "player", id: number} for the recruiting board',
+              },
+            },
+            {
               name: 'deletedAt',
               type: 'date',
               admin: {

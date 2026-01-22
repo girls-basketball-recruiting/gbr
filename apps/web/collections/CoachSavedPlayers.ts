@@ -7,6 +7,70 @@ export const CoachSavedPlayers: CollectionConfig = {
     defaultColumns: ['coach', 'player', 'savedAt'],
     hidden: true, // Hidden from sidebar - accessed via Coach tabs
   },
+  hooks: {
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        // Add to coach's boardOrder when a player is saved
+        if (operation === 'create' && req.payload) {
+          const coachId = typeof doc.coach === 'number' ? doc.coach : doc.coach?.id
+          const playerId = typeof doc.player === 'number' ? doc.player : doc.player?.id
+          if (!coachId || !playerId) return doc
+
+          const coach = await req.payload.findByID({
+            collection: 'coaches',
+            id: coachId,
+          })
+
+          const currentOrder = (coach.boardOrder as Array<{ type: string; id: number }>) || []
+          // Only add if not already in the list
+          const alreadyExists = currentOrder.some(
+            (item) => item.type === 'player' && item.id === playerId
+          )
+          if (!alreadyExists) {
+            await req.payload.update({
+              collection: 'coaches',
+              id: coachId,
+              data: {
+                boardOrder: [...currentOrder, { type: 'player', id: playerId }],
+              },
+            })
+          }
+        }
+        return doc
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        // Remove from coach's boardOrder when a player is unsaved
+        if (req.payload) {
+          const coachId = typeof doc.coach === 'number' ? doc.coach : doc.coach?.id
+          const playerId = typeof doc.player === 'number' ? doc.player : doc.player?.id
+          if (!coachId || !playerId) return doc
+
+          const coach = await req.payload.findByID({
+            collection: 'coaches',
+            id: coachId,
+          })
+
+          const currentOrder = (coach.boardOrder as Array<{ type: string; id: number }>) || []
+          const newOrder = currentOrder.filter(
+            (item) => !(item.type === 'player' && item.id === playerId)
+          )
+
+          if (newOrder.length !== currentOrder.length) {
+            await req.payload.update({
+              collection: 'coaches',
+              id: coachId,
+              data: {
+                boardOrder: newOrder,
+              },
+            })
+          }
+        }
+        return doc
+      },
+    ],
+  },
   fields: [
     {
       name: 'coach',

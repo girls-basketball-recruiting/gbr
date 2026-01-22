@@ -23,12 +23,9 @@ export function ProspectTableRow({ prospect, action }: ProspectTableRowProps) {
     : null
 
   return (
-    <Link
-      href={profileLink}
-      className='group flex items-stretch gap-4 px-4 py-3 transition-colors hover:bg-muted/40'
-    >
+    <div className='group flex items-stretch gap-4 px-4 py-3'>
       {/* Avatar */}
-      <div className='flex-shrink-0 self-center'>
+      <div className='shrink-0 self-center'>
         <div className='relative w-14 h-14 rounded-lg overflow-hidden bg-purple-50 dark:bg-purple-950/40 border border-purple-200/60 dark:border-purple-800/60'>
           {prospect.profileImageUrl ? (
             <Image
@@ -51,9 +48,12 @@ export function ProspectTableRow({ prospect, action }: ProspectTableRowProps) {
         {/* Row 1: Name / Position / Year + Badges */}
         <div className='flex items-center gap-2 min-w-0'>
           <div className='flex items-center gap-2 min-w-0 truncate'>
-            <span className='font-semibold text-foreground truncate'>
+            <Link
+              href={profileLink}
+              className='font-semibold text-purple-600 dark:text-purple-400 hover:underline truncate'
+            >
               {prospect.firstName} {prospect.lastName}
-            </span>
+            </Link>
             {prospect.primaryPosition && (
               <>
                 <span className='text-muted-foreground/40 hidden sm:inline'>/</span>
@@ -64,11 +64,11 @@ export function ProspectTableRow({ prospect, action }: ProspectTableRowProps) {
             )}
           </div>
           {prospect.graduationYear && (
-            <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
-              '{String(prospect.graduationYear).slice(-2)}
+            <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 shrink-0'>
+              &apos;{String(prospect.graduationYear).slice(-2)}
             </Badge>
           )}
-          <Badge className='bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700 text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
+          <Badge className='bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700 text-[10px] px-1.5 py-0 h-5 shrink-0'>
             PROSPECT
           </Badge>
         </div>
@@ -107,7 +107,7 @@ export function ProspectTableRow({ prospect, action }: ProspectTableRowProps) {
             <>
               <span className='text-muted-foreground/40 hidden lg:inline'>·</span>
               <span className='hidden lg:flex items-center gap-1.5 truncate'>
-                <MapPin className='w-3 h-3 flex-shrink-0' />
+                <MapPin className='w-3 h-3 shrink-0' />
                 <span className='truncate'>
                   {location}
                   {location && prospect.highSchool && ' — '}
@@ -121,10 +121,10 @@ export function ProspectTableRow({ prospect, action }: ProspectTableRowProps) {
 
       {/* Action Button */}
       {action && (
-        <div className='flex-shrink-0 self-center' onClick={(e) => e.preventDefault()}>
+        <div className='shrink-0 self-center'>
           {action}
         </div>
       )}
-    </Link>
+    </div>
   )
 }

@@ -14,6 +14,68 @@ export const CoachProspects: CollectionConfig = {
     defaultColumns: ['firstName', 'lastName', 'graduationYear', 'highSchool', 'coach'],
     hidden: true, // Hidden from sidebar - accessed via Coach tabs
   },
+  hooks: {
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        // Add to coach's boardOrder when a prospect is created
+        if (operation === 'create' && req.payload) {
+          const coachId = typeof doc.coach === 'number' ? doc.coach : doc.coach?.id
+          if (!coachId) return doc
+
+          const coach = await req.payload.findByID({
+            collection: 'coaches',
+            id: coachId,
+          })
+
+          const currentOrder = (coach.boardOrder as Array<{ type: string; id: number }>) || []
+          // Only add if not already in the list
+          const alreadyExists = currentOrder.some(
+            (item) => item.type === 'prospect' && item.id === doc.id
+          )
+          if (!alreadyExists) {
+            await req.payload.update({
+              collection: 'coaches',
+              id: coachId,
+              data: {
+                boardOrder: [...currentOrder, { type: 'prospect', id: doc.id }],
+              },
+            })
+          }
+        }
+        return doc
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        // Remove from coach's boardOrder when a prospect is deleted
+        if (req.payload) {
+          const coachId = typeof doc.coach === 'number' ? doc.coach : doc.coach?.id
+          if (!coachId) return doc
+
+          const coach = await req.payload.findByID({
+            collection: 'coaches',
+            id: coachId,
+          })
+
+          const currentOrder = (coach.boardOrder as Array<{ type: string; id: number }>) || []
+          const newOrder = currentOrder.filter(
+            (item) => !(item.type === 'prospect' && item.id === doc.id)
+          )
+
+          if (newOrder.length !== currentOrder.length) {
+            await req.payload.update({
+              collection: 'coaches',
+              id: coachId,
+              data: {
+                boardOrder: newOrder,
+              },
+            })
+          }
+        }
+        return doc
+      },
+    ],
+  },
   fields: [
     // Ownership
     {

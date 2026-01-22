@@ -534,6 +534,18 @@ export interface Coach {
    */
   tournamentSchedule?: (number | Tournament)[] | null;
   /**
+   * Ordered array of {type: "prospect" | "player", id: number} for the recruiting board
+   */
+  boardOrder?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
    * Soft delete timestamp - if set, profile is archived
    */
   deletedAt?: string | null;
@@ -1180,6 +1192,7 @@ export interface CoachesSelect<T extends boolean = true> {
   bio?: T;
   profileImageUrl?: T;
   tournamentSchedule?: T;
+  boardOrder?: T;
   deletedAt?: T;
   updatedAt?: T;
   createdAt?: T;
