@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { User, MapPin } from 'lucide-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { getPositionLabel } from '@/lib/zod/Positions'
+import { getAAUCircuitLabel } from '@/lib/zod/AauCircuits'
+import { getAAUAgeBracketLabel } from '@/lib/zod/AauAgeBrackets'
 import { formatHeight } from '@/lib/formatters'
 import type { Player } from '@/payload-types'
 
@@ -34,7 +36,7 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
       }`}
     >
       {/* Avatar */}
-      <div className='flex-shrink-0 self-center'>
+      <div className='shrink-0 self-center'>
         <div className='relative w-14 h-14 rounded-lg overflow-hidden bg-orange-50 dark:bg-orange-950/40 border border-orange-200/60 dark:border-orange-800/60'>
           {player.profileImageUrl ? (
             <Image
@@ -70,17 +72,17 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
             )}
           </div>
           {player.graduationYear && (
-            <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
-              '{String(player.graduationYear).slice(-2)}
+            <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 shrink-0'>
+              &apos;{String(player.graduationYear).slice(-2)}
             </Badge>
           )}
           {isOwnProfile && (
-            <Badge className='bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700 text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
+            <Badge className='bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700 text-[10px] px-1.5 py-0 h-5 shrink-0'>
               YOU
             </Badge>
           )}
           {isArchived && (
-            <Badge variant='destructive' className='text-[10px] px-1.5 py-0 h-5 flex-shrink-0'>
+            <Badge variant='destructive' className='text-[10px] px-1.5 py-0 h-5 shrink-0'>
               ARCHIVED
             </Badge>
           )}
@@ -120,7 +122,7 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
             <>
               <span className='text-muted-foreground/40 hidden lg:inline'>·</span>
               <span className='hidden lg:flex items-center gap-1.5 truncate'>
-                <MapPin className='w-3 h-3 flex-shrink-0' />
+                <MapPin className='w-3 h-3 shrink-0' />
                 <span className='truncate'>
                   {location}
                   {location && player.highSchool && ' — '}
@@ -130,11 +132,56 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
             </>
           )}
         </div>
+
+        {/* Row 3: AAU Info */}
+        {(() => {
+          const circuit = getAAUCircuitLabel(player.aauCircuit)
+          const team = player.aauProgramName
+          const age = getAAUAgeBracketLabel(player.aauAgeBracket)
+
+          if (!circuit && !team && !age) return null
+
+          const parts: ReactNode[] = []
+
+          if (circuit) {
+            parts.push(
+              <span key='circuit'>
+                AAU Circuit: <span className='text-orange-600 dark:text-orange-400'>{circuit}</span>
+              </span>
+            )
+          }
+
+          if (team) {
+            parts.push(
+              <span key='team'>
+                AAU Team: <span className='text-orange-600 dark:text-orange-400'>{team}</span>
+                {age && <span> (<span className='text-orange-600 dark:text-orange-400'>{age}</span>)</span>}
+              </span>
+            )
+          } else if (age) {
+            parts.push(
+              <span key='age'>
+                AAU: <span className='text-orange-600 dark:text-orange-400'>{age}</span>
+              </span>
+            )
+          }
+
+          return (
+            <div className='text-sm text-muted-foreground flex items-center gap-1.5'>
+              {parts.map((part, i) => (
+                <span key={i} className='flex items-center gap-1.5'>
+                  {i > 0 && <span className='text-muted-foreground/40'>•</span>}
+                  {part}
+                </span>
+              ))}
+            </div>
+          )
+        })()}
       </div>
 
       {/* Action Button */}
       {action && (
-        <div className='flex-shrink-0 self-center' onClick={(e) => e.preventDefault()}>
+        <div className='shrink-0 self-center' onClick={(e) => e.preventDefault()}>
           {action}
         </div>
       )}

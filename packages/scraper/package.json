@@ -10,6 +10,8 @@
     "parse:cli": "tsx src/parse-html-cli.ts",
     "parse:save": "tsx src/save-local.ts",
     "import": "tsx src/import-direct.ts",
+    "fetch:tournaments": "tsx src/fetch-tournaments.ts",
+    "import:tournaments": "tsx src/import-tournaments.ts",
     "postinstall": "puppeteer browsers install chrome"
   },
   "dependencies": {

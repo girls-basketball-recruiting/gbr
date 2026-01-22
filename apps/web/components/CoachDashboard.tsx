@@ -8,6 +8,7 @@ import { TournamentScheduleSection } from './dashboard/TournamentScheduleSection
 import { getAuthContext } from '@/lib/auth-context'
 import { redirect } from 'next/navigation'
 import { ButtonLink } from './ui/ButtonLink'
+import Link from 'next/link'
 
 export default async function CoachDashboard() {
   // Fetch saved players for this coach
@@ -39,7 +40,9 @@ export default async function CoachDashboard() {
               </h2>
               <p>
                 {coachProfile.jobTitle && `${getCoachPositionLabel(coachProfile.jobTitle)} @ `}
-                {coachProfile.collegeName}
+                <Link href={`/programs/${coachProfile.collegeId}`} className='text-primary hover:underline'>
+                  {coachProfile.collegeName}
+                </Link>
               </p>
             </div>
             <div>

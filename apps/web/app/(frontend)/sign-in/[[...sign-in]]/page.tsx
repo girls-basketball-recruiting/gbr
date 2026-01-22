@@ -13,7 +13,7 @@ export default function SignInPage() {
   return (
     <AuthPageLayout>
       <div className='text-center mb-8'>
-        <H1>Welcome Back</H1>
+        <H1 className='mb-6'>Welcome Back</H1>
         <P>Sign in to your account</P>
       </div>
 

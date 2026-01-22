@@ -10,6 +10,7 @@ import { create } from '@/lib/payload-helpers'
 import {
   ProspectCsvRowSchema,
   CSV_HEADERS,
+  parseHeightToInches,
   type CsvImportResult,
   type CsvRowValidationResult,
 } from '@/lib/zod/ProspectsCsv'
@@ -174,8 +175,8 @@ export const POST = handleApiError(async (req: Request) => {
   }
   const headerMap = mapHeaders(headerRow)
 
-  // Verify required headers are present
-  const requiredHeaders = ['firstName', 'lastName', 'graduationYear']
+  // Verify required headers are present (only firstName and lastName are required)
+  const requiredHeaders = ['firstName', 'lastName']
   const mappedHeaders = Array.from(headerMap.values())
   const missingHeaders = requiredHeaders.filter((h) => !mappedHeaders.includes(h))
 
@@ -222,20 +223,54 @@ export const POST = handleApiError(async (req: Request) => {
     if (!row.data) continue
 
     try {
+      // Parse height to inches (handles both raw inches and feet'inches format)
+      const heightInInches = row.data.height
+        ? parseHeightToInches(row.data.height)
+        : undefined
+
       const prospect = await create('coach-prospects', {
         coach: auth.coachProfile.id,
+        // Required fields
         firstName: row.data.firstName,
         lastName: row.data.lastName,
-        graduationYear: parseInt(row.data.graduationYear, 10),
-        uniformNumber: row.data.uniformNumber || undefined,
-        heightInInches: row.data.heightInInches
-          ? parseInt(row.data.heightInInches, 10)
+        // Basic info
+        graduationYear: row.data.graduationYear
+          ? parseInt(row.data.graduationYear, 10)
           : undefined,
-        weight: row.data.weight ? parseInt(row.data.weight, 10) : undefined,
+        city: row.data.city || undefined,
+        state: row.data.state || undefined,
         highSchool: row.data.highSchool || undefined,
-        aauProgram: row.data.aauProgram || undefined,
-        twitterHandle: row.data.twitterHandle || undefined,
+        schoolTeamScheduleUrl: row.data.schoolTeamScheduleUrl || undefined,
+        // Athletic profile
+        primaryPosition: row.data.primaryPosition || undefined,
+        secondaryPosition: row.data.secondaryPosition || undefined,
+        heightInInches: heightInInches ?? undefined,
+        weight: row.data.weight ? parseInt(row.data.weight, 10) : undefined,
+        bio: row.data.bio || undefined,
+        // AAU info
+        aauProgramName: row.data.aauProgramName || undefined,
+        aauTeamName: row.data.aauTeamName || undefined,
+        aauCircuit: row.data.aauCircuit || undefined,
+        aauCoach: row.data.aauCoach || undefined,
+        aauAgeBracket: row.data.aauAgeBracket || undefined,
+        // Stats
+        ppg: row.data.ppg ? parseFloat(row.data.ppg) : undefined,
+        rpg: row.data.rpg ? parseFloat(row.data.rpg) : undefined,
+        apg: row.data.apg ? parseFloat(row.data.apg) : undefined,
+        // Academic
+        unweightedGpa: row.data.unweightedGpa
+          ? parseFloat(row.data.unweightedGpa)
+          : undefined,
+        weightedGpa: row.data.weightedGpa
+          ? parseFloat(row.data.weightedGpa)
+          : undefined,
+        ncaaId: row.data.ncaaId || undefined,
+        // Contact info
         phoneNumber: row.data.phoneNumber || undefined,
+        xHandle: row.data.xHandle || undefined,
+        instaHandle: row.data.instaHandle || undefined,
+        tiktokHandle: row.data.tiktokHandle || undefined,
+        // Coach-specific
         notes: row.data.notes || undefined,
       })
 

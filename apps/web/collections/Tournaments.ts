@@ -7,6 +7,9 @@ export const Tournaments: CollectionConfig = {
     defaultColumns: ['name', 'location', 'startDate', 'endDate'],
     description: 'Manage tournaments for players and coaches to discover',
     group: 'Reference Data',
+    components: {
+      beforeListTable: ['@/components/payload/TournamentScraperActions'],
+    },
   },
   fields: [
     {
@@ -65,6 +68,17 @@ export const Tournaments: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Tournament website URL',
+      },
+    },
+    {
+      name: 'sourceId',
+      type: 'text',
+      unique: true,
+      index: true,
+      admin: {
+        description: 'External ID from source (e.g., acahoops-123456)',
+        readOnly: true,
+        position: 'sidebar',
       },
     },
   ],

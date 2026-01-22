@@ -1,83 +1,190 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { TournamentsPageContent } from '@/components/TournamentsPageContent'
-import { findOne, findAll, countDocs } from '@/lib/payload-helpers'
-import { Tournament, Player } from '@/payload-types'
+import { findOne, getDb, countDocs } from '@/lib/payload-helpers'
+import { and, gte, lte, inArray, asc, desc, sql } from 'drizzle-orm'
 
 interface TournamentsListProps {
   searchParams: {
-    filter?: 'upcoming' | 'past'
+    states?: string
+    startDate?: string
+    endDate?: string
+    hasPlayers?: string
+    hasCoaches?: string
+    includePast?: string
+    sortBy?: string
+    page?: string
   }
 }
 
 export async function TournamentsList({ searchParams }: TournamentsListProps) {
-  const filter = searchParams.filter || 'upcoming'
-
   const clerkUser = await currentUser()
   const isPlayer = clerkUser?.publicMetadata?.role === 'player'
   const isAuthenticated = !!clerkUser
 
-  // Fetch all tournaments via Payload
-  const tournaments = await findAll('tournaments', {}, { limit: 1000, sort: 'startDate' })
+  const { db, tables } = await getDb()
+  const tournamentsTable = tables.tournaments
 
-  // Count attendees for each tournament by querying the players collection
-  const tournamentsWithCounts = await Promise.all(
-    tournaments.map(async (tournament) => {
-      const attendeeCount = await countDocs('players', {
-        tournamentSchedule: { contains: tournament.id }
-      })
-
-      return {
-        ...tournament,
-        attendeeCount,
-      }
-    }),
-  )
-
-  // Helper functions for tournament status
+  // Date references
   const today = new Date()
   today.setHours(0, 0, 0, 0)
+  const todayStr = today.toISOString().split('T')[0]
+  const includePast = searchParams.includePast === 'true'
 
-  const isInProgress = (startDate: string, endDate: string) => {
-    const start = new Date(startDate)
-    start.setHours(0, 0, 0, 0)
-    const end = new Date(endDate)
-    end.setHours(23, 59, 59, 999)
-    return today >= start && today <= end
+  // ============================================
+  // SEPARATE QUERY: Fetch in-progress tournaments
+  // ============================================
+  const inProgressList = await db
+    .select()
+    .from(tournamentsTable)
+    .where(
+      and(
+        lte(tournamentsTable.startDate, todayStr),
+        gte(tournamentsTable.endDate, todayStr)
+      )
+    )
+    .orderBy(asc(tournamentsTable.startDate))
+
+  // Get counts for in-progress tournaments
+  const inProgressCountsPromises = inProgressList.map(async (tournament) => {
+    const playerCount = await countDocs('players', {
+      tournamentSchedule: { contains: tournament.id },
+      deletedAt: { equals: null }
+    })
+    return { id: tournament.id, playerCount }
+  })
+  const inProgressCounts = await Promise.all(inProgressCountsPromises)
+  const inProgressCountMap = new Map(inProgressCounts.map(c => [c.id, c.playerCount]))
+
+  const inProgressTournaments = inProgressList.map(t => ({
+    ...t,
+    attendeeCount: inProgressCountMap.get(t.id) || 0,
+    coachCount: 0,
+  }))
+
+  // ============================================
+  // MAIN QUERY: Paginated tournaments
+  // ============================================
+  const conditions: any[] = []
+
+  // Only show future/current tournaments unless includePast is true
+  if (!includePast) {
+    // Show tournaments that haven't ended yet
+    conditions.push(gte(tournamentsTable.endDate, todayStr))
   }
 
-  const isUpcoming = (startDate: string) => {
-    const start = new Date(startDate)
-    start.setHours(0, 0, 0, 0)
-    return start > today
+  // Custom date range filter
+  if (searchParams.startDate) {
+    conditions.push(gte(tournamentsTable.startDate, searchParams.startDate))
+  }
+  if (searchParams.endDate) {
+    conditions.push(lte(tournamentsTable.endDate, searchParams.endDate))
   }
 
-  const isPast = (endDate: string) => {
-    const end = new Date(endDate)
-    end.setHours(23, 59, 59, 999)
-    return today > end
+  // State filter
+  if (searchParams.states) {
+    const states = searchParams.states.split(',').filter(Boolean)
+    if (states.length > 0) {
+      conditions.push(inArray(tournamentsTable.state, states))
+    }
   }
 
-  // Separate in-progress tournaments (for hero section)
-  const inProgressTournaments = tournamentsWithCounts.filter((t) =>
-    isInProgress(t.startDate, t.endDate)
-  )
+  // Determine sort order
+  let orderBy: any
+  switch (searchParams.sortBy) {
+    case 'date-desc':
+      orderBy = desc(tournamentsTable.startDate)
+      break
+    case 'name-asc':
+      orderBy = asc(tournamentsTable.name)
+      break
+    case 'name-desc':
+      orderBy = desc(tournamentsTable.name)
+      break
+    default:
+      orderBy = asc(tournamentsTable.startDate)
+  }
 
-  // Filter tournaments based on the filter parameter (excluding in-progress from main list)
-  const filteredTournaments = tournamentsWithCounts.filter((tournament) => {
-    // In-progress tournaments go to the hero section, not the main list
-    if (isInProgress(tournament.startDate, tournament.endDate)) return false
+  // Pagination
+  const page = parseInt(searchParams.page || '1')
+  const limit = 24
+  const offset = (page - 1) * limit
 
-    if (filter === 'upcoming') return isUpcoming(tournament.startDate)
-    if (filter === 'past') return isPast(tournament.endDate)
-    return false
+  // Fetch tournaments
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined
+
+  const tournamentsList = await db
+    .select()
+    .from(tournamentsTable)
+    .where(whereClause)
+    .orderBy(orderBy)
+    .limit(limit)
+    .offset(offset)
+
+  // Get total count for pagination
+  const totalResult = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(tournamentsTable)
+    .where(whereClause)
+
+  const totalDocs = totalResult[0]?.count || 0
+  const totalPages = Math.ceil(totalDocs / limit)
+
+  // Get attendee counts for main list
+  const countsPromises = tournamentsList.map(async (tournament) => {
+    const [playerCount, coachCount] = await Promise.all([
+      countDocs('players', {
+        tournamentSchedule: { contains: tournament.id },
+        deletedAt: { equals: null }
+      }),
+      countDocs('coaches', {
+        tournamentSchedule: { contains: tournament.id }
+      })
+    ])
+    return { id: tournament.id, playerCount, coachCount }
   })
 
-  // Sort past tournaments newest to oldest (by startDate descending)
-  if (filter === 'past') {
-    filteredTournaments.sort((a, b) =>
-      new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    )
+  const counts = await Promise.all(countsPromises)
+  const playerCountMap = new Map<number, number>()
+  const coachCountMap = new Map<number, number>()
+
+  for (const { id, playerCount, coachCount } of counts) {
+    playerCountMap.set(id, playerCount)
+    coachCountMap.set(id, coachCount)
   }
+
+  // Add counts to tournaments
+  type TournamentWithCounts = typeof tournamentsList[number] & {
+    attendeeCount: number
+    coachCount: number
+  }
+
+  let tournamentsWithCounts: TournamentWithCounts[] = tournamentsList.map(tournament => ({
+    ...tournament,
+    attendeeCount: playerCountMap.get(tournament.id) || 0,
+    coachCount: coachCountMap.get(tournament.id) || 0,
+  }))
+
+  // Filter by has players/coaches attending (post-query filter)
+  // Note: These filters affect displayed count but pagination is based on DB query
+  const hasPostQueryFilters = searchParams.hasPlayers === 'true' || searchParams.hasCoaches === 'true'
+
+  if (searchParams.hasPlayers === 'true') {
+    tournamentsWithCounts = tournamentsWithCounts.filter(t => t.attendeeCount > 0)
+  }
+  if (searchParams.hasCoaches === 'true') {
+    tournamentsWithCounts = tournamentsWithCounts.filter(t => t.coachCount > 0)
+  }
+
+  // Sort by attendee count if requested
+  if (searchParams.sortBy === 'attendees-desc') {
+    tournamentsWithCounts.sort((a, b) => b.attendeeCount - a.attendeeCount)
+  } else if (searchParams.sortBy === 'attendees-asc') {
+    tournamentsWithCounts.sort((a, b) => a.attendeeCount - b.attendeeCount)
+  }
+
+  // Adjust counts if post-query filters were applied
+  const displayedCount = hasPostQueryFilters ? tournamentsWithCounts.length : totalDocs
+  const displayedPages = hasPostQueryFilters ? 1 : totalPages
 
   // Get player's attending tournaments if they're a player
   let attendingIds: number[] = []
@@ -100,8 +207,11 @@ export async function TournamentsList({ searchParams }: TournamentsListProps) {
 
   return (
     <TournamentsPageContent
-      tournaments={filteredTournaments as any}
+      tournaments={tournamentsWithCounts as any}
       inProgressTournaments={inProgressTournaments as any}
+      totalDocs={displayedCount}
+      totalPages={displayedPages}
+      currentPage={page}
       attendingIds={attendingIds}
       isPlayer={isPlayer}
       isAuthenticated={isAuthenticated}

@@ -40,7 +40,13 @@
       "Bash(pnpm --filter web typecheck:*)",
       "Bash(wc:*)",
       "Bash(npx next build:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:acahoops.com)",
+      "WebFetch(domain:www.acahoops.com)",
+      "mcp__shadcn__search_items_in_registries",
+      "mcp__shadcn__view_items_in_registries",
+      "mcp__shadcn__get_item_examples_from_registries",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": [],
     "ask": []

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useTransition } from 'react'
 import {
   Select,
@@ -10,17 +10,18 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 
-export function SortByDropdown() {
+export function ProspectSortDropdown() {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
-  const currentSort = searchParams.get('sortBy') || 'newest'
+  const currentSort = searchParams.get('sortBy') || 'updated'
 
   const handleSortChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams.toString())
 
-    if (value === 'newest') {
+    if (value === 'updated') {
       newParams.delete('sortBy')
     } else {
       newParams.set('sortBy', value)
@@ -30,7 +31,7 @@ export function SortByDropdown() {
     newParams.delete('page')
 
     startTransition(() => {
-      router.push(`/players?${newParams.toString()}`)
+      router.push(`${pathname}?${newParams.toString()}`)
     })
   }
 
@@ -40,12 +41,12 @@ export function SortByDropdown() {
         <SelectValue placeholder='Sort by...' />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem value='updated'>Recently Modified</SelectItem>
         <SelectItem value='newest'>Recently Added</SelectItem>
+        <SelectItem value='oldest'>Oldest First</SelectItem>
         <SelectItem value='name-asc'>Name A-Z</SelectItem>
         <SelectItem value='graduation-asc'>Graduation Year (Youngest)</SelectItem>
         <SelectItem value='graduation-desc'>Graduation Year (Oldest)</SelectItem>
-        <SelectItem value='gpa-desc'>GPA (Highest)</SelectItem>
-        <SelectItem value='gpa-asc'>GPA (Lowest)</SelectItem>
       </SelectContent>
     </Select>
   )

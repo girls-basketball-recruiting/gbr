@@ -59,11 +59,6 @@ const ProspectsTab: React.FC = () => {
           >
             <div style={{ fontWeight: 500, marginBottom: '4px' }}>
               {prospect.name}
-              {prospect.uniformNumber && (
-                <span style={{ marginLeft: '8px', color: '#6b7280' }}>
-                  #{prospect.uniformNumber}
-                </span>
-              )}
             </div>
 
             <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>

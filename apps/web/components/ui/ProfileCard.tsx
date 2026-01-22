@@ -45,7 +45,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
       isArchived ? 'opacity-60' : 'hover:shadow-xl hover:-translate-y-1'
     }`}>
       {/* Header Area - Subtle accent background */}
-      <div className={`relative aspect-[4/3] rounded-b-3xl overflow-hidden ${
+      <div className={`relative aspect-4/3 rounded-b-3xl overflow-hidden ${
         variant === 'player'
           ? 'bg-orange-50 dark:bg-orange-950/40 border-b-2 border-orange-200 dark:border-orange-800'
           : 'bg-purple-50 dark:bg-purple-950/40 border-b-2 border-purple-200 dark:border-purple-800'
@@ -77,7 +77,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
 
         {/* Own Profile Badge - Top Left (players only) */}
         {isOwnCard && variant === 'player' && (
-          <div className='absolute top-3 left-3 bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white flex items-center gap-1.5'>
+          <div className='absolute top-3 left-3 bg-linear-to-br from-orange-500 to-orange-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white flex items-center gap-1.5'>
             <span className='text-amber-200'>★</span>
             <span>YOU</span>
           </div>
@@ -85,7 +85,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
 
         {/* Prospect Badge - Top Left */}
         {variant === 'prospect' && (
-          <div className='absolute top-3 left-3 bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white'>
+          <div className='absolute top-3 left-3 bg-linear-to-br from-purple-500 to-purple-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold tracking-wider text-white'>
             PROSPECT
           </div>
         )}
@@ -95,8 +95,8 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
           <div className='absolute top-3 right-3'>
             <Badge className={`border-0 text-white text-sm px-3 py-1 font-bold shadow-lg ${
               variant === 'player'
-                ? 'bg-gradient-to-br from-orange-500 to-orange-600'
-                : 'bg-gradient-to-br from-purple-500 to-purple-600'
+                ? 'bg-linear-to-br from-orange-500 to-orange-600'
+                : 'bg-linear-to-br from-purple-500 to-purple-600'
             }`}>
               &apos;{String(gradYear).slice(-2)}
             </Badge>

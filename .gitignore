@@ -42,6 +42,7 @@ next-env.d.ts
 packages/scraper/debug-html.html
 packages/scraper/debug-screenshot.png
 packages/scraper/colleges-data.json
+packages/scraper/tournaments-data.json
 packages/scraper/temp-*.json
 
 # User manual

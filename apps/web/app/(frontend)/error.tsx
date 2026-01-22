@@ -22,7 +22,7 @@ export default function Error({
   }
 
   return (
-    <div className='flex min-h-screen items-center justify-center px-4'>
+    <div className='flex items-center justify-center px-4'>
       <div className='max-w-md w-full space-y-8 text-center'>
         <div className='space-y-4'>
           <h1 className='text-4xl font-bold text-white'>Something went wrong</h1>

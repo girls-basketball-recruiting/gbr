@@ -191,12 +191,6 @@ export function DynamicBreadcrumbs() {
       return // Skip this segment
     }
 
-    // Skip the 'prospects' segment since /prospects doesn't exist as a page
-    // Prospects are shown on the coach dashboard, not a separate page
-    if (part === 'prospects' && index === 0) {
-      return // Skip this segment
-    }
-
     // Build the href for this segment (up to and including this part)
     const href = isLast ? undefined : '/' + pathParts.slice(0, index + 1).join('/')
 

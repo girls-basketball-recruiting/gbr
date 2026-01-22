@@ -2,13 +2,22 @@ import { Suspense } from 'react'
 import { currentUser } from '@clerk/nextjs/server'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
+import { TournamentFilters } from '@/components/TournamentFilters'
 import { TournamentsList } from './TournamentsList'
 import { PageLoadingState } from '@/components/PageLoadingState'
 import { H1, MutedText } from '@/components/ui/typography'
 
 interface TournamentsPageProps {
   searchParams: Promise<{
-    filter?: 'upcoming' | 'past'
+    states?: string
+    startDate?: string
+    endDate?: string
+    hasPlayers?: string
+    hasCoaches?: string
+    includePast?: string
+    sortBy?: string
+    page?: string
+    view?: 'grid' | 'table'
   }>
 }
 
@@ -46,6 +55,9 @@ export default async function TournamentsPage({
                 />
               </div>
             )}
+
+            {/* Filters */}
+            <TournamentFilters />
 
             {/* Content */}
             <Suspense fallback={<PageLoadingState message='Loading tournaments...' />}>

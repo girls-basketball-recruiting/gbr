@@ -1,19 +1,25 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { ListPageToolbar } from './ListPageToolbar'
+import { TournamentSortDropdown } from './TournamentSortDropdown'
 import { TournamentCalendarCard } from '@/components/ui/TournamentCalendarCard'
+import { TournamentsTable } from './TournamentsTable'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { URLPagination } from './URLPagination'
+import { useViewPreference } from '@/hooks/useViewPreference'
 import { Calendar, Users, ChevronRight, Zap } from 'lucide-react'
 import { formatDateLocationRange } from '@/lib/format-date-location'
 import type { Tournament } from '@/payload-types'
 
-type FilterTab = 'upcoming' | 'past'
-
 interface TournamentsPageContentProps {
   tournaments: (Tournament & { attendeeCount?: number })[]
   inProgressTournaments: (Tournament & { attendeeCount?: number })[]
+  totalDocs: number
+  totalPages: number
+  currentPage: number
   attendingIds: number[]
   isPlayer: boolean
   isAuthenticated: boolean
@@ -22,19 +28,21 @@ interface TournamentsPageContentProps {
 export function TournamentsPageContent({
   tournaments,
   inProgressTournaments,
+  totalDocs,
+  totalPages,
+  currentPage,
   attendingIds: initialAttendingIds,
   isPlayer,
   isAuthenticated,
 }: TournamentsPageContentProps) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const activeFilter = (searchParams.get('filter') as FilterTab) || 'upcoming'
+  const { view, handleViewChange } = useViewPreference('tournaments', 'grid')
 
   const [attendingIds, setAttendingIds] = useState(initialAttendingIds)
   const [localTournaments, setLocalTournaments] = useState(tournaments)
   const [localInProgress, setLocalInProgress] = useState(inProgressTournaments)
 
-  // Sync local tournaments when server-side filtered tournaments change
+  // Sync local state when server data changes
   useEffect(() => {
     setLocalTournaments(tournaments)
   }, [tournaments])
@@ -43,19 +51,13 @@ export function TournamentsPageContent({
     setLocalInProgress(inProgressTournaments)
   }, [inProgressTournaments])
 
-  const handleFilterChange = (filter: FilterTab) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('filter', filter)
-    router.push(`/tournaments?${params.toString()}`)
-  }
-
   const handleToggleAttendance = async (tournamentId: number) => {
     try {
       const response = await fetch(
         `/api/tournaments/${tournamentId}/toggle-attendance`,
         {
           method: 'POST',
-        },
+        }
       )
 
       if (!response.ok) {
@@ -123,12 +125,21 @@ export function TournamentsPageContent({
                       <div className='flex flex-wrap items-center gap-4 text-sm text-muted-foreground'>
                         <div className='flex items-center gap-1.5'>
                           <Calendar className='w-4 h-4 text-green-600 dark:text-green-400' />
-                          <span>{formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}</span>
+                          <span>
+                            {formatDateLocationRange(
+                              tournament.startDate.toString(),
+                              tournament.endDate.toString(),
+                              tournament.city,
+                              tournament.state
+                            )}
+                          </span>
                         </div>
                         {isAuthenticated && (
                           <div className='flex items-center gap-1.5'>
                             <Users className='w-4 h-4 text-green-600 dark:text-green-400' />
-                            <span className='font-medium'>{tournament.attendeeCount ?? 0} players attending</span>
+                            <span className='font-medium'>
+                              {tournament.attendeeCount ?? 0} players attending
+                            </span>
                           </div>
                         )}
                       </div>
@@ -147,47 +158,26 @@ export function TournamentsPageContent({
         </div>
       )}
 
-      {/* Filter Tabs */}
-      <div className='mb-6 flex gap-2 border-b'>
-        <button
-          onClick={() => handleFilterChange('upcoming')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 ${
-            activeFilter === 'upcoming'
-              ? 'border-current'
-              : 'border-transparent'
-          }`}
-        >
-          Upcoming
-        </button>
-        <button
-          onClick={() => handleFilterChange('past')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 ${
-            activeFilter === 'past'
-              ? 'border-current'
-              : 'border-transparent'
-          }`}
-        >
-          Past
-        </button>
-      </div>
+      {/* Toolbar */}
+      <ListPageToolbar
+        totalCount={totalDocs}
+        itemLabel='tournament'
+        view={view}
+        onViewChange={handleViewChange}
+        sortSelector={isAuthenticated ? <TournamentSortDropdown /> : undefined}
+      />
 
-      {/* Results count */}
-      <div className='mb-6'>
-        <p className='text-muted-foreground'>
-          {localTournaments.length}{' '}
-          {localTournaments.length === 1 ? 'tournament' : 'tournaments'}
-        </p>
-      </div>
-
-      {/* Tournaments Grid */}
+      {/* Content */}
       {localTournaments.length === 0 ? (
         <EmptyState
           title='No Tournaments Found'
-          description={
-            activeFilter === 'upcoming'
-              ? 'There are no upcoming tournaments at this time.'
-              : 'No past tournaments to display.'
-          }
+          description='No tournaments match your current filters. Try adjusting your search criteria.'
+        />
+      ) : view === 'table' ? (
+        <TournamentsTable
+          tournaments={localTournaments}
+          attendingIds={attendingIds}
+          isAuthenticated={isAuthenticated}
         />
       ) : (
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
@@ -198,11 +188,16 @@ export function TournamentsPageContent({
               isAttending={attendingIds.includes(tournament.id)}
               isPlayer={isPlayer}
               isAuthenticated={isAuthenticated}
-              onToggleAttendance={
-                isPlayer ? handleToggleAttendance : undefined
-              }
+              onToggleAttendance={isPlayer ? handleToggleAttendance : undefined}
             />
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className='mt-8'>
+          <URLPagination currentPage={currentPage} totalPages={totalPages} />
         </div>
       )}
     </>

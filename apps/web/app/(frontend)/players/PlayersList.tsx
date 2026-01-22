@@ -191,8 +191,8 @@ export async function PlayersList({ searchParams }: PlayersListProps) {
     orderBy = desc(playersTable.weightedGpa)
   } else if (searchParams.sortBy === 'gpa-asc') {
     orderBy = asc(playersTable.weightedGpa)
-  } else if (searchParams.sortBy === 'oldest') {
-    orderBy = asc(playersTable.createdAt)
+  } else if (searchParams.sortBy === 'name-asc') {
+    orderBy = asc(playersTable.lastName)
   } else {
     orderBy = desc(playersTable.createdAt) // default: newest first
   }

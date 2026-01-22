@@ -196,8 +196,10 @@ export function ProspectCsvUpload({ onSuccess }: ProspectCsvUploadProps) {
             <ul className='list-disc list-inside space-y-0.5 text-xs'>
               <li>{CSV_HEADER_LABELS.firstName}</li>
               <li>{CSV_HEADER_LABELS.lastName}</li>
-              <li>{CSV_HEADER_LABELS.graduationYear}</li>
             </ul>
+            <p className='mt-2 text-xs'>
+              Height accepts inches (e.g., 71) or feet&apos;inches (e.g., 5&apos;11)
+            </p>
           </div>
 
           {/* File Upload Zone */}

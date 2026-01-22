@@ -39,7 +39,7 @@ export default function RegisterPage({ role }: { role: 'Player' | 'Coach' }) {
     return (
       <AuthPageLayout>
         <div className='text-center max-w-100 mx-auto'>
-          <H1>
+          <H1 className='mb-6'>
             Invalid Invitation
           </H1>
           <P>{error}</P>
@@ -57,7 +57,7 @@ export default function RegisterPage({ role }: { role: 'Player' | 'Coach' }) {
   return (
     <AuthPageLayout>
       <div className='text-center mb-8'>
-        <H1 className='md:text-5xl mb-4'>
+        <H1 className='md:text-5xl mb-6'>
           {role} Registration
         </H1>
         <P>

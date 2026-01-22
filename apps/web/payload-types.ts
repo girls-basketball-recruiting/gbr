@@ -467,6 +467,10 @@ export interface Tournament {
    * Tournament website URL
    */
   website?: string | null;
+  /**
+   * External ID from source (e.g., acahoops-123456)
+   */
+  sourceId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1320,6 +1324,7 @@ export interface TournamentsSelect<T extends boolean = true> {
   endDate?: T;
   description?: T;
   website?: T;
+  sourceId?: T;
   updatedAt?: T;
   createdAt?: T;
 }

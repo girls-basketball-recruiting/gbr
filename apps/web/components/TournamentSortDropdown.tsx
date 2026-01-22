@@ -10,17 +10,17 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 
-export function SortByDropdown() {
+export function TournamentSortDropdown() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
-  const currentSort = searchParams.get('sortBy') || 'newest'
+  const currentSort = searchParams.get('sortBy') || 'date-asc'
 
   const handleSortChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams.toString())
 
-    if (value === 'newest') {
+    if (value === 'date-asc') {
       newParams.delete('sortBy')
     } else {
       newParams.set('sortBy', value)
@@ -30,7 +30,7 @@ export function SortByDropdown() {
     newParams.delete('page')
 
     startTransition(() => {
-      router.push(`/players?${newParams.toString()}`)
+      router.push(`/tournaments?${newParams.toString()}`)
     })
   }
 
@@ -40,12 +40,12 @@ export function SortByDropdown() {
         <SelectValue placeholder='Sort by...' />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value='newest'>Recently Added</SelectItem>
+        <SelectItem value='date-asc'>Date (Soonest)</SelectItem>
+        <SelectItem value='date-desc'>Date (Latest)</SelectItem>
         <SelectItem value='name-asc'>Name A-Z</SelectItem>
-        <SelectItem value='graduation-asc'>Graduation Year (Youngest)</SelectItem>
-        <SelectItem value='graduation-desc'>Graduation Year (Oldest)</SelectItem>
-        <SelectItem value='gpa-desc'>GPA (Highest)</SelectItem>
-        <SelectItem value='gpa-asc'>GPA (Lowest)</SelectItem>
+        <SelectItem value='name-desc'>Name Z-A</SelectItem>
+        <SelectItem value='attendees-desc'>Most Players</SelectItem>
+        <SelectItem value='attendees-asc'>Fewest Players</SelectItem>
       </SelectContent>
     </Select>
   )

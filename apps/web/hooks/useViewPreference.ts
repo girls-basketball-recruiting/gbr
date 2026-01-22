@@ -8,9 +8,18 @@ type ViewMode = 'grid' | 'table'
 const STORAGE_KEYS = {
   players: 'gbr-players-view',
   programs: 'gbr-programs-view',
+  prospects: 'gbr-prospects-view',
+  tournaments: 'gbr-tournaments-view',
 } as const
 
 type StorageKey = keyof typeof STORAGE_KEYS
+
+const PATHS: Record<StorageKey, string> = {
+  players: '/players',
+  programs: '/programs',
+  prospects: '/prospects',
+  tournaments: '/tournaments',
+}
 
 export function useViewPreference(
   storageKey: StorageKey,
@@ -50,8 +59,7 @@ export function useViewPreference(
     // Update URL params
     const params = new URLSearchParams(searchParams.toString())
     params.set('view', newView)
-    const path = storageKey === 'players' ? '/players' : '/programs'
-    router.push(`${path}?${params.toString()}`)
+    router.push(`${PATHS[storageKey]}?${params.toString()}`)
   }
 
   // Sync with localStorage on mount (hydration)

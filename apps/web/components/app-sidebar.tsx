@@ -7,6 +7,7 @@ import {
   School,
   LogIn,
   UserPlus as UserPlusIcon,
+  ClipboardList,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -70,6 +71,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: 'Browse Players',
       url: '/players',
       icon: Users,
+    },
+    {
+      title: 'My Prospects',
+      url: '/prospects',
+      icon: ClipboardList,
     },
     {
       title: 'College Programs',
