@@ -10,6 +10,7 @@ import { US_STATES_AND_TERRITORIES } from '@/lib/zod/States'
 import { getPositionOptions } from '@/lib/zod/Positions'
 import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
 import { AAU_CIRCUITS } from '@/lib/zod/AauCircuits'
+import { AAU_AGE_BRACKETS } from '@/lib/zod/AauAgeBrackets'
 import { LEVELS_OF_PLAY } from '@/lib/zod/LevelsOfPlay'
 import { DISTANCE_FROM_HOME_OPTIONS } from '@/lib/zod/DistanceFromHome'
 import { RangeSlider } from './RangeSlider'
@@ -38,6 +39,7 @@ export function PlayerFilters() {
   const [desiredDistances, setDesiredDistances] = useState<string[]>(parseArrayParam('desiredDistances'))
   const [desiredLevels, setDesiredLevels] = useState<string[]>(parseArrayParam('desiredLevels'))
   const [aauCircuits, setAauCircuits] = useState<string[]>(parseArrayParam('aauCircuits'))
+  const [aauAgeBrackets, setAauAgeBrackets] = useState<string[]>(parseArrayParam('aauAgeBrackets'))
   const [gpaRange, setGpaRange] = useState<[number, number]>([
     parseFloat(searchParams.get('minGpa') || '0'),
     parseFloat(searchParams.get('maxGpa') || '4'),
@@ -103,6 +105,9 @@ export function PlayerFilters() {
       case 'aauCircuits':
         setAauCircuits(values)
         break
+      case 'aauAgeBrackets':
+        setAauAgeBrackets(values)
+        break
     }
     // Update URL with comma-separated values
     updateURL({ [key]: values.join(',') })
@@ -160,6 +165,7 @@ export function PlayerFilters() {
     setDesiredDistances([])
     setDesiredLevels([])
     setAauCircuits([])
+    setAauAgeBrackets([])
     setGpaRange([0, 4])
     setHeightRange([60, 90])
     setPpgRange([0, 40])
@@ -189,6 +195,7 @@ export function PlayerFilters() {
     desiredDistances.length > 0,
     desiredLevels.length > 0,
     aauCircuits.length > 0,
+    aauAgeBrackets.length > 0,
     gpaRange[0] > 0 || gpaRange[1] < 4,
     heightRange[0] > 60 || heightRange[1] < 90,
     ppgRange[0] > 0 || ppgRange[1] < 40,
@@ -304,6 +311,25 @@ export function PlayerFilters() {
               />
             </div>
 
+            {/* AAU Age Bracket */}
+            <div className='space-y-0.5'>
+              <Label className='text-sm font-medium'>
+                AAU Age Bracket
+              </Label>
+              <MultiSelect
+                options={AAU_AGE_BRACKETS}
+                selected={aauAgeBrackets}
+                onChange={(values) => handleMultiSelectChange('aauAgeBrackets', values)}
+                placeholder='All Brackets'
+                searchPlaceholder='Search brackets...'
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Stats Filters - Hidden in public view */}
+        {!isPublic && (
+          <div className='grid grid-cols-1 sm:grid-cols-5 gap-5'>
             {/* Height Range */}
             <div>
               <RangeSlider
@@ -316,12 +342,7 @@ export function PlayerFilters() {
                 label='Height'
               />
             </div>
-          </div>
-        )}
 
-        {/* Stats Filters - Hidden in public view */}
-        {!isPublic && (
-          <div className='grid grid-cols-1 sm:grid-cols-4 gap-5'>
             {/* GPA Range */}
             <div>
               <RangeSlider

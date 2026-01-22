@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react'
 import type { Player, CoachProspect, Tournament } from '@/payload-types'
 import Image from 'next/image'
 import { getPositionLabel } from '@/lib/zod/Positions'
-import { formatHeight } from '@/lib/formatters'
+import { formatHeight, formatPhoneNumber } from '@/lib/formatters'
 import { getAAUCircuitLabel } from '@/lib/zod/AauCircuits'
+import { getAAUAgeBracketLabel } from '@/lib/zod/AauAgeBrackets'
 import { getGeographicAreaLabel } from '@/lib/zod/GeographicAreas'
 import { getAreaOfStudyLabel } from '@/lib/zod/AreasOfStudy'
 import { getDistanceFromHomeLabel } from '@/lib/zod/DistanceFromHome'
 import { getLevelOfPlayLabel } from '@/lib/zod/LevelsOfPlay'
 import { CopyableText } from './copyable-text'
 import { TournamentList } from './TournamentList'
-import { MailIcon, PhoneIcon, Play, ExternalLink, User, FileText, Calendar, Info } from 'lucide-react'
-import { X as XIcon, Instagram } from 'lucide-react'
+import { MailIcon, PhoneIcon, Play, ExternalLink, User, FileText, Calendar, Info, Instagram, TwitterIcon } from 'lucide-react'
 import { H1, H2, H3, P, Small } from '../ui/typography'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@workspace/ui/components/tabs'
 import { Card } from '@workspace/ui/components/card'
@@ -36,6 +36,7 @@ import { DatePicker } from '@workspace/ui/components/date-picker'
 import { Alert, AlertDescription } from '@workspace/ui/components/alert'
 import { AlertCircle, History } from 'lucide-react'
 import { format } from 'date-fns'
+import Link from 'next/link'
 
 type ProfileData = Player | CoachProspect
 
@@ -59,6 +60,8 @@ interface ProfileViewProps {
   tournamentSchedule: Tournament[]
   headerAction?: React.ReactNode
   coachId?: string
+  /** Whether the viewer can see contact information (email, phone, social handles). Typically true for coaches viewing players. */
+  canViewContact?: boolean
 }
 
 function isPlayer(profile: ProfileData): profile is Player {
@@ -80,7 +83,7 @@ function DataRow({ label, value }: { label: string; value: string | number | und
   return (
     <div className='flex justify-between items-baseline gap-2'>
       <span className='text-sm text-muted-foreground'>{label}</span>
-      <span className='text-sm font-medium'>{value}</span>
+      <span className='text-sm font-bold'>{value}</span>
     </div>
   )
 }
@@ -154,9 +157,11 @@ export function ProfileView({
   tournamentSchedule,
   headerAction,
   coachId,
+  canViewContact = false,
 }: ProfileViewProps) {
   const playerId = profile.id
-  const email = isPlayer(profile) ? profile.email : null
+  // Only show email/contact info if canViewContact is true
+  const email = canViewContact && isPlayer(profile) ? profile.email : null
   const staticNotes = !isPlayer(profile) ? profile.notes : null
 
   // Coach notes state (only for prospects when coachId is available)
@@ -278,7 +283,7 @@ export function ProfileView({
   const hasStats = profile.ppg || profile.rpg || profile.apg
   const hasPhysical = profile.heightInInches || profile.weight || profile.weightedGpa || profile.unweightedGpa
   const hasSchool = profile.highSchool || profile.city || profile.state
-  const hasAAU = profile.aauProgramName || profile.aauTeamName || profile.aauCircuit || profile.aauCoach
+  const hasAAU = profile.aauProgramName || profile.aauTeamName || profile.aauCircuit || profile.aauCoach || profile.aauAgeBracket
   const hasCollegePrefs = (profile.desiredLevelsOfPlay && profile.desiredLevelsOfPlay.length > 0) ||
     (profile.desiredGeographicAreas && profile.desiredGeographicAreas.length > 0) ||
     profile.desiredDistanceFromHome ||
@@ -346,8 +351,8 @@ export function ProfileView({
                 <div className='space-y-1.5'>
                   <DataRow label='Height' value={profile.heightInInches ? formatHeight(profile.heightInInches) : undefined} />
                   <DataRow label='Weight' value={profile.weight ? `${profile.weight} lbs` : undefined} />
-                  <DataRow label='GPA (W)' value={profile.weightedGpa} />
-                  <DataRow label='GPA (UW)' value={profile.unweightedGpa} />
+                  <DataRow label='GPA (W)' value={profile.weightedGpa?.toFixed(2)} />
+                  <DataRow label='GPA (UW)' value={profile.unweightedGpa?.toFixed(2)} />
                   {profile.ncaaId && <DataRow label='NCAA ID' value={profile.ncaaId} />}
                 </div>
               </div>
@@ -357,13 +362,28 @@ export function ProfileView({
             {hasSchool && (
               <div className='space-y-2'>
                 <SectionHeader>High School</SectionHeader>
-                {profile.highSchool && (
-                  <p className='font-medium'>{profile.highSchool}</p>
-                )}
-                {(profile.city || profile.state) && (
-                  <p className='text-sm text-muted-foreground'>
-                    {profile.city}{profile.city && profile.state && ', '}{profile.state}
-                  </p>
+                <DataRow
+                  value={profile.highSchool}
+                  label='Name'
+                />
+                <DataRow
+                  value={`${profile.city}${profile.city && profile.state && ', '}${profile.state}`}
+                  label='Location'
+                />
+                {profile.schoolTeamScheduleUrl && (
+                  <div className='flex justify-between items-baseline gap-2'>
+                    <span className='text-sm text-muted-foreground'>Team Schedule</span>
+                    <span className='text-sm font-bold'>
+                      <Link
+                        href={profile.schoolTeamScheduleUrl}
+                        target='_blank'
+                        className='inline-flex items-center gap-1.5 text-sm text-primary hover:underline'
+                      >
+                        View
+                        <ExternalLink className='w-3.5 h-3.5' />
+                      </Link>
+                    </span>
+                  </div>
                 )}
               </div>
             )}
@@ -376,6 +396,7 @@ export function ProfileView({
                   <DataRow label='Program' value={profile.aauProgramName} />
                   <DataRow label='Team' value={profile.aauTeamName} />
                   <DataRow label='Circuit' value={getAAUCircuitLabel(profile.aauCircuit)} />
+                  <DataRow label='Age Bracket' value={getAAUAgeBracketLabel(profile.aauAgeBracket)} />
                   <DataRow label='Coach' value={profile.aauCoach} />
                 </div>
               </div>
@@ -414,7 +435,7 @@ export function ProfileView({
 
                 {profile.desiredDistanceFromHome && (
                   <div>
-                    <p className='text-xs text-muted-foreground mb-1.5'>Distance from home</p>
+                    <p className='text-xs text-muted-foreground mb-1.5'>Desired distance from home</p>
                     <DistancePill>
                       {getDistanceFromHomeLabel(profile.desiredDistanceFromHome)}
                     </DistancePill>
@@ -496,47 +517,62 @@ export function ProfileView({
             <ProfileImage />
           </div>
 
-          {/* Contact Links */}
-          {(email || profile.phoneNumber || profile.xHandle || profile.instaHandle) && (
-            <div className='flex flex-wrap items-center gap-x-4 gap-y-2 mb-4'>
+          {/* Contact Links - Only show for coaches (canViewContact) or when viewing prospects */}
+          {(canViewContact || variant === 'prospect') && (email || profile.phoneNumber || profile.xHandle || profile.instaHandle || profile.tiktokHandle) && (
+            <div className='flex flex-col flex-wrap gap-x-4 gap-y-2 mb-4'>
               {email && (
                 <CopyableText
                   icon={<MailIcon className='w-4 h-4' />}
                   text={email}
-                  successMsg='Email copied!'
+                  successMsg='Email address copied'
                   errorMsg='Failed to copy'
                 />
               )}
               {profile.phoneNumber && (
                 <CopyableText
                   icon={<PhoneIcon className='w-4 h-4' />}
-                  text={profile.phoneNumber}
-                  successMsg='Phone copied!'
+                  text={formatPhoneNumber(profile.phoneNumber)}
+                  successMsg='Phone number copied'
                   errorMsg='Failed to copy'
                 />
               )}
-              {profile.xHandle && (
-                <a
-                  href={`https://x.com/${profile.xHandle.replace('@', '')}`}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='inline-flex items-center gap-1.5 text-sm hover:text-primary transition-colors'
-                >
-                  <XIcon className='w-4 h-4' />
-                  @{profile.xHandle.replace('@', '')}
-                </a>
-              )}
-              {profile.instaHandle && (
-                <a
-                  href={`https://instagram.com/${profile.instaHandle.replace('@', '')}`}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='inline-flex items-center gap-1.5 text-sm hover:text-primary transition-colors'
-                >
-                  <Instagram className='w-4 h-4' />
-                  @{profile.instaHandle.replace('@', '')}
-                </a>
-              )}
+              <div className='flex gap-4'>
+                {profile.xHandle && (
+                  <a
+                    href={`https://x.com/${profile.xHandle.replace('@', '')}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='inline-flex items-center gap-1.5 text-sm hover:text-primary transition-colors'
+                  >
+                    <TwitterIcon className='w-4 h-4' />
+                    @{profile.xHandle.replace('@', '')}
+                  </a>
+                )}
+                {profile.instaHandle && (
+                  <a
+                    href={`https://instagram.com/${profile.instaHandle.replace('@', '')}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='inline-flex items-center gap-1.5 text-sm hover:text-primary transition-colors'
+                  >
+                    <Instagram className='w-4 h-4' />
+                    @{profile.instaHandle.replace('@', '')}
+                  </a>
+                )}
+                {profile.tiktokHandle && (
+                  <a
+                    href={`https://tiktok.com/@${profile.tiktokHandle.replace('@', '')}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='inline-flex items-center gap-1.5 text-sm hover:text-primary transition-colors'
+                  >
+                    <svg className='w-4 h-4' viewBox='0 0 24 24' fill='currentColor'>
+                      <path d='M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z' />
+                    </svg>
+                    @{profile.tiktokHandle.replace('@', '')}
+                  </a>
+                )}
+              </div>
             </div>
           )}
 

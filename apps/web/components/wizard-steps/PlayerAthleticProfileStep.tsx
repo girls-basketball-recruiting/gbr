@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@workspace/ui/components/alert'
 import { AlertCircle, Plus, Trash2 } from 'lucide-react'
 import { Controller, useFieldArray } from 'react-hook-form'
 import { AAU_CIRCUITS } from '@/lib/zod/AauCircuits'
+import { AAU_AGE_BRACKETS } from '@/lib/zod/AauAgeBrackets'
 import { getPositionOptions } from '@/lib/zod/Positions'
 import { PlayerAthleticProfileSchema } from '@/lib/zod/PlayerSteps'
 import { useSchemaForm } from '@/hooks/useSchemaForm'
@@ -54,6 +55,7 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
       aauTeamName: profile?.aauTeamName || '',
       aauCircuit: profile?.aauCircuit || '',
       aauCoach: profile?.aauCoach || '',
+      aauAgeBracket: profile?.aauAgeBracket || '',
       ppg: profile?.ppg?.toString() || '',
       rpg: profile?.rpg?.toString() || '',
       apg: profile?.apg?.toString() || '',
@@ -206,6 +208,17 @@ export function PlayerAthleticProfileStep({ onSave, error, isLastStep, profile }
             name='aauTeamName'
             label='AAU Team'
             placeholder='Enter AAU team name'
+          />
+
+          <FormSelectField
+            control={form.control}
+            name='aauAgeBracket'
+            label='AAU Age Bracket'
+            placeholder='Select age bracket'
+            options={AAU_AGE_BRACKETS.map((b) => ({
+              value: b.value,
+              label: b.label,
+            }))}
           />
 
           <FormTextField

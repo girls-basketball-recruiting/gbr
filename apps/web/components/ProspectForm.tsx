@@ -17,6 +17,7 @@ import { useSchemaForm } from '@/hooks/useSchemaForm'
 import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
 import { getPositionOptions } from '@/lib/zod/Positions'
 import { AAU_CIRCUITS } from '@/lib/zod/AauCircuits'
+import { AAU_AGE_BRACKETS } from '@/lib/zod/AauAgeBrackets'
 import { US_STATES_AND_TERRITORIES } from '@/lib/zod/States'
 import { AREAS_OF_STUDY } from '@/lib/zod/AreasOfStudy'
 import { LEVELS_OF_PLAY } from '@/lib/zod/LevelsOfPlay'
@@ -110,10 +111,11 @@ export function ProspectForm({ coachId, prospect, mode = 'create' }: ProspectFor
       coach: coachId?.toString() || '',
       firstName: prospect?.firstName || '',
       lastName: prospect?.lastName || '',
-      graduationYear: prospect?.graduationYear || null,
+      graduationYear: prospect?.graduationYear?.toString() || null,
       city: prospect?.city || '',
       state: prospect?.state || '',
       highSchool: prospect?.highSchool || '',
+      schoolTeamScheduleUrl: prospect?.schoolTeamScheduleUrl || '',
       primaryPosition: prospect?.primaryPosition || '',
       secondaryPosition: prospect?.secondaryPosition || '',
       heightInInches: prospect?.heightInInches || null,
@@ -123,6 +125,7 @@ export function ProspectForm({ coachId, prospect, mode = 'create' }: ProspectFor
       aauTeamName: prospect?.aauTeamName || '',
       aauCircuit: prospect?.aauCircuit || '',
       aauCoach: prospect?.aauCoach || '',
+      aauAgeBracket: prospect?.aauAgeBracket || '',
       ppg: prospect?.ppg?.toString() || '',
       rpg: prospect?.rpg?.toString() || '',
       apg: prospect?.apg?.toString() || '',
@@ -327,6 +330,13 @@ export function ProspectForm({ coachId, prospect, mode = 'create' }: ProspectFor
               />
             </div>
 
+            <FormTextField
+              control={form.control}
+              name='schoolTeamScheduleUrl'
+              label='School Team Schedule URL'
+              placeholder='https://maxpreps.com/...'
+            />
+
             <div className='grid md:grid-cols-2 gap-5'>
               <FormTextField
                 control={form.control}
@@ -458,6 +468,14 @@ export function ProspectForm({ coachId, prospect, mode = 'create' }: ProspectFor
                 placeholder='Coach name'
               />
             </div>
+
+            <FormSelectField
+              control={form.control}
+              name='aauAgeBracket'
+              label='AAU Age Bracket'
+              placeholder='Select age bracket'
+              options={AAU_AGE_BRACKETS.map(b => ({ value: b.value, label: b.label }))}
+            />
 
             <H3 className='pt-4'>Statistics</H3>
 

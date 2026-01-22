@@ -24,14 +24,6 @@ export function SavedPlayersTable({ savedPlayers }: SavedPlayersTableProps) {
         <PlayerTableRow
           key={savedPlayer.id}
           player={savedPlayer.player}
-          action={
-            <SavePlayerButton
-              playerId={savedPlayer.player.id}
-              initialIsSaved
-              variant='outline'
-              size='sm'
-            />
-          }
         />
       )}
     />

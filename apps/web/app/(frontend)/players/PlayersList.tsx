@@ -12,6 +12,7 @@ interface PlayersListProps {
     desiredDistances?: string
     desiredLevels?: string
     aauCircuits?: string
+    aauAgeBrackets?: string
     minGpa?: string
     maxGpa?: string
     minHeight?: string
@@ -133,6 +134,14 @@ export async function PlayersList({ searchParams }: PlayersListProps) {
     const circuits = searchParams.aauCircuits.split(',').filter(Boolean)
     if (circuits.length > 0) {
       conditions.push(inArray(playersTable.aauCircuit, circuits))
+    }
+  }
+
+  // Handle multi-select AAU age brackets
+  if (searchParams.aauAgeBrackets) {
+    const brackets = searchParams.aauAgeBrackets.split(',').filter(Boolean)
+    if (brackets.length > 0) {
+      conditions.push(inArray(playersTable.aauAgeBracket, brackets))
     }
   }
 

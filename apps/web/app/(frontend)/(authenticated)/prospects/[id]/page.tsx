@@ -4,8 +4,7 @@ import { ProfileView } from '@/components/profile/ProfileView'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { findById, findOne } from '@/lib/payload-helpers'
 import type { Tournament, CoachProspect } from '@/payload-types'
-import { Pencil, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+import { Pencil } from 'lucide-react'
 
 export default async function ProspectDetailPage({
   params,
@@ -52,7 +51,7 @@ export default async function ProspectDetailPage({
 
   return (
     <div>
-      <div className='max-w-6xl mx-auto space-y-8'>
+      <div className='max-w-6xl mx-auto space-y-8 px-5'>
 
         {/* Prospect Profile View */}
         <ProfileView
@@ -60,6 +59,17 @@ export default async function ProspectDetailPage({
           variant='prospect'
           tournamentSchedule={tournamentSchedule}
           coachId={coachProfile.id.toString()}
+          canViewContact={true}
+          headerAction={
+            <ButtonLink
+              href={`/prospects/${prospect.id}/edit`}
+              variant='outline'
+              size='sm'
+            >
+              <Pencil className='w-4 h-4 mr-1.5' />
+              Edit
+            </ButtonLink>
+          }
         />
       </div>
     </div>

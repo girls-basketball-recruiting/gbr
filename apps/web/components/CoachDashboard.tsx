@@ -87,7 +87,7 @@ export default async function CoachDashboard() {
         </div>
 
         {/* Tournament Schedule Section */}
-        <div className='mb-8'>
+        <div className='mt-16 mb-4'>
           <div className='flex items-center justify-between mb-4'>
             <h3 className='text-2xl font-bold'>
               Tournament Schedule

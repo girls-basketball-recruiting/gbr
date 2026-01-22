@@ -12,8 +12,14 @@ export const PlayerBasicInfoSchema = z.object({
   lastName: z.string().min(1, 'Last name is required'),
   graduationYear: z.coerce.number().pipe(GraduationYearSchema),
   highSchool: z.string().min(1, 'High school is required'),
+  schoolTeamScheduleUrl: z.string().optional().or(z.literal('')),
   city: z.string().min(1, 'City is required'),
   state: StateCodeSchema, // Required - StateCodeSchema is an enum
+  // Contact Info
+  phoneNumber: z.string().optional().or(z.literal('')),
+  xHandle: z.string().optional().or(z.literal('')),
+  instaHandle: z.string().optional().or(z.literal('')),
+  tiktokHandle: z.string().optional().or(z.literal('')),
   // Profile image is handled via FormData separately
 })
 
@@ -46,6 +52,7 @@ export const PlayerAthleticProfileSchema = z.object({
   aauTeamName: z.string().optional().or(z.literal('')),
   aauCircuit: z.string().optional().or(z.literal('')),
   aauCoach: z.string().optional().or(z.literal('')),
+  aauAgeBracket: z.string().optional().or(z.literal('')),
   ppg: z.string().optional().or(z.literal('')),
   rpg: z.string().optional().or(z.literal('')),
   apg: z.string().optional().or(z.literal('')),

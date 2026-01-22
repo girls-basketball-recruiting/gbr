@@ -47,19 +47,8 @@ export default async function EditProspectPage({
   }
 
   return (
-    <div className='p-8'>
-      <div className='max-w-3xl mx-auto space-y-6'>
-        {/* Header */}
-        <div className='flex items-center gap-4'>
-          <Link
-            href={`/prospects/${id}`}
-            className='inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors'
-          >
-            <ArrowLeft className='w-4 h-4' />
-            Back to Profile
-          </Link>
-        </div>
-
+    <div className='px-8'>
+      <div className='max-w-xl mx-auto space-y-6'>
         <H1>Edit Prospect</H1>
 
         <ProspectForm

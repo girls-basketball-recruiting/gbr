@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { getPositionOptions } from '@/lib/zod/Positions'
 import { AAU_CIRCUITS } from '@/lib/zod/AauCircuits'
+import { AAU_AGE_BRACKETS } from '@/lib/zod/AauAgeBrackets'
 import { AREAS_OF_STUDY } from '@/lib/zod/AreasOfStudy'
 import { LEVELS_OF_PLAY } from '@/lib/zod/LevelsOfPlay'
 import { GEOGRAPHIC_AREAS } from '@/lib/zod/GeographicAreas'
@@ -79,6 +80,13 @@ export const CoachProspects: CollectionConfig = {
         description: 'High school name',
       },
     },
+    {
+      name: 'schoolTeamScheduleUrl',
+      type: 'text',
+      admin: {
+        description: 'URL to school team schedule (MaxPreps, etc.)',
+      },
+    },
     // Athletic Profile
     {
       name: 'primaryPosition',
@@ -145,6 +153,14 @@ export const CoachProspects: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'AAU Coach name',
+      },
+    },
+    {
+      name: 'aauAgeBracket',
+      type: 'select',
+      options: AAU_AGE_BRACKETS,
+      admin: {
+        description: 'AAU Age Bracket',
       },
     },
     // Stats

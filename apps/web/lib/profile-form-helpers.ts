@@ -69,6 +69,14 @@ export function getFloatField(formData: FormData, field: string): number | undef
 }
 
 /**
+ * Round a number to two decimal places.
+ * Used for GPA fields to ensure consistent storage.
+ */
+export function roundToTwoDecimals(value: number): number {
+  return Math.round(value * 100) / 100
+}
+
+/**
  * Parse a boolean field from FormData.
  * Handles string 'true'/'false' conversion.
  */
@@ -126,6 +134,7 @@ export const PROFILE_TEXT_FIELDS = [
   'lastName',
   'graduationYear',
   'highSchool',
+  'schoolTeamScheduleUrl',
   'city',
   'state',
   'primaryPosition',
@@ -142,6 +151,7 @@ export const PROFILE_TEXT_FIELDS = [
   'aauTeamName',
   'aauCircuit',
   'aauCoach',
+  'aauAgeBracket',
   'notes', // Prospect-only but harmless to include
 ] as const
 
@@ -197,6 +207,7 @@ export interface ProfileFormData {
   lastName?: string
   graduationYear?: string
   highSchool?: string
+  schoolTeamScheduleUrl?: string
   city?: string
   state?: string
   primaryPosition?: string
@@ -213,6 +224,7 @@ export interface ProfileFormData {
   aauTeamName?: string
   aauCircuit?: string
   aauCoach?: string
+  aauAgeBracket?: string
   notes?: string
 
   // Number fields
@@ -274,6 +286,14 @@ export function extractProfileDataFromFormData(formData: FormData): ProfileFormD
     if (value !== undefined) {
       (data as any)[field] = value
     }
+  }
+
+  // Round GPA values to 2 decimal places for consistent storage
+  if (data.unweightedGpa !== undefined) {
+    data.unweightedGpa = roundToTwoDecimals(data.unweightedGpa)
+  }
+  if (data.weightedGpa !== undefined) {
+    data.weightedGpa = roundToTwoDecimals(data.weightedGpa)
   }
 
   // Extract boolean fields
@@ -347,6 +367,14 @@ export function normalizeProfileJsonData(data: Record<string, any>): ProfileForm
         (result as any)[field] = parsed
       }
     }
+  }
+
+  // Round GPA values to 2 decimal places for consistent storage
+  if (result.unweightedGpa !== undefined) {
+    result.unweightedGpa = roundToTwoDecimals(result.unweightedGpa)
+  }
+  if (result.weightedGpa !== undefined) {
+    result.weightedGpa = roundToTwoDecimals(result.weightedGpa)
   }
 
   // Copy boolean fields

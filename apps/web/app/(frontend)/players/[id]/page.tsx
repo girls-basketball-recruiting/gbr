@@ -95,11 +95,21 @@ export default async function PlayerProfilePage({
   let isCoach = false
   let coachProfile = null
   let isSaved = false
+  let isOwnProfile = false
 
   if (clerkUser) {
     const user = await findOne('users', { clerkId: { equals: clerkUser.id } })
 
     if (user) {
+      // Check if this is the user's own coach profile
+      const ownPlayerProfile = await findOne('players', {
+        user: { equals: user.id }
+      })
+
+      if (ownPlayerProfile && ownPlayerProfile.id === player.id) {
+        isOwnProfile = true
+      }
+
       isCoach = user.roles?.includes('coach') || false
 
       if (isCoach) {
@@ -276,7 +286,7 @@ export default async function PlayerProfilePage({
   }
 
   return (
-    <div className='p-8'>
+    <div className='px-8'>
       <div className='max-w-6xl mx-auto space-y-8'>
         {/* Player Profile View */}
         <ProfileView
@@ -284,6 +294,7 @@ export default async function PlayerProfilePage({
           variant='player'
           tournamentSchedule={tournamentSchedule}
           coachId={isCoach && coachProfile ? String(coachProfile.id) : undefined}
+          canViewContact={isCoach || isOwnProfile}
           headerAction={
             isCoach ? (
               <SavePlayerButton

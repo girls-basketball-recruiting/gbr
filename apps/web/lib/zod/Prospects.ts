@@ -30,6 +30,7 @@ export const ProspectSchema = z.object({
   city: z.string().optional().or(z.literal('')),
   state: z.string().optional().or(z.literal('')),
   highSchool: z.string().optional().or(z.literal('')),
+  schoolTeamScheduleUrl: z.string().optional().or(z.literal('')),
 
   // Athletic Profile
   primaryPosition: BasketballPositionSchema.optional().or(z.literal('')),
@@ -43,6 +44,7 @@ export const ProspectSchema = z.object({
   aauTeamName: z.string().optional().or(z.literal('')),
   aauCircuit: z.string().optional().or(z.literal('')),
   aauCoach: z.string().optional().or(z.literal('')),
+  aauAgeBracket: z.string().optional().or(z.literal('')),
 
   // Stats
   ppg: z.string().optional().or(z.literal('')),

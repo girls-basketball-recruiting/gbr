@@ -140,7 +140,7 @@ export function PlayerCard({ player, action, isOwnCard = false }: PlayerCardProp
                 GPA
               </div>
               <div className='font-semibold'>
-                {player.weightedGpa || player.unweightedGpa}
+                {(player.weightedGpa || player.unweightedGpa)?.toFixed(2)}
               </div>
             </div>
           )}

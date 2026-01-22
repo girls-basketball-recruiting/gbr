@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@workspace/ui/components/button'
 import { Alert, AlertDescription } from '@workspace/ui/components/alert'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Info } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 import { getGraduationYearOptions } from '@/lib/zod/GraduationYears'
 import { US_STATES_AND_TERRITORIES } from '@/lib/zod/States'
@@ -46,8 +46,13 @@ export function PlayerBasicInfoStep({
       lastName: profile?.lastName || initialLastName || '',
       graduationYear: profile?.graduationYear || '',
       highSchool: profile?.highSchool || '',
+      schoolTeamScheduleUrl: profile?.schoolTeamScheduleUrl || '',
       city: profile?.city || '',
       state: profile?.state || '',
+      phoneNumber: profile?.phoneNumber || '',
+      xHandle: profile?.xHandle || '',
+      instaHandle: profile?.instaHandle || '',
+      tiktokHandle: profile?.tiktokHandle || '',
     },
     schema: PlayerBasicInfoSchema,
     fileFields: {
@@ -136,6 +141,13 @@ export function PlayerBasicInfoStep({
             />
           </div>
 
+          <FormTextField
+            control={form.control}
+            name='schoolTeamScheduleUrl'
+            label='School Team Schedule URL'
+            placeholder='https://maxpreps.com/...'
+          />
+
           <div className='grid grid-cols-2 gap-5'>
             <FormTextField
               control={form.control}
@@ -155,6 +167,49 @@ export function PlayerBasicInfoStep({
                 label: state.label,
               }))}
             />
+          </div>
+
+          {/* Contact Information */}
+          <div className='pt-6 border-t space-y-4'>
+            <div>
+              <h3 className='text-base font-semibold mb-1'>Contact Information</h3>
+              <Alert className='bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800'>
+                <Info className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                <AlertDescription className='text-blue-800 dark:text-blue-200'>
+                  Your contact information is only visible to registered coaches from college programs. Other players cannot see this information.
+                </AlertDescription>
+              </Alert>
+            </div>
+
+            <div className='grid grid-cols-2 gap-5'>
+              <FormTextField
+                control={form.control}
+                name='phoneNumber'
+                label='Phone Number'
+                placeholder='(555) 555-5555'
+              />
+              <FormTextField
+                control={form.control}
+                name='xHandle'
+                label='X (Twitter) Handle'
+                placeholder='@username'
+              />
+            </div>
+
+            <div className='grid grid-cols-2 gap-5'>
+              <FormTextField
+                control={form.control}
+                name='instaHandle'
+                label='Instagram Handle'
+                placeholder='@username'
+              />
+              <FormTextField
+                control={form.control}
+                name='tiktokHandle'
+                label='TikTok Handle'
+                placeholder='@username'
+              />
+            </div>
           </div>
         </div>
 

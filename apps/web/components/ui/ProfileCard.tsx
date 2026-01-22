@@ -216,7 +216,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
                 GPA
               </div>
               <div className='font-semibold'>
-                {profile.weightedGpa || profile.unweightedGpa}
+                {(profile.weightedGpa || profile.unweightedGpa)?.toFixed(2)}
               </div>
             </div>
           )}

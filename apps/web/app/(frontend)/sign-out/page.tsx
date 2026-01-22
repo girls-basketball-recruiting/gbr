@@ -1,6 +1,12 @@
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useClerk } from '@clerk/nextjs'
+import { useEffect } from 'react'
 
 export default function SignOutPage() {
-  // Immediately redirect to trigger sign out
-  redirect('/api/auth/signout')
+  const { signOut } = useClerk()
+  useEffect(() => {
+    signOut()
+  }, [signOut])
+  return null
 }

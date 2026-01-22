@@ -8,7 +8,7 @@ import config from '@payload-config'
 import type { Tournament } from '@/payload-types'
 import { P } from '@/components/ui/typography'
 
-export async function ProfileView() {
+export async function ProfileView({ canViewContact }: { canViewContact?: boolean }) {
   const { clerkUser, dbUser } = await getAuthContext()
 
   // Get role from Clerk publicMetadata (single source of truth)
@@ -33,10 +33,10 @@ export async function ProfileView() {
     const players = await payload.find({
       collection: 'players',
       where: {
-        user: { equals: dbUser.id }
+        user: { equals: dbUser.id },
       },
       depth: 2, // Populate tournamentSchedule relationship
-      limit: 1
+      limit: 1,
     })
 
     const player = players.docs[0]
@@ -49,14 +49,19 @@ export async function ProfileView() {
     // Filter out IDs and keep only populated Tournament objects
     const tournamentSchedule = Array.isArray(player.tournamentSchedule)
       ? player.tournamentSchedule.filter(
-          (t): t is Tournament => typeof t === 'object' && t !== null
+          (t): t is Tournament => typeof t === 'object' && t !== null,
         )
       : []
 
     // Render player profile view
     return (
       <ProfileLayout role='player'>
-        <SharedProfileView profile={player} variant='player' tournamentSchedule={tournamentSchedule} />
+        <SharedProfileView
+          canViewContact={canViewContact}
+          profile={player}
+          variant='player'
+          tournamentSchedule={tournamentSchedule}
+        />
       </ProfileLayout>
     )
   }
@@ -68,9 +73,9 @@ export async function ProfileView() {
     const coaches = await payload.find({
       collection: 'coaches',
       where: {
-        user: { equals: dbUser.id }
+        user: { equals: dbUser.id },
       },
-      limit: 1
+      limit: 1,
     })
 
     const coach = coaches.docs[0]

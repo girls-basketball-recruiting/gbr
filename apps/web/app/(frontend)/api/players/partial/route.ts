@@ -8,6 +8,7 @@ import {
 import { findOne, create, updateById } from '@/lib/payload-helpers'
 import { uploadProfileImage } from '@/lib/blob-storage'
 import { clerkClient } from '@clerk/nextjs/server'
+import { roundToTwoDecimals } from '@/lib/profile-form-helpers'
 
 /**
  * Save partial player profile data (step-by-step onboarding)
@@ -247,10 +248,10 @@ export const POST = handleApiError(async (req: Request) => {
 
       updateData = {
         unweightedGpa: stepData.unweightedGpa
-          ? parseFloat(stepData.unweightedGpa)
+          ? roundToTwoDecimals(parseFloat(stepData.unweightedGpa))
           : undefined,
         weightedGpa: stepData.weightedGpa
-          ? parseFloat(stepData.weightedGpa)
+          ? roundToTwoDecimals(parseFloat(stepData.weightedGpa))
           : undefined,
         potentialAreasOfStudy: stepData.potentialAreasOfStudy || undefined,
         desiredLevelsOfPlay: stepData.desiredLevelsOfPlay || undefined,

@@ -218,6 +218,10 @@ export interface Player {
   state: string;
   highSchool: string;
   /**
+   * URL to school team schedule (MaxPreps, etc.)
+   */
+  schoolTeamScheduleUrl?: string | null;
+  /**
    * Add up to 10 awards, honors, and achievements
    */
   awards?:
@@ -307,6 +311,10 @@ export interface Player {
    * AAU Coach name
    */
   aauCoach?: string | null;
+  /**
+   * AAU Age Bracket
+   */
+  aauAgeBracket?: ('u17' | 'u16' | 'u15' | 'u14') | null;
   /**
    * Contact phone number
    */
@@ -643,6 +651,10 @@ export interface CoachProspect {
    */
   highSchool?: string | null;
   /**
+   * URL to school team schedule (MaxPreps, etc.)
+   */
+  schoolTeamScheduleUrl?: string | null;
+  /**
    * Primary playing position
    */
   primaryPosition?: ('point-guard' | 'combo-guard' | 'wing' | 'stretch-4' | 'power-4' | 'post') | null;
@@ -701,6 +713,10 @@ export interface CoachProspect {
    * AAU Coach name
    */
   aauCoach?: string | null;
+  /**
+   * AAU Age Bracket
+   */
+  aauAgeBracket?: ('u17' | 'u16' | 'u15' | 'u14') | null;
   /**
    * Points per game
    */
@@ -1083,6 +1099,7 @@ export interface PlayersSelect<T extends boolean = true> {
   city?: T;
   state?: T;
   highSchool?: T;
+  schoolTeamScheduleUrl?: T;
   awards?:
     | T
     | {
@@ -1103,6 +1120,7 @@ export interface PlayersSelect<T extends boolean = true> {
   aauTeamName?: T;
   aauCircuit?: T;
   aauCoach?: T;
+  aauAgeBracket?: T;
   phoneNumber?: T;
   xHandle?: T;
   instaHandle?: T;
@@ -1217,6 +1235,7 @@ export interface CoachProspectsSelect<T extends boolean = true> {
   city?: T;
   state?: T;
   highSchool?: T;
+  schoolTeamScheduleUrl?: T;
   primaryPosition?: T;
   secondaryPosition?: T;
   heightInInches?: T;
@@ -1226,6 +1245,7 @@ export interface CoachProspectsSelect<T extends boolean = true> {
   aauTeamName?: T;
   aauCircuit?: T;
   aauCoach?: T;
+  aauAgeBracket?: T;
   ppg?: T;
   rpg?: T;
   apg?: T;
