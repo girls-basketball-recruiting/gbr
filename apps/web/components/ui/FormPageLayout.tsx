@@ -21,7 +21,7 @@ export function FormPageLayout({
   maxWidth = 'md',
 }: FormPageLayoutProps) {
   return (
-    <div className='p-8'>
+    <div className='p-5 sm:p-10'>
       <div>
         <div className='text-center mb-8'>
           <H1 className='mb-6'>{title}</H1>

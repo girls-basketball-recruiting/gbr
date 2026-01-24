@@ -30,12 +30,12 @@ export function PageSizeSelector() {
   }
 
   return (
-    <div className='flex items-center gap-2'>
-      <Small>
+    <div className='flex items-center gap-1.5 sm:gap-2'>
+      <Small className='hidden sm:inline whitespace-nowrap'>
         Per page:
       </Small>
       <Select value={currentPageSize} onValueChange={handlePageSizeChange}>
-        <SelectTrigger size='sm' className='w-17.5 border-gray'>
+        <SelectTrigger size='sm' className='w-[70px] border-gray'>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

@@ -25,12 +25,12 @@ export default function Error({
     <div className='flex items-center justify-center px-4'>
       <div className='max-w-md w-full space-y-8 text-center'>
         <div className='space-y-4'>
-          <h1 className='text-4xl font-bold text-white'>Something went wrong</h1>
+          <h1 className='text-4xl font-bold'>Something went wrong</h1>
           <p className='text-lg text-slate-400'>
             We encountered an unexpected error. Please try again.
           </p>
           {error.digest && (
-            <p className='text-sm text-slate-500 font-mono'>
+            <p className='text-sm font-mono'>
               Error ID: {error.digest}
             </p>
           )}

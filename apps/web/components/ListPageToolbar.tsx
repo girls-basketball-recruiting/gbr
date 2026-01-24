@@ -21,12 +21,12 @@ export function ListPageToolbar({
   sortSelector,
 }: ListPageToolbarProps) {
   return (
-    <div className='flex items-center justify-between mb-6'>
-      <MutedText className=''>
+    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6'>
+      <MutedText className='text-sm'>
         {totalCount.toLocaleString()} {itemLabel}
         {totalCount !== 1 && 's'}
       </MutedText>
-      <div className='flex items-center gap-3'>
+      <div className='flex items-center gap-2 sm:gap-3'>
         <PageSizeSelector />
         {sortSelector}
         <ViewToggle view={view} onViewChange={onViewChange} />

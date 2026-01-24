@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ListPageToolbar } from './ListPageToolbar'
 import { TournamentSortDropdown } from './TournamentSortDropdown'
-import { TournamentCalendarCard } from '@/components/ui/TournamentCalendarCard'
+import { TournamentCard } from '@/components/ui/TournamentCard'
 import { TournamentsTable } from './TournamentsTable'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { URLPagination } from './URLPagination'
 import { useViewPreference } from '@/hooks/useViewPreference'
-import { Calendar, Users, ChevronRight, Zap } from 'lucide-react'
+import { Calendar, Users, Zap } from 'lucide-react'
 import { formatDateLocationRange } from '@/lib/format-date-location'
 import type { Tournament } from '@/payload-types'
 
@@ -107,48 +107,40 @@ export function TournamentsPageContent({
                   {/* Animated background accent */}
                   <div className='absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-green-400/20 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2' />
 
-                  <div className='relative flex items-center justify-between gap-4'>
-                    <div className='flex-1 min-w-0'>
-                      <div className='flex items-center gap-3 mb-2'>
-                        <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-linear-to-r from-green-500 to-emerald-600 text-white shadow-sm'>
-                          <span className='relative flex h-2 w-2'>
-                            <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75'></span>
-                            <span className='relative inline-flex rounded-full h-2 w-2 bg-white'></span>
-                          </span>
-                          Live
+                  <div className='relative'>
+                    <div className='flex justify-between items-center gap-2 mb-2'>
+                      <h3 className='text-lg sm:text-xl font-bold group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors'>
+                        {tournament.name}
+                      </h3>
+                      <span className='hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-linear-to-r from-green-500 to-emerald-600 text-white shadow-sm shrink-0'>
+                        <span className='relative flex h-2 w-2'>
+                          <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75'></span>
+                          <span className='relative inline-flex rounded-full h-2 w-2 bg-white'></span>
                         </span>
-                        <h3 className='text-xl font-bold truncate group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors'>
-                          {tournament.name}
-                        </h3>
-                      </div>
-
-                      <div className='flex flex-wrap items-center gap-4 text-sm text-muted-foreground'>
-                        <div className='flex items-center gap-1.5'>
-                          <Calendar className='w-4 h-4 text-green-600 dark:text-green-400' />
-                          <span>
-                            {formatDateLocationRange(
-                              tournament.startDate.toString(),
-                              tournament.endDate.toString(),
-                              tournament.city,
-                              tournament.state
-                            )}
-                          </span>
-                        </div>
-                        {isAuthenticated && (
-                          <div className='flex items-center gap-1.5'>
-                            <Users className='w-4 h-4 text-green-600 dark:text-green-400' />
-                            <span className='font-medium'>
-                              {tournament.attendeeCount ?? 0} players attending
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                        Live
+                      </span>
                     </div>
 
-                    <div className='shrink-0'>
-                      <div className='w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800/50 transition-colors'>
-                        <ChevronRight className='w-5 h-5 text-green-600 dark:text-green-400' />
+                    <div className='flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground'>
+                      <div className='flex items-center gap-1.5'>
+                        <Calendar className='w-4 h-4 text-green-600 dark:text-green-400' />
+                        <span>
+                          {formatDateLocationRange(
+                            tournament.startDate.toString(),
+                            tournament.endDate.toString(),
+                            tournament.city,
+                            tournament.state
+                          )}
+                        </span>
                       </div>
+                      {isAuthenticated && (
+                        <div className='flex items-center gap-1.5'>
+                          <Users className='w-4 h-4 text-green-600 dark:text-green-400' />
+                          <span className='font-medium'>
+                            {tournament.attendeeCount ?? 0} players attending
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -182,7 +174,7 @@ export function TournamentsPageContent({
       ) : (
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
           {localTournaments.map((tournament) => (
-            <TournamentCalendarCard
+            <TournamentCard
               key={tournament.id}
               tournament={tournament}
               isAttending={attendingIds.includes(tournament.id)}

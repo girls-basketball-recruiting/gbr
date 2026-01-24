@@ -41,7 +41,7 @@ export function ProfileCard({ profile, variant, action, isOwnCard = false }: Pro
     : `/prospects/${profile.id}`
 
   return (
-    <Card className={`overflow-hidden p-0 flex flex-col h-full min-w-[340px] transition-all ${
+    <Card className={`overflow-hidden p-0 flex flex-col h-full min-w-[340px] max-w-full transition-all ${
       isArchived ? 'opacity-60' : 'hover:shadow-xl hover:-translate-y-1'
     }`}>
       {/* Header Area - Subtle accent background */}

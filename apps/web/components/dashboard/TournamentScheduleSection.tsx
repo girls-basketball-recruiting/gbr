@@ -1,10 +1,10 @@
 import { EmptyState } from '@/components/ui/EmptyState'
 import { findById, countDocs } from '@/lib/payload-helpers'
 import type { Tournament } from '@/payload-types'
-import { Briefcase, Calendar, ExternalLink, Users } from 'lucide-react'
+import { Briefcase, Users, Calendar, MapPin } from 'lucide-react'
 import { ButtonLink } from '../ui/ButtonLink'
 import { formatDateLocationRange } from '@/lib/format-date-location'
-import { H4, P } from '../ui/typography'
+import Link from 'next/link'
 
 interface TournamentScheduleSectionProps {
   playerId?: number
@@ -88,54 +88,59 @@ function TournamentCard({
   coachesCount
 }: TournamentWithCounts) {
   return (
-    <div className='group relative bg-accent rounded-xl p-4'>
-      <div className='flex gap-4'>
-        {/* Date Badge */}
-        <div className='shrink-0 w-16 h-16 rounded-lg flex flex-col items-center justify-center shadow-lg'>
-          <div className='text-[10px] font-bold uppercase tracking-wider opacity-90'>
+    <div className='group flex items-stretch gap-4'>
+      {/* Date Badge */}
+      <div className='shrink-0 self-center'>
+        <div className='relative w-14 h-14 rounded-lg overflow-hidden bg-purple-50 dark:bg-purple-950/40 border border-purple-200/60 dark:border-purple-800/60 flex flex-col items-center justify-center'>
+          <div className='text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400'>
             {formatDayOfWeek(tournament.startDate)}
           </div>
-          <div className='text-xl font-black leading-none'>
+          <div className='text-lg font-black leading-none text-purple-700 dark:text-purple-300'>
             {new Date(tournament.startDate).getDate()}
           </div>
-          <div className='text-[10px] font-bold uppercase tracking-wider opacity-90'>
+          <div className='text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400'>
             {new Date(tournament.startDate).toLocaleDateString('en-US', { month: 'short' })}
           </div>
         </div>
+      </div>
 
-        {/* Tournament Info */}
-        <div className='flex-1 min-w-0'>
-          <H4 className='mb-1 truncate'>
+      {/* Content */}
+      <div className='flex-1 min-w-0 flex flex-col justify-center gap-1'>
+        {/* Row 1: Name as link */}
+        <div className='flex items-center gap-2 min-w-0'>
+          <Link
+            href={`/tournaments/${tournament.id}`}
+            className='font-semibold text-purple-600 dark:text-purple-400 hover:underline truncate'
+          >
             {tournament.name}
-          </H4>
-          <div className='flex items-center gap-2 mb-2'>
-            <Calendar className='w-5 h-5' />
-            <P>{formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}</P>
-          </div>
+          </Link>
+        </div>
 
-          {/* Attendee Counts */}
-          <div className='flex items-center gap-5 text-sm mb-4 opacity-80'>
-            <div className='flex items-center gap-2'>
-              <Users className='w-4 h-4 text-primary' />
-              <span><strong>{playersCount}</strong> {playersCount === 1 ? 'player' : 'players'}</span>
-            </div>
-            <div className='flex items-center gap-2'>
-              <Briefcase className='w-4 h-4 text-blue-500' />
-              <span><strong>{coachesCount}</strong> {coachesCount === 1 ? 'coach' : 'coaches'}</span>
-            </div>
+        {/* Row 2: Player/coach counts + Date/Location */}
+        <div className='flex items-center gap-2 text-sm text-muted-foreground flex-wrap'>
+          <div className='flex items-center gap-1.5'>
+            <Users className='w-3.5 h-3.5 text-primary' />
+            <span><span className='text-purple-600 dark:text-purple-400 font-medium'>{playersCount}</span> {playersCount === 1 ? 'player' : 'players'}</span>
           </div>
+          <div className='flex items-center gap-1.5'>
+            <Briefcase className='w-3.5 h-3.5 text-blue-500' />
+            <span><span className='text-purple-600 dark:text-purple-400 font-medium'>{coachesCount}</span> {coachesCount === 1 ? 'coach' : 'coaches'}</span>
+          </div>
+          <span className='text-muted-foreground/40 hidden md:inline'>·</span>
+          <span className='hidden md:flex items-center gap-1.5 truncate'>
+            <MapPin className='w-3 h-3 shrink-0' />
+            <span className='truncate'>
+              {formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}
+            </span>
+          </span>
+        </div>
 
-          <div className='flex gap-3'>
-            <ButtonLink variant='purple' size='sm' href={`/tournaments/${tournament.id}`}>
-              View Tournament Details
-            </ButtonLink>
-            {tournament.website && (
-              <ButtonLink variant='outline' size='sm' href={tournament.website} isExternal>
-                <ExternalLink className='w-4 h-4 mr-2' />
-                Tournament Website
-              </ButtonLink>
-            )}
-          </div>
+        {/* Row 3 Mobile only: Date/Location */}
+        <div className='flex md:hidden items-center gap-1.5 text-sm text-muted-foreground'>
+          <MapPin className='w-3 h-3 shrink-0' />
+          <span className='truncate'>
+            {formatDateLocationRange(tournament.startDate.toString(), tournament.endDate.toString(), tournament.city, tournament.state)}
+          </span>
         </div>
       </div>
     </div>

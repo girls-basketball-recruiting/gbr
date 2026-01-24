@@ -329,7 +329,7 @@ export function PlayerFilters() {
 
         {/* Stats Filters - Hidden in public view */}
         {!isPublic && (
-          <div className='grid grid-cols-1 sm:grid-cols-5 gap-5'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5'>
             {/* Height Range */}
             <div>
               <RangeSlider
@@ -365,7 +365,7 @@ export function PlayerFilters() {
                 value={ppgRange}
                 onValueChange={handlePpgRangeChange}
                 formatValue={(v) => `${v.toFixed(1)} ppg`}
-                label='Points Per Game'
+                label='PPG'
               />
             </div>
 
@@ -378,7 +378,7 @@ export function PlayerFilters() {
                 value={rpgRange}
                 onValueChange={handleRpgRangeChange}
                 formatValue={(v) => `${v.toFixed(1)} rpg`}
-                label='Rebounds Per Game'
+                label='RPG'
               />
             </div>
 
@@ -391,25 +391,25 @@ export function PlayerFilters() {
                 value={apgRange}
                 onValueChange={handleApgRangeChange}
                 formatValue={(v) => `${v.toFixed(1)} apg`}
-                label='Assists Per Game'
+                label='APG'
               />
             </div>
 
             {/* Clear All Button */}
-            <div className='flex items-end'>
-              {activeFilterCount > 0 && (
+            {activeFilterCount > 0 && (
+              <div className='flex items-end sm:col-span-2 lg:col-span-3 xl:col-span-5'>
                 <Button
                   onClick={clearAllFilters}
                   variant='outline'
                   size='default'
                   disabled={isPending}
-                  className='h-10 w-full'
+                  className='w-full sm:w-auto'
                 >
                   <X className='w-4 h-4 mr-2' />
                   Clear {activeFilterCount} {activeFilterCount === 1 ? 'filter' : 'filters'}
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
 

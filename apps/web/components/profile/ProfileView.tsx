@@ -488,9 +488,9 @@ export function ProfileView({
             )}
           </div>
 
-          <div className='flex flex-wrap items-center gap-2 text-lg text-muted-foreground mb-4'>
+          <div className='space-y-1 mb-4'>
             {profile.primaryPosition && (
-              <>
+              <div className='flex flex-wrap items-center gap-2 text-lg text-muted-foreground'>
                 <span className='font-medium text-foreground'>
                   {getPositionLabel(profile.primaryPosition)}
                 </span>
@@ -502,13 +502,12 @@ export function ProfileView({
                     </span>
                   </>
                 )}
-                <span>•</span>
-              </>
+              </div>
             )}
             {profile.graduationYear && (
-              <span className='font-semibold text-foreground'>
+              <div className='text-lg text-muted-foreground'>
                 Class of {profile.graduationYear}
-              </span>
+              </div>
             )}
           </div>
 
@@ -536,7 +535,7 @@ export function ProfileView({
                   errorMsg='Failed to copy'
                 />
               )}
-              <div className='flex gap-4'>
+              <div className='flex flex-col sm:flex-row gap-2 sm:gap-4'>
                 {profile.xHandle && (
                   <a
                     href={`https://x.com/${profile.xHandle.replace('@', '')}`}

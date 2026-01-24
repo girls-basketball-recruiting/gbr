@@ -40,17 +40,17 @@ export default async function ProspectsPage({ searchParams }: ProspectsPageProps
   }
 
   return (
-    <div className='px-8'>
+    <div className='px-4 sm:px-8'>
       <div className='max-w-7xl mx-auto'>
         {/* Header */}
-        <div className='mb-8 flex flex-col gap-5'>
-          <div>
-            <H1 className='mb-6'>My Prospects</H1>
-            <MutedText className='text-center'>
+        <div className='mb-8 flex flex-col gap-4 sm:gap-5'>
+          <div className='text-center'>
+            <H1 className='mb-2 sm:mb-6'>My Prospects</H1>
+            <MutedText>
               Track players who haven&apos;t registered on the platform yet
             </MutedText>
           </div>
-          <div className='flex gap-3 mx-auto'>
+          <div className='flex gap-3 justify-center'>
             <ButtonLink href='/prospects/create' variant='default' size='sm'>
               <Plus className='w-4 h-4 mr-2' />
               Add Prospect

@@ -9,7 +9,7 @@ import type { Tournament } from '@/payload-types'
 import { formatDateLocationRange } from '@/lib/format-date-location'
 import { ButtonLink } from './ButtonLink'
 
-interface TournamentCalendarCardProps {
+interface TournamentCardProps {
   tournament: Tournament & { attendeeCount?: number }
   isAttending?: boolean
   isPlayer?: boolean
@@ -22,13 +22,13 @@ const formatDayOfWeek = (dateStr: string) => {
   return date.toLocaleDateString('en-US', { weekday: 'short' })
 }
 
-export function TournamentCalendarCard({
+export function TournamentCard({
   tournament,
   isAttending = false,
   isPlayer = false,
   isAuthenticated = false,
   onToggleAttendance,
-}: TournamentCalendarCardProps) {
+}: TournamentCardProps) {
   const [attending, setAttending] = useState(isAttending)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -60,7 +60,7 @@ export function TournamentCalendarCard({
       !upcoming ? 'opacity-60' : 'hover:shadow-xl hover:-translate-y-1'
     }`}>
       {/* Header Area - Subtle accent background */}
-      <div className='relative aspect-[16/9] bg-purple-50 dark:bg-purple-950/40 border-b-2 border-purple-200 dark:border-purple-800 rounded-b-3xl overflow-hidden'>
+      <div className='relative aspect-video bg-purple-50 dark:bg-purple-950/40 border-b-2 border-purple-200 dark:border-purple-800 rounded-b-3xl overflow-hidden'>
         <div className='absolute inset-0 flex items-center justify-center'>
           <div className='w-20 h-20 rounded-xl bg-purple-100 dark:bg-purple-900/50 border border-purple-200 dark:border-purple-700 flex items-center justify-center'>
             <Trophy className='w-10 h-10 text-purple-400 dark:text-purple-500' />
@@ -69,7 +69,7 @@ export function TournamentCalendarCard({
 
         {/* Date Badge - Top Right */}
         <div className='absolute top-3 right-3'>
-          <div className='bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg rounded-xl px-3 py-2 text-center min-w-[70px]'>
+          <div className='bg-linear-to-br from-purple-500 to-purple-600 shadow-lg rounded-xl px-3 py-2 text-center min-w-[70px]'>
             <div className='text-[10px] font-bold uppercase tracking-wider text-white/80'>
               {formatDayOfWeek(tournament.startDate)}
             </div>
@@ -84,7 +84,7 @@ export function TournamentCalendarCard({
 
         {/* Attending/Attended Badge - Top Left */}
         {attending && (
-          <div className='absolute top-3 left-3 bg-gradient-to-br from-green-500 to-green-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1.5'>
+          <div className='absolute top-3 left-3 bg-linear-to-br from-green-500 to-green-600 shadow-lg px-3 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1.5'>
             <CalendarCheck2Icon className='w-3 h-3' />
             <span>{upcoming ? 'Attending' : 'Attended'}</span>
           </div>
@@ -93,7 +93,7 @@ export function TournamentCalendarCard({
         {/* Past Event Indicator */}
         {!upcoming && (
           <div className='absolute bottom-3 right-3'>
-            <Badge className='bg-gradient-to-br from-gray-500 to-gray-600 shadow-lg border-0 text-white/90 text-xs'>
+            <Badge className='bg-linear-to-br from-gray-500 to-gray-600 shadow-lg border-0 text-white/90 text-xs'>
               Past Event
             </Badge>
           </div>

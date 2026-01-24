@@ -97,7 +97,7 @@ export function CoachForm({ profile, mode = 'create', initialFirstName, initialL
   const isLoading = form.isSubmitting || isPending
 
   return (
-    <Card className='p-8'>
+    <Card className='p-5 sm:p-10 bg-accent rounded-lg border-accent-foreground/10'>
       <form onSubmit={form.handleSubmit}>
         <FieldSet>
           {/* Error Alert */}
@@ -186,7 +186,7 @@ export function CoachForm({ profile, mode = 'create', initialFirstName, initialL
             <FormTextareaField
               control={form.control}
               name='bio'
-              label='About Your Program'
+              label='About you and your program'
               placeholder="Tell players about your coaching philosophy, program culture, and what you're looking for in recruits..."
               rows={4}
             />

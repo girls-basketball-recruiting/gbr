@@ -33,12 +33,12 @@ export default async function TournamentsPage({
     <>
       {isLoggedOut && <PublicNav activePage='tournaments' />}
       <div>
-        <div className={isLoggedOut ? 'py-12 px-4' : 'px-8'}>
+        <div className={isLoggedOut ? 'py-12 px-4' : 'px-4 sm:px-8'}>
           <div className='max-w-7xl mx-auto'>
             {/* Header */}
-            <div className='mb-8'>
-              <H1 className='mb-6'>AAU Tournaments</H1>
-              <MutedText className='text-center text-xl'>
+            <div className='mb-6 sm:mb-8 text-center'>
+              <H1 className='mb-2 sm:mb-6'>AAU Tournaments</H1>
+              <MutedText className='text-base sm:text-xl'>
                 {isPlayer
                   ? "View upcoming tournaments and mark which ones you'll be attending"
                   : 'View upcoming tournaments and see how many players are attending'}

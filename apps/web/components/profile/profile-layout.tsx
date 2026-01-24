@@ -9,7 +9,7 @@ interface ProfileLayoutProps {
 
 export function ProfileLayout({ role, children }: ProfileLayoutProps) {
   return (
-    <div className='max-w-4xl mx-auto'>
+    <div className='max-w-4xl px-5 sm:px-10 mx-auto'>
       <Alert className='mb-4'>
         <Globe2Icon />
         <AlertTitle className='flex flex-col xs:flex-row justify-between items-center gap-3'>

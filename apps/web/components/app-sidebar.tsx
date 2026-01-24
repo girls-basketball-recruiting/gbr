@@ -25,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from '@workspace/ui/components/sidebar'
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
 import { NavUser } from './NavUser'
@@ -56,6 +57,14 @@ const OLD_COACH_ROUTE_PATTERN = /^\/coaches\/\d+/
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { user } = useUser()
+  const { isMobile, setOpenMobile } = useSidebar()
+
+  // Close sidebar on mobile when navigating
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
 
   const role = user?.publicMetadata?.role as 'coach' | 'player'
   const isCoach = role === 'coach'
@@ -155,7 +164,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size='lg' asChild>
-              <Link href='/'>
+              <Link href='/' onClick={handleNavClick}>
                 <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarFallback className='rounded-lg bg-primary text-primary-foreground'>
                     <BasketballIcon className='h-4 w-4' />
@@ -201,7 +210,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         isActive={isActive}
                         tooltip={item.title}
                       >
-                        <Link href={item.url}>
+                        <Link href={item.url} onClick={handleNavClick}>
                           <item.icon />
                           <span>{item.title}</span>
                         </Link>
@@ -225,7 +234,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {authItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild tooltip={item.title}>
-                    <Link href={item.url}>
+                    <Link href={item.url} onClick={handleNavClick}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>

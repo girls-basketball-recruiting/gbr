@@ -26,7 +26,7 @@ export default function GlobalError({
         <div className='flex min-h-screen items-center justify-center px-4'>
           <div className='max-w-md w-full space-y-8 text-center'>
             <div className='space-y-4'>
-              <h1 className='text-4xl font-bold text-white'>
+              <h1 className='text-4xl font-bold'>
                 Something went wrong
               </h1>
               <p className='text-lg text-slate-400'>

@@ -55,28 +55,58 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
 
       {/* Content - Two Rows */}
       <div className='flex-1 min-w-0 flex flex-col justify-center gap-1'>
-        {/* Row 1: Name / Position / Year + Badges */}
+        {/* Row 1: Name (full width on mobile) */}
         <div className='flex items-center gap-2 min-w-0'>
-          <div className='flex items-center gap-2 min-w-0 truncate'>
-            <Link
-              href={profileLink}
-              className='font-semibold text-orange-600 dark:text-orange-400 hover:underline truncate'
-            >
-              {player.firstName} {player.lastName}
-            </Link>
-            {player.primaryPosition && (
-              <>
-                <span className='text-muted-foreground/40 hidden sm:inline'>/</span>
-                <span className='text-sm text-muted-foreground truncate hidden sm:inline'>
-                  {getPositionLabel(player.primaryPosition)}
-                </span>
-              </>
-            )}
-          </div>
+          <Link
+            href={profileLink}
+            className='font-semibold text-orange-600 dark:text-orange-400 hover:underline truncate'
+          >
+            {player.firstName} {player.lastName}
+          </Link>
+          {/* Position & Badges - visible on md+ */}
+          {player.primaryPosition && (
+            <span className='hidden md:flex items-center gap-2'>
+              <span className='text-muted-foreground/40'>/</span>
+              <span className='text-sm text-muted-foreground truncate'>
+                {getPositionLabel(player.primaryPosition)}
+              </span>
+            </span>
+          )}
+          {player.graduationYear && (
+            <Badge variant='secondary' className='hidden md:inline-flex text-[10px] px-1.5 py-0 h-5 shrink-0'>
+              &apos;{String(player.graduationYear).slice(-2)}
+            </Badge>
+          )}
+          {isOwnProfile && (
+            <Badge className='hidden md:inline-flex bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700 text-[10px] px-1.5 py-0 h-5 shrink-0'>
+              YOU
+            </Badge>
+          )}
+          {isArchived && (
+            <Badge variant='destructive' className='hidden md:inline-flex text-[10px] px-1.5 py-0 h-5 shrink-0'>
+              ARCHIVED
+            </Badge>
+          )}
+        </div>
+
+        {/* Row 2 Mobile: Position / Year / Badges (mobile only) */}
+        <div className='flex md:hidden items-center gap-2 flex-wrap'>
+          {player.primaryPosition && (
+            <span className='text-sm text-muted-foreground'>
+              {getPositionLabel(player.primaryPosition)}
+            </span>
+          )}
           {player.graduationYear && (
             <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 shrink-0'>
               &apos;{String(player.graduationYear).slice(-2)}
             </Badge>
+          )}
+          {(player.heightInInches || player.weight) && (
+            <span className='text-sm text-muted-foreground'>
+              {player.heightInInches && formatHeight(player.heightInInches)}
+              {player.heightInInches && player.weight && ' / '}
+              {player.weight && `${player.weight} lbs`}
+            </span>
           )}
           {isOwnProfile && (
             <Badge className='bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-700 text-[10px] px-1.5 py-0 h-5 shrink-0'>
@@ -90,8 +120,8 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
           )}
         </div>
 
-        {/* Row 2: Physical / Stats / Location / School */}
-        <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+        {/* Row 2 Desktop: Physical / Stats / Location / School */}
+        <div className='hidden md:flex items-center gap-2 text-sm text-muted-foreground'>
           {/* Physical */}
           {(player.heightInInches || player.weight) && (
             <span className='truncate'>
@@ -135,7 +165,7 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
           )}
         </div>
 
-        {/* Row 3: AAU Info */}
+        {/* Row 3: AAU Info - Hidden on mobile */}
         {(() => {
           const circuit = getAAUCircuitLabel(player.aauCircuit)
           const team = player.aauProgramName
@@ -169,7 +199,7 @@ export function PlayerTableRow({ player, action, isOwnProfile = false }: PlayerT
           }
 
           return (
-            <div className='text-sm text-muted-foreground flex items-center gap-1.5'>
+            <div className='hidden md:flex text-sm text-muted-foreground items-center gap-1.5'>
               {parts.map((part, i) => (
                 <span key={i} className='flex items-center gap-1.5'>
                   {i > 0 && <span className='text-muted-foreground/40'>•</span>}

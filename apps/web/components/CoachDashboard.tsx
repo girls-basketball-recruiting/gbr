@@ -18,13 +18,13 @@ export default async function CoachDashboard() {
   }
 
   return (
-    <div className='container mx-auto px-5'>
+    <div className='container mx-auto px-4 sm:px-5'>
       <div className='max-w-4xl mx-auto'>
         {/* Coach Profile Header */}
         <div className='mb-8'>
-          <div className='flex items-center gap-6'>
+          <div className='flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6'>
             {coachProfile.profileImageUrl && (
-              <div className='w-24 h-24 rounded-full overflow-hidden relative shrink-0'>
+              <div className='w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden relative shrink-0 mx-auto sm:mx-0'>
                 <Image
                   src={coachProfile.profileImageUrl}
                   alt={coachProfile.firstName + ' ' + coachProfile.lastName}
@@ -33,19 +33,19 @@ export default async function CoachDashboard() {
                 />
               </div>
             )}
-            <div className='flex-1'>
-              <h2 className='text-2xl font-bold mb-1'>
+            <div className='flex-1 text-center sm:text-left'>
+              <h2 className='text-xl sm:text-2xl font-bold mb-1'>
                 {coachProfile.firstName} {coachProfile.lastName}
               </h2>
-              <p>
+              <p className='text-sm sm:text-base'>
                 {coachProfile.jobTitle && `${getCoachPositionLabel(coachProfile.jobTitle)} @ `}
                 <Link href={`/programs/${coachProfile.collegeId}`} className='text-primary hover:underline'>
                   {coachProfile.collegeName}
                 </Link>
               </p>
             </div>
-            <div>
-              <ButtonLink href='/profile' variant='ghost' className='mr-2' size='sm'>
+            <div className='flex gap-2 justify-center sm:justify-end'>
+              <ButtonLink href='/profile' variant='ghost' size='sm'>
                 View Profile
               </ButtonLink>
               <ButtonLink href='/profile/edit' variant='outline' size='sm'>
@@ -57,8 +57,8 @@ export default async function CoachDashboard() {
 
         {/* Recruiting Board Section */}
         <div className='mb-8'>
-          <div className='flex items-center justify-between mb-4'>
-            <h3 className='text-2xl font-bold'>
+          <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4'>
+            <h3 className='text-xl sm:text-2xl font-bold'>
               Recruiting Board
             </h3>
             <ProspectsActions />
@@ -70,12 +70,12 @@ export default async function CoachDashboard() {
         </div>
 
         {/* Tournament Schedule Section */}
-        <div className='mt-16 mb-4'>
-          <div className='flex items-center justify-between mb-4'>
-            <h3 className='text-2xl font-bold'>
+        <div className='mt-12 sm:mt-16 mb-4'>
+          <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4'>
+            <h3 className='text-xl sm:text-2xl font-bold'>
               Tournament Schedule
             </h3>
-            <ButtonLink href="/tournaments" variant="outline" size='sm'>
+            <ButtonLink href="/tournaments" variant="outline" size='sm' className='w-full sm:w-auto justify-center'>
               View All Tournaments
             </ButtonLink>
           </div>

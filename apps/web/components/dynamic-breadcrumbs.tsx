@@ -2,6 +2,8 @@
 
 import { usePathname } from 'next/navigation'
 import { Fragment, useEffect, useState } from 'react'
+import Link from 'next/link'
+import { ChevronLeft } from 'lucide-react'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -197,28 +199,47 @@ export function DynamicBreadcrumbs() {
     segments.push({ label, href })
   })
 
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        {segments.map((segment, index) => {
-          const isLast = index === segments.length - 1
+  // Find the back link (second to last segment with an href, or dashboard)
+  const backSegment = segments.length > 1
+    ? segments.slice(0, -1).reverse().find(s => s.href) || segments[0]
+    : null
 
-          return (
-            <Fragment key={index}>
-              {index > 0 && <BreadcrumbSeparator key={`sep-${index}`} />}
-              <BreadcrumbItem key={index} className={index === 0 ? 'hidden md:block' : ''}>
-                {isLast || !segment.href ? (
-                  <BreadcrumbPage>{segment.label}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink href={segment.href}>
-                    {segment.label}
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-            </Fragment>
-          )
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
+  return (
+    <>
+      {/* Mobile: Simple back link */}
+      {backSegment && backSegment.href && (
+        <Link
+          href={backSegment.href}
+          className='md:hidden inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors'
+        >
+          <ChevronLeft className='w-4 h-4' />
+          <span>Back</span>
+        </Link>
+      )}
+
+      {/* Desktop: Full breadcrumb trail */}
+      <Breadcrumb className='hidden md:flex'>
+        <BreadcrumbList>
+          {segments.map((segment, index) => {
+            const isLast = index === segments.length - 1
+
+            return (
+              <Fragment key={index}>
+                {index > 0 && <BreadcrumbSeparator key={`sep-${index}`} />}
+                <BreadcrumbItem key={index}>
+                  {isLast || !segment.href ? (
+                    <BreadcrumbPage>{segment.label}</BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink href={segment.href}>
+                      {segment.label}
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+              </Fragment>
+            )
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
+    </>
   )
 }

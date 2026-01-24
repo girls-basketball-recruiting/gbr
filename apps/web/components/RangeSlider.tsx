@@ -28,11 +28,11 @@ export function RangeSlider({
   const format = formatValue || ((v) => v.toString())
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn('space-y-2', className)}>
       {label && (
-        <div className='flex items-center justify-between'>
+        <div className='flex flex-col gap-0.5'>
           <span className='text-sm font-medium'>{label}</span>
-          <span className='text-sm'>
+          <span className='text-xs text-muted-foreground'>
             {format(value[0])} - {format(value[1])}
           </span>
         </div>
@@ -53,10 +53,10 @@ export function RangeSlider({
             onValueChange([newValue[0], newValue[1]])
           }
         }}
-        className='w-full'
+        className='w-full touch-none'
       />
 
-      <div className='flex items-center justify-between text-xs'>
+      <div className='flex items-center justify-between text-xs text-muted-foreground'>
         <span>{format(min)}</span>
         <span>{format(max)}</span>
       </div>

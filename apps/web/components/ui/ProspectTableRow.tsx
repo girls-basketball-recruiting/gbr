@@ -45,36 +45,59 @@ export function ProspectTableRow({ prospect, action }: ProspectTableRowProps) {
 
       {/* Content - Two Rows */}
       <div className='flex-1 min-w-0 flex flex-col justify-center gap-1'>
-        {/* Row 1: Name / Position / Year + Badges */}
+        {/* Row 1: Name (full width on mobile) */}
         <div className='flex items-center gap-2 min-w-0'>
-          <div className='flex items-center gap-2 min-w-0 truncate'>
-            <Link
-              href={profileLink}
-              className='font-semibold text-purple-600 dark:text-purple-400 hover:underline truncate'
-            >
-              {prospect.firstName} {prospect.lastName}
-            </Link>
-            {prospect.primaryPosition && (
-              <>
-                <span className='text-muted-foreground/40 hidden sm:inline'>/</span>
-                <span className='text-sm text-muted-foreground truncate hidden sm:inline'>
-                  {getPositionLabel(prospect.primaryPosition)}
-                </span>
-              </>
-            )}
-          </div>
+          <Link
+            href={profileLink}
+            className='font-semibold text-purple-600 dark:text-purple-400 hover:underline truncate'
+          >
+            {prospect.firstName} {prospect.lastName}
+          </Link>
+          {/* Position & Badges - visible on md+ */}
+          {prospect.primaryPosition && (
+            <span className='hidden md:flex items-center gap-2'>
+              <span className='text-muted-foreground/40'>/</span>
+              <span className='text-sm text-muted-foreground truncate'>
+                {getPositionLabel(prospect.primaryPosition)}
+              </span>
+            </span>
+          )}
+          {prospect.graduationYear && (
+            <Badge variant='secondary' className='hidden md:inline-flex text-[10px] px-1.5 py-0 h-5 shrink-0'>
+              &apos;{String(prospect.graduationYear).slice(-2)}
+            </Badge>
+          )}
+          <Badge className='hidden md:inline-flex bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700 text-[10px] px-1.5 py-0 h-5 shrink-0'>
+            PROSPECT
+          </Badge>
+        </div>
+
+        {/* Row 2 Mobile: Position / Year / Badges (mobile only) */}
+        <div className='flex md:hidden items-center gap-2 flex-wrap'>
+          {prospect.primaryPosition && (
+            <span className='text-sm text-muted-foreground'>
+              {getPositionLabel(prospect.primaryPosition)}
+            </span>
+          )}
           {prospect.graduationYear && (
             <Badge variant='secondary' className='text-[10px] px-1.5 py-0 h-5 shrink-0'>
               &apos;{String(prospect.graduationYear).slice(-2)}
             </Badge>
+          )}
+          {(prospect.heightInInches || prospect.weight) && (
+            <span className='text-sm text-muted-foreground'>
+              {prospect.heightInInches && formatHeight(prospect.heightInInches)}
+              {prospect.heightInInches && prospect.weight && ' / '}
+              {prospect.weight && `${prospect.weight} lbs`}
+            </span>
           )}
           <Badge className='bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700 text-[10px] px-1.5 py-0 h-5 shrink-0'>
             PROSPECT
           </Badge>
         </div>
 
-        {/* Row 2: Physical / Stats / Location / School */}
-        <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+        {/* Row 2 Desktop: Physical / Stats / Location / School */}
+        <div className='hidden md:flex items-center gap-2 text-sm text-muted-foreground'>
           {/* Physical */}
           {(prospect.heightInInches || prospect.weight) && (
             <span className='truncate'>

@@ -31,12 +31,12 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
     <>
       {isLoggedOut && <PublicNav activePage='programs' />}
       <div>
-        <div className={isLoggedOut ? 'py-12 px-4' : 'px-8'}>
+        <div className={isLoggedOut ? 'py-12 px-4' : 'px-4 sm:px-8'}>
           <div className='max-w-7xl mx-auto'>
             {/* Header */}
-            <div className='mb-8'>
-              <H1 className='mb-6'>College Programs</H1>
-              <MutedText className='text-center text-xl'>
+            <div className='mb-6 sm:mb-8 text-center'>
+              <H1 className='mb-2 sm:mb-6'>College Programs</H1>
+              <MutedText className='text-base sm:text-xl'>
                 Browse and connect with women&apos;s college basketball programs
               </MutedText>
             </div>

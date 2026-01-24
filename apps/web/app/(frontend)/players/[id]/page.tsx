@@ -286,7 +286,7 @@ export default async function PlayerProfilePage({
   }
 
   return (
-    <div className='px-8'>
+    <div className='px-5 sm:px-10'>
       <div className='max-w-6xl mx-auto space-y-8'>
         {/* Player Profile View */}
         <ProfileView

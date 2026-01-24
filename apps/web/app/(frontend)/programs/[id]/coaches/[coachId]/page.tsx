@@ -91,15 +91,15 @@ export default async function CoachProfilePage({
       <>
         {/* Show programs nav since this is a nested route under programs */}
         <PublicNav activePage='programs' />
-        <div className='py-12 px-4'>
+        <div className='py-12 px-5 sm:px-10'>
           <div className='container mx-auto max-w-3xl'>
           {/* Public Coach Profile */}
-          <Card className='p-8 mb-8'>
+          <Card className='p-5 sm:p-8 mb-8'>
             <div className='text-center space-y-6'>
               {/* Profile Image */}
               {coach.profileImageUrl && (
                 <div className='flex justify-center'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden relative'>
+                  <div className='w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden relative'>
                     <Image
                       src={coach.profileImageUrl}
                       alt={`${coach.firstName} ${coach.lastName}`}
@@ -112,15 +112,15 @@ export default async function CoachProfilePage({
 
               {/* Name */}
               <div>
-                <h1 className='text-4xl font-bold mb-2'>
+                <h1 className='text-2xl sm:text-4xl font-bold mb-2'>
                   {coach.firstName} {coach.lastName}
                 </h1>
                 {coach.jobTitle && (
-                  <p className='text-xl mb-1'>
+                  <p className='text-lg sm:text-xl mb-1'>
                     {getCoachPositionLabel(coach.jobTitle)}
                   </p>
                 )}
-                <p className='text-lg'>
+                <p className='text-base sm:text-lg'>
                   {coach.collegeName}
                 </p>
               </div>
@@ -139,10 +139,10 @@ export default async function CoachProfilePage({
 
               {/* CTA to Sign Up */}
               <div className='pt-6 border-t'>
-                <p className='mb-4'>
+                <p className='mb-4 text-sm sm:text-base'>
                   Sign in or register to view full profile and contact information
                 </p>
-                <div className='text-center space-x-3'>
+                <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center'>
                   <ButtonLink href='/sign-in' variant='outline'>
                     Sign In
                   </ButtonLink>
@@ -163,7 +163,7 @@ export default async function CoachProfilePage({
   }
 
   return (
-    <div className='max-w-5xl mx-auto'>
+    <div className='max-w-5xl px-5 sm:px-10 mx-auto'>
       {/* Coach Profile View - Using same component as /profile */}
       <CoachProfileView coach={coach} />
     </div>

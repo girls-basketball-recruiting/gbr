@@ -48,7 +48,7 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
   return (
     <>
       {isLoggedOut && <PublicNav activePage='programs' />}
-      <div className={isLoggedOut ? 'py-12 px-4' : 'p-8'}>
+      <div className={isLoggedOut ? 'py-12 px-5 sm:px-10' : 'px-5 sm:px-10'}>
         <div className='max-w-lg mx-auto'>
           {/* Unauthenticated CTA */}
           {isLoggedOut && (
@@ -62,14 +62,14 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
           )}
 
           {/* Program Header */}
-          <Card className='max-w-lg p-8 mb-8'>
+          <Card className='max-w-lg p-5 sm:p-10 mb-8 bg-accent rounded-lg border-accent-foreground/10'>
             <div>
               <div className='flex items-start justify-between mb-4'>
                 <div className='flex-1'>
-                  <h1 className='text-4xl font-bold mb-2'>
+                  <h1 className='text-2xl sm:text-4xl font-bold mb-2'>
                     {college.school}
                   </h1>
-                  <p className='text-xl'>
+                  <p className='text-lg sm:text-xl'>
                     Women&apos;s Basketball Program
                   </p>
                 </div>
@@ -88,7 +88,7 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
               )}
             </div>
 
-            <div className='grid grid-cols-2 gap-6'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
               {/* Location */}
               <div className='flex items-start gap-3'>
                 <div className='w-6 min-w-6'>
@@ -154,52 +154,55 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
 
             {hasCoaches && (
               <div>
-                <div className='flex items-center my-6 gap-2 px-3 py-2 border rounded-lg shrink-0'>
+                <div className='flex items-center my-6 gap-2 px-3 py-2 border border-primary text-primary rounded-lg shrink-0'>
                   <BadgeCheck className='w-5 h-5' />
                   <span className='text-sm font-medium'>
                     {coaches.length}{' '}
                     {coaches.length === 1 ? 'Coach' : 'Coaches'} on Platform
                   </span>
                 </div>
-                <div className='grid gap-6'>
+                <div className='grid gap-4 sm:gap-6'>
                   {coaches.map((coach: any) => (
                     <Card
                       key={coach.id}
-                      className='py-4 px-6'
+                      className='py-4 px-4 sm:px-6'
                     >
-                      <div className='flex items-center gap-4'>
-                        {coach.profileImageUrl ? (
-                          <div className='w-16 h-16 rounded-full overflow-hidden relative shrink-0'>
-                            <Image
-                              src={coach.profileImageUrl}
-                              alt={coach.firstName + ' ' + coach.lastName}
-                              fill
-                              className='object-cover'
-                            />
-                          </div>
-                        ) : (
-                          <div className='w-16 h-16 rounded-full flex items-center justify-center shrink-0'>
-                            <span className='text-2xl font-bold'>
-                              {coach.firstName[0] + coach.lastName[0]}
-                            </span>
-                          </div>
-                        )}
-
-                        <div className='flex-1'>
-                          <h3 className='text-lg font-semibold mb-1'>
-                            {coach.firstName} {coach.lastName}
-                          </h3>
-                          {coach.jobTitle && (
-                            <p className='text-sm mb-3'>
-                              {getCoachPositionLabel(coach.jobTitle)}
-                            </p>
+                      <div className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
+                        <div className='flex items-center gap-3 sm:gap-4'>
+                          {coach.profileImageUrl ? (
+                            <div className='w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden relative shrink-0'>
+                              <Image
+                                src={coach.profileImageUrl}
+                                alt={coach.firstName + ' ' + coach.lastName}
+                                fill
+                                className='object-cover'
+                              />
+                            </div>
+                          ) : (
+                            <div className='w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shrink-0'>
+                              <span className='text-xl sm:text-2xl font-bold'>
+                                {coach.firstName[0] + coach.lastName[0]}
+                              </span>
+                            </div>
                           )}
+
+                          <div className='flex-1 min-w-0'>
+                            <h3 className='text-base sm:text-lg font-semibold'>
+                              {coach.firstName} {coach.lastName}
+                            </h3>
+                            {coach.jobTitle && (
+                              <p className='text-sm'>
+                                {getCoachPositionLabel(coach.jobTitle)}
+                              </p>
+                            )}
+                          </div>
                         </div>
                         <ButtonLink
                           size='sm'
                           href={`/programs/${id}/coaches/${coach.id}`}
+                          className='w-full sm:w-auto sm:shrink-0'
                         >
-                          View Coach Profile
+                          View Profile
                         </ButtonLink>
                       </div>
                     </Card>
