@@ -7,6 +7,7 @@ import { AttendanceBadge } from '@/components/AttendanceBadge'
 import { TournamentAttendeesTable } from './TournamentAttendeesTable'
 import { formatDateLocationRange } from '@/lib/format-date-location'
 import { ButtonLink } from '@/components/ui/ButtonLink'
+import { SafeHtml } from '@/components/ui/SafeHtml'
 import { PublicNav } from '@/components/PublicNav'
 import { UnauthenticatedCTA } from '@/components/UnauthenticatedCTA'
 import { H1, P, MutedText } from '@/components/ui/typography'
@@ -208,9 +209,10 @@ export default async function TournamentDetailPage({
               <MutedText className='uppercase font-extrabold'>
                 About This Tournament
               </MutedText>
-              <P className='text-lg whitespace-pre-wrap mt-4'>
-                {tournament.description}
-              </P>
+              <SafeHtml
+                html={tournament.description}
+                className='text-lg mt-4 prose max-w-none'
+              />
             </div>
           )}
 

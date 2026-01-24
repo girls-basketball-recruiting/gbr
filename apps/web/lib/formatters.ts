@@ -26,6 +26,39 @@ export function parseHeightToInches(heightStr: string | null | undefined): numbe
   return null
 }
 
+/**
+ * Ensures a URL is absolute (starts with a protocol).
+ * Handles various formats: www.example.com, example.com, https://example.com
+ */
+export function formatExternalUrl(url: string | null | undefined): string {
+  if (!url) return ''
+
+  const trimmed = url.trim()
+  if (!trimmed) return ''
+
+  // Already has a protocol
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
+  }
+
+  // Has other protocol (mailto:, tel:, etc.) - leave as-is
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) {
+    return trimmed
+  }
+
+  // No protocol - add https://
+  return `https://${trimmed}`
+}
+
+/**
+ * Checks if a URL is external (absolute URL pointing to a different origin)
+ */
+export function isExternalUrl(url: string | null | undefined): boolean {
+  if (!url) return false
+  const formatted = formatExternalUrl(url)
+  return /^https?:\/\//i.test(formatted)
+}
+
 // Format phone number as (XXX) XXX-XXXX
 export function formatPhoneNumber(value: string): string {
   // Remove all non-digit characters

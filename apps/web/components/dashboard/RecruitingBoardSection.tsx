@@ -26,7 +26,7 @@ export async function RecruitingBoardSection({ coachId }: RecruitingBoardSection
     id: coachId,
   }) as Coach
 
-  let boardOrder = (coach.boardOrder as BoardOrderItem[]) || []
+  const boardOrder = (coach.boardOrder as BoardOrderItem[]) || []
 
   // Fetch all saved players for this coach
   const savedPlayersResult = await payload.find({
