@@ -9,6 +9,7 @@ import { ProspectTableRow } from '@/components/ui/ProspectTableRow'
 import { updateBoardOrder, type BoardOrderItem } from '@/actions/board-actions'
 import type { Player, CoachProspect } from '@/payload-types'
 import Link from 'next/link'
+import { P } from '../ui/typography'
 
 export type BoardItem = {
   type: 'prospect' | 'player'
@@ -80,16 +81,16 @@ export function RecruitingBoard({ initialItems, needsOrderSync }: RecruitingBoar
 
   if (items.length === 0) {
     return (
-      <div className='rounded-lg border bg-card p-8 text-center'>
-        <p className='text-muted-foreground mb-4'>
-          Your recruiting board is empty. Save players from Browse or add prospects to get started.
-        </p>
+      <div className='rounded-lg bg-accent border border-accent-card p-8 text-center'>
+        <P className='mb-4'>
+          Your recruiting board is empty. Save a player or add a prospect to get started.
+        </P>
         <div className='flex justify-center gap-3'>
           <Link
             href='/players'
             className='inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4'
           >
-            Browse Players
+            Find Players
           </Link>
           <Link
             href='/prospects/new'

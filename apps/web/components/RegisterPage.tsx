@@ -80,6 +80,11 @@ export default function RegisterPage({ role }: { role: 'Player' | 'Coach' }) {
             promoCode: invitation?.promoCode || undefined,
           }}
           forceRedirectUrl='/payment'
+          appearance={{
+            elements: {
+              footerAction: { display: 'none' },
+            },
+          }}
         />
       </div>
     </AuthPageLayout>

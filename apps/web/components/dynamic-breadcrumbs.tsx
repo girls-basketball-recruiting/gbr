@@ -166,7 +166,7 @@ export function DynamicBreadcrumbs() {
 
     // Map known paths to readable labels
     const labelMap: Record<string, string> = {
-      players: 'Browse Players',
+      players: 'Find Players',
       coaches: 'Browse Coaches',
       prospects: 'My Prospects',
       programs: 'College Programs',

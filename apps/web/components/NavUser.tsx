@@ -93,13 +93,13 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className='cursor-pointer'>
                 <Link href='/profile/edit'>
                   <Settings />
                   Edit Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className='cursor-pointer'>
                 <Link href='/subscription'>
                   <CreditCard />
                   Manage Subscription
@@ -107,7 +107,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut}>
+            <DropdownMenuItem onClick={handleSignOut} className='cursor-pointer'>
               <LogOut />
               Log out
             </DropdownMenuItem>

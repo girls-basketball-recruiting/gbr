@@ -77,7 +77,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: Home,
     },
     {
-      title: 'Browse Players',
+      title: 'Find Players',
       url: '/players',
       icon: Users,
     },
@@ -115,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: Calendar,
     },
     {
-      title: 'Browse Players',
+      title: 'Find Players',
       url: '/players',
       icon: Users,
     },
@@ -123,7 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const publicNavItems = [
     {
-      title: 'Browse Players',
+      title: 'Find Players',
       url: '/players',
       icon: Users,
     },

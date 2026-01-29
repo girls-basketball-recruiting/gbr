@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Toggle } from '@workspace/ui/components/toggle'
 import { Bookmark } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface SavePlayerButtonProps {
   playerId: number
@@ -67,6 +68,7 @@ export function SavePlayerButton({
       })
     } catch (error) {
       console.error('Error toggling save:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to save player')
       // Revert the state on error
       setIsSaved(!isSaved)
     } finally {

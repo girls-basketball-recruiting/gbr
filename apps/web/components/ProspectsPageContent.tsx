@@ -7,9 +7,8 @@ import { ProspectsTable } from './ProspectsTable'
 import { EmptyState } from './ui/EmptyState'
 import { URLPagination } from './URLPagination'
 import { useViewPreference } from '@/hooks/useViewPreference'
-import { ButtonLink } from './ui/ButtonLink'
-import { Plus, Upload } from 'lucide-react'
 import type { CoachProspect } from '@/payload-types'
+import { ProspectsEmptyActions } from './dashboard/ProspectsEmptyActions'
 
 interface ProspectsPageContentProps {
   prospects: CoachProspect[]
@@ -42,18 +41,7 @@ export function ProspectsPageContent({
         <EmptyState
           title='No Prospects Added Yet'
           description="Add prospects manually or import from CSV to track players who haven't registered on the platform yet."
-          action={
-            <div className='flex gap-3'>
-              <ButtonLink href='/prospects/create' variant='default'>
-                <Plus className='w-4 h-4 mr-2' />
-                Add Prospect
-              </ButtonLink>
-              <ButtonLink href='/prospects/create?tab=import' variant='outline'>
-                <Upload className='w-4 h-4 mr-2' />
-                Import CSV
-              </ButtonLink>
-            </div>
-          }
+          action={<ProspectsEmptyActions />}
         />
       ) : view === 'table' ? (
         <ProspectsTable prospects={prospects} />

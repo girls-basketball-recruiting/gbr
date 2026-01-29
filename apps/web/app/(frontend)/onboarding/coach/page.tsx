@@ -1,3 +1,4 @@
+import { AuthenticatedFooter } from '@/components/AuthenticatedFooter'
 import { CoachOnboardingForm } from '@/components/CoachOnboardingForm'
 import { FormPageLayout } from '@/components/ui/FormPageLayout'
 import { currentUser } from '@clerk/nextjs/server'
@@ -19,15 +20,18 @@ export default async function CoachOnboardingPage() {
   }
 
   return (
-    <FormPageLayout
-      title={`You're in, Coach ${user.lastName}`}
-      description='Fill out your Coach profile to start discovering talented recruits'
-      maxWidth='md'
-    >
-      <CoachOnboardingForm
-        initialFirstName={user?.firstName || ''}
-        initialLastName={user?.lastName || ''}
-      />
-    </FormPageLayout>
+    <div className='mt-5'>
+      <FormPageLayout
+        title={`You're in, Coach ${user.lastName}`}
+        description='Fill out your Coach profile to start discovering talented recruits'
+        maxWidth='sm'
+      >
+        <CoachOnboardingForm
+          initialFirstName={user?.firstName || ''}
+          initialLastName={user?.lastName || ''}
+        />
+      </FormPageLayout>
+      <AuthenticatedFooter />
+    </div>
   )
 }

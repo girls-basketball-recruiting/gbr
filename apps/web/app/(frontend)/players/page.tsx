@@ -37,7 +37,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
           <div className='max-w-7xl mx-auto'>
             {/* Header */}
             <div className='mb-6 sm:mb-8 text-center'>
-              <H1 className='mb-2 sm:mb-6'>Browse Players</H1>
+              <H1 className='mb-2 sm:mb-6'>Find Players</H1>
               <MutedText className='text-base sm:text-xl'>
                 Find talented recruits and save them to your board
               </MutedText>

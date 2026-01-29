@@ -126,7 +126,7 @@ async function main() {
   // Parse command line args
   const args = process.argv.slice(2)
   const limitIndex = args.indexOf('--limit')
-  const limit = limitIndex !== -1 ? parseInt(args[limitIndex + 1], 10) : undefined
+  const limit = limitIndex !== -1 ? parseInt(args[limitIndex + 1]!, 10) : undefined
 
   if (limit) {
     console.log(`⚠️  Limit set to ${limit} tournaments (testing mode)\n`)

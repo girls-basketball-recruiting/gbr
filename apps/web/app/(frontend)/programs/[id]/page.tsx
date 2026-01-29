@@ -167,7 +167,7 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
                       key={coach.id}
                       className='py-4 px-4 sm:px-6'
                     >
-                      <div className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
+                      <div className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 justify-between'>
                         <div className='flex items-center gap-3 sm:gap-4'>
                           {coach.profileImageUrl ? (
                             <div className='w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden relative shrink-0'>

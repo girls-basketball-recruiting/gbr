@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 
 const DynamicSignIn = dynamic(
   () => import('@clerk/nextjs').then((mod) => mod.SignIn),
-  { ssr: false }
+  { ssr: false },
 )
 
 export default function SignInPage() {
@@ -17,13 +17,15 @@ export default function SignInPage() {
         <P>Sign in to your account</P>
       </div>
 
-      <DynamicSignIn
-        appearance={{
-          elements: {
-            rootBox: 'w-full m-auto',
-          },
-        }}
-      />
+      <div className='max-w-100 mx-auto'>
+        <DynamicSignIn
+          appearance={{
+            elements: {
+              footerAction: { display: 'none' },
+            },
+          }}
+        />
+      </div>
     </AuthPageLayout>
   )
 }

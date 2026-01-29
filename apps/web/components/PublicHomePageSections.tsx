@@ -33,7 +33,7 @@ export function PlayersSection() {
               ))}
             </ul>
             <ButtonLink href='/players' size='lg'>
-              Browse Players
+              Find Players
               <ArrowRight className='ml-2 w-4 h-4' />
             </ButtonLink>
           </div>

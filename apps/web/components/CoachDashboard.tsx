@@ -92,13 +92,19 @@ export default async function CoachDashboard() {
 function RecruitingBoardSkeleton() {
   return (
     <div className='rounded-lg border bg-card divide-y animate-pulse'>
-      {[...Array(5)].map((_, i) => (
-        <div key={i} className='flex items-center gap-4 px-4 py-3'>
-          <div className='w-8 shrink-0' />
-          <div className='w-14 h-14 rounded-lg bg-muted shrink-0' />
-          <div className='flex-1 space-y-2'>
-            <div className='h-4 bg-muted rounded w-1/3' />
-            <div className='h-3 bg-muted rounded w-1/2' />
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className='flex items-stretch'>
+          {/* Drag handle space */}
+          <div className='flex items-center justify-center w-8 shrink-0' />
+          {/* Content wrapper */}
+          <div className='flex-1 min-w-0'>
+            <div className='flex items-stretch gap-4 px-4 py-3'>
+              <div className='w-14 h-14 rounded-lg bg-muted shrink-0' />
+              <div className='flex-1 space-y-2 self-center'>
+                <div className='h-4 bg-muted rounded w-1/3' />
+                <div className='h-3 bg-muted rounded w-1/2' />
+              </div>
+            </div>
           </div>
         </div>
       ))}

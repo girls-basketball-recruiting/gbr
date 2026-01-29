@@ -37,7 +37,7 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
             <div className='mb-6 sm:mb-8 text-center'>
               <H1 className='mb-2 sm:mb-6'>College Programs</H1>
               <MutedText className='text-base sm:text-xl'>
-                Browse and connect with women&apos;s college basketball programs
+                Discover and connect with women&apos;s college basketball programs
               </MutedText>
             </div>
 
