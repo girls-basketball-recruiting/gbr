@@ -48,7 +48,8 @@
       "mcp__shadcn__get_item_examples_from_registries",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(pnpm add:*)",
-      "mcp__plugin_context7_context7__query-docs"
+      "mcp__plugin_context7_context7__query-docs",
+      "Read(//Users/carl/.claude/**)"
     ],
     "deny": [],
     "ask": []

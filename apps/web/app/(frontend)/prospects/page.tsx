@@ -6,6 +6,7 @@ import { ProspectsList } from './ProspectsList'
 import { PageLoadingState } from '@/components/PageLoadingState'
 import { H1 } from '@/components/ui/typography/H1'
 import { MutedText } from '@/components/ui/typography/MutedText'
+import { ProspectFilters } from '@/components/ProspectFilters'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Plus, Upload } from 'lucide-react'
 
@@ -14,6 +15,9 @@ interface ProspectsPageProps {
     sortBy?: string
     page?: string
     view?: 'grid' | 'table'
+    lastName?: string
+    positions?: string
+    states?: string
   }>
 }
 
@@ -61,6 +65,9 @@ export default async function ProspectsPage({ searchParams }: ProspectsPageProps
             </ButtonLink>
           </div>
         </div>
+
+        {/* Filters */}
+        <ProspectFilters />
 
         {/* Content */}
         <Suspense fallback={<PageLoadingState message='Loading prospects...' />}>

@@ -31,7 +31,7 @@ export function ProgramCard({ program, isSaved = false }: ProgramCardProps) {
         coachCount > 0 ? 'ring-2 ring-blue-500/50' : ''
       }`}>
         {/* Header Area - Subtle accent background */}
-        <div className='relative aspect-[16/9] bg-blue-50 dark:bg-blue-950/40 border-b-2 border-blue-200 dark:border-blue-800 rounded-b-3xl overflow-hidden'>
+        <div className='relative aspect-square bg-blue-50 dark:bg-blue-950/40 border-b-2 border-blue-200 dark:border-blue-800 rounded-b-3xl overflow-hidden'>
           <div className='absolute inset-0 flex items-center justify-center'>
             <div className='w-20 h-20 rounded-xl bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700 flex items-center justify-center'>
               <School className='w-10 h-10 text-blue-400 dark:text-blue-500' />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { Button } from '@workspace/ui/components/button'
 import { Field, FieldLabel, FieldDescription, FieldError } from '@workspace/ui/components/field'
@@ -10,6 +10,7 @@ import {
 } from '@workspace/ui/components/file-upload'
 import { Upload, X, Check, CloudUpload } from 'lucide-react'
 import { cn } from '@workspace/ui/lib/utils'
+import { CropDialog } from '@/components/CropDialog'
 
 interface ProfileImageUploadProps {
   label?: string
@@ -26,6 +27,7 @@ type ImageState = 'empty' | 'selected' | 'saved' | 'error'
 /**
  * Refined profile image upload component with clear visual states.
  * Shows: empty, file selected (pending save), saved, and error states.
+ * Opens a crop dialog when a file is selected to enforce 1:1 aspect ratio.
  */
 export function ProfileImageUpload({
   label = 'Profile Photo',
@@ -39,6 +41,11 @@ export function ProfileImageUpload({
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialImageUrl ?? null)
   const [validationError, setValidationError] = useState<string | null>(null)
+
+  // Crop dialog state
+  const [cropDialogOpen, setCropDialogOpen] = useState(false)
+  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null)
+  const pendingFileName = useRef<string>('profile.jpg')
 
   // Determine current state
   const getState = (): ImageState => {
@@ -54,17 +61,34 @@ export function ProfileImageUpload({
     const file = files?.[0]
     if (!file) return
 
-    // Clear any validation errors when a valid file is selected
     setValidationError(null)
-    setSelectedFile(file)
-    onImageChange?.(file)
+    pendingFileName.current = file.name
 
-    // Create preview
+    // Read the file and open crop dialog
     const reader = new FileReader()
     reader.onloadend = () => {
-      setPreviewUrl(reader.result as string)
+      setRawImageSrc(reader.result as string)
+      setCropDialogOpen(true)
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleCropConfirm = (croppedBlob: Blob, croppedPreviewUrl: string) => {
+    // Convert blob to File so it works with existing FormData upload flow
+    const croppedFile = new File([croppedBlob], pendingFileName.current, {
+      type: 'image/jpeg',
+    })
+
+    setSelectedFile(croppedFile)
+    setPreviewUrl(croppedPreviewUrl)
+    onImageChange?.(croppedFile)
+    setCropDialogOpen(false)
+    setRawImageSrc(null)
+  }
+
+  const handleCropCancel = () => {
+    setCropDialogOpen(false)
+    setRawImageSrc(null)
   }
 
   const handleChange = () => {
@@ -219,6 +243,17 @@ export function ProfileImageUpload({
 
       {description && <FieldDescription>{description}</FieldDescription>}
       {(error || validationError) && <FieldError>{error || validationError}</FieldError>}
+
+      {/* Crop Dialog */}
+      {rawImageSrc && (
+        <CropDialog
+          open={cropDialogOpen}
+          imageSrc={rawImageSrc}
+          aspect={1}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
     </Field>
   )
 }

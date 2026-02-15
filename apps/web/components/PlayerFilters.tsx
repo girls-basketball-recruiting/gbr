@@ -35,6 +35,7 @@ export function PlayerFilters() {
   const [graduationYears, setGraduationYears] = useState<string[]>(parseArrayParam('graduationYears'))
   const [positions, setPositions] = useState<string[]>(parseArrayParam('positions'))
   const [states, setStates] = useState<string[]>(parseArrayParam('states'))
+  const [lastName, setLastName] = useState(searchParams.get('lastName') || '')
   const [city, setCity] = useState(searchParams.get('city') || '')
   const [desiredDistances, setDesiredDistances] = useState<string[]>(parseArrayParam('desiredDistances'))
   const [desiredLevels, setDesiredLevels] = useState<string[]>(parseArrayParam('desiredLevels'))
@@ -115,7 +116,9 @@ export function PlayerFilters() {
 
   const handleTextChange = (key: string, value: string) => {
     // Update state
-    if (key === 'city') {
+    if (key === 'lastName') {
+      setLastName(value)
+    } else if (key === 'city') {
       setCity(value)
     }
 
@@ -161,6 +164,7 @@ export function PlayerFilters() {
     setGraduationYears([])
     setPositions([])
     setStates([])
+    setLastName('')
     setCity('')
     setDesiredDistances([])
     setDesiredLevels([])
@@ -191,6 +195,7 @@ export function PlayerFilters() {
     graduationYears.length > 0,
     positions.length > 0,
     states.length > 0,
+    lastName,
     city,
     desiredDistances.length > 0,
     desiredLevels.length > 0,
@@ -207,7 +212,22 @@ export function PlayerFilters() {
     <div className='rounded-lg p-5 mb-6 bg-accent'>
       <div className='flex flex-col gap-5'>
         {/* Basic Info & Location */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+        <div className='grid grid-cols-2 lg:grid-cols-5 gap-4'>
+          {/* Last Name */}
+          <div className='space-y-0.5'>
+            <Label htmlFor='lastName' className='text-sm font-medium'>
+              Last Name
+            </Label>
+            <Input
+              id='lastName'
+              type='text'
+              placeholder='Search by last name'
+              value={lastName}
+              onChange={(e) => handleTextChange('lastName', e.target.value)}
+              className='w-full bg-white border-gray'
+            />
+          </div>
+
           {/* Graduation Year */}
           <div className='space-y-0.5'>
             <Label className='text-sm font-medium'>
@@ -268,7 +288,7 @@ export function PlayerFilters() {
 
         {/* Preferences - Hidden in public view */}
         {!isPublic && (
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
             {/* Desired Levels */}
             <div className='space-y-0.5'>
               <Label className='text-sm font-medium'>
@@ -329,7 +349,7 @@ export function PlayerFilters() {
 
         {/* Stats Filters - Hidden in public view */}
         {!isPublic && (
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5'>
+          <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5'>
             {/* Height Range */}
             <div>
               <RangeSlider

@@ -7,6 +7,9 @@ interface ProspectsListProps {
   searchParams: {
     sortBy?: string
     page?: string
+    lastName?: string
+    positions?: string
+    states?: string
   }
 }
 
@@ -41,11 +44,39 @@ export async function ProspectsList({ coachId, searchParams }: ProspectsListProp
   const page = parseInt(searchParams.page || '1')
   const limit = 24
 
+  // Build where conditions
+  const whereConditions: any[] = [
+    { coach: { equals: coachId } },
+  ]
+
+  if (searchParams.lastName) {
+    whereConditions.push({ lastName: { like: searchParams.lastName } })
+  }
+
+  if (searchParams.positions) {
+    const positions = searchParams.positions.split(',').filter(Boolean)
+    if (positions.length > 0) {
+      whereConditions.push({
+        or: [
+          { primaryPosition: { in: positions } },
+          { secondaryPosition: { in: positions } },
+        ],
+      })
+    }
+  }
+
+  if (searchParams.states) {
+    const states = searchParams.states.split(',').filter(Boolean)
+    if (states.length > 0) {
+      whereConditions.push({ state: { in: states } })
+    }
+  }
+
   // Fetch prospects using Payload API
   const result = await payload.find({
     collection: 'coach-prospects',
     where: {
-      coach: { equals: coachId },
+      and: whereConditions,
     },
     sort,
     limit,

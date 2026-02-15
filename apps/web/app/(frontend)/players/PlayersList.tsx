@@ -8,6 +8,7 @@ interface PlayersListProps {
     graduationYears?: string
     positions?: string
     states?: string
+    lastName?: string
     city?: string
     desiredDistances?: string
     desiredLevels?: string
@@ -105,6 +106,11 @@ export async function PlayersList({ searchParams }: PlayersListProps) {
     if (states.length > 0) {
       conditions.push(inArray(playersTable.state, states))
     }
+  }
+
+  // Handle lastName search
+  if (searchParams.lastName) {
+    conditions.push(like(playersTable.lastName, `%${searchParams.lastName}%`))
   }
 
   // Handle city search
